@@ -14,19 +14,13 @@
       min-height: 100vh;
       overflow-x: hidden;
     }
-
-    /* HEADER */
     .header {
       padding: 20px 16px 0;
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-    .logo {
-      font-size: 20px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
+    .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
     .logo span { color: #a855f7; }
     .badge {
       background: #1a1a1a;
@@ -36,17 +30,13 @@
       padding: 4px 10px;
       border-radius: 20px;
     }
-
-    /* HERO */
-    .hero {
-      padding: 28px 16px 20px;
-    }
+    .hero { padding: 24px 16px 16px; }
     .hero h1 {
       font-size: 26px;
       font-weight: 800;
       line-height: 1.2;
       letter-spacing: -0.5px;
-      margin-bottom: 8px;
+      margin-bottom: 6px;
     }
     .hero h1 em {
       font-style: normal;
@@ -54,13 +44,7 @@
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
-    .hero p {
-      color: #666;
-      font-size: 14px;
-      line-height: 1.5;
-    }
-
-    /* TABS */
+    .hero p { color: #555; font-size: 14px; }
     .tabs {
       display: flex;
       gap: 8px;
@@ -78,70 +62,39 @@
       cursor: pointer;
       white-space: nowrap;
       border: 1px solid transparent;
-      transition: all 0.2s;
     }
-    .tab.active {
-      background: white;
-      color: black;
-    }
-    .tab:not(.active) {
-      background: #141414;
-      border-color: #2a2a2a;
-      color: #888;
-    }
-
-    /* CARDS GRID */
+    .tab.active { background: white; color: black; }
+    .tab:not(.active) { background: #141414; border-color: #2a2a2a; color: #888; }
     .section-title {
       padding: 0 16px;
-      font-size: 13px;
-      color: #555;
-      font-weight: 500;
+      font-size: 11px;
+      color: #444;
+      font-weight: 600;
       margin-bottom: 12px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
     }
-    .cards {
-      padding: 0 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 24px;
-    }
+    .cards { padding: 0 16px; display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
+
+    /* CARD */
     .card {
       background: #111;
-      border-radius: 16px;
+      border-radius: 20px;
       overflow: hidden;
       border: 1px solid #1e1e1e;
-      cursor: pointer;
-      transition: transform 0.2s, border-color 0.2s;
-      position: relative;
     }
-    .card:active { transform: scale(0.98); }
     .card-preview {
       width: 100%;
-      height: 160px;
-      object-fit: cover;
-      display: block;
-      background: linear-gradient(135deg, #1a0a2e, #0a1628);
+      height: 140px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 48px;
+      font-size: 44px;
       position: relative;
-      overflow: hidden;
     }
-    .card-preview::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(135deg, #2d1b4e44, #1a2f5a44);
-    }
-    .card-preview-photo {
-      background: linear-gradient(135deg, #1a0a2e, #2d0a3e);
-    }
-    .card-preview-video {
-      background: linear-gradient(135deg, #0a1628, #0a2040);
-    }
+    .card-preview-photo { background: linear-gradient(135deg, #1a0a2e, #2d0a3e); }
+    .card-preview-video { background: linear-gradient(135deg, #0a1628, #0a2040); }
+    .card-preview-motion { background: linear-gradient(135deg, #0a2818, #1a2808); }
     .card-tag {
       position: absolute;
       top: 10px;
@@ -149,32 +102,47 @@
       background: rgba(0,0,0,0.6);
       backdrop-filter: blur(10px);
       border: 1px solid rgba(255,255,255,0.1);
-      color: white;
-      font-size: 11px;
+      font-size: 10px;
       padding: 3px 8px;
       border-radius: 6px;
-      font-weight: 600;
-    }
-    .card-tag.photo { color: #a855f7; }
-    .card-tag.video { color: #3b82f6; }
-    .card-body {
-      padding: 14px 16px 16px;
-    }
-    .card-title {
-      font-size: 16px;
       font-weight: 700;
-      margin-bottom: 4px;
+      letter-spacing: 0.5px;
     }
-    .card-desc {
-      font-size: 13px;
-      color: #555;
+    .tag-photo { color: #a855f7; }
+    .tag-video { color: #3b82f6; }
+    .tag-motion { color: #22c55e; }
+
+    .card-body { padding: 16px; }
+    .card-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
+    .card-desc { font-size: 13px; color: #555; margin-bottom: 16px; line-height: 1.4; }
+
+    /* MODE SWITCHER */
+    .mode-switch {
+      display: flex;
+      background: #0a0a0a;
+      border-radius: 10px;
+      padding: 3px;
       margin-bottom: 14px;
-      line-height: 1.4;
+      border: 1px solid #1e1e1e;
     }
-    .card-input {
+    .mode-btn {
+      flex: 1;
+      padding: 8px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      color: #444;
+      transition: all 0.2s;
+    }
+    .mode-btn.active { background: #1e1e1e; color: white; }
+
+    /* INPUTS */
+    textarea {
       width: 100%;
       background: #0a0a0a;
-      border: 1px solid #2a2a2a;
+      border: 1px solid #1e1e1e;
       border-radius: 10px;
       color: white;
       padding: 11px 14px;
@@ -185,11 +153,71 @@
       margin-bottom: 10px;
       transition: border-color 0.2s;
     }
-    .card-input:focus {
-      outline: none;
-      border-color: #444;
+    textarea:focus { outline: none; border-color: #333; }
+    textarea::placeholder { color: #2a2a2a; }
+
+    /* UPLOAD */
+    .upload-area {
+      border: 1px dashed #2a2a2a;
+      border-radius: 10px;
+      padding: 16px;
+      text-align: center;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: border-color 0.2s;
+      position: relative;
     }
-    .card-input::placeholder { color: #333; }
+    .upload-area:hover { border-color: #444; }
+    .upload-area input {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+    }
+    .upload-icon { font-size: 24px; margin-bottom: 6px; }
+    .upload-title { font-size: 13px; font-weight: 600; color: #888; }
+    .upload-sub { font-size: 11px; color: #444; margin-top: 2px; }
+    .upload-area.has-file { border-color: #22c55e44; background: #0a1a0a; }
+    .upload-area.has-file .upload-title { color: #22c55e; }
+
+    /* TOGGLE */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-top: 1px solid #1a1a1a;
+      margin-top: 4px;
+      margin-bottom: 10px;
+    }
+    .toggle-label { font-size: 13px; color: #888; }
+    .toggle-label span { display: block; font-size: 11px; color: #444; margin-top: 2px; }
+    .toggle {
+      width: 44px;
+      height: 24px;
+      background: #1e1e1e;
+      border-radius: 12px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.2s;
+      border: 1px solid #2a2a2a;
+    }
+    .toggle.on { background: #22c55e; border-color: #22c55e; }
+    .toggle-dot {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 18px;
+      height: 18px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle.on .toggle-dot { transform: translateX(20px); }
+
+    /* BUTTON */
     .btn {
       width: 100%;
       padding: 13px;
@@ -205,208 +233,237 @@
       transition: opacity 0.2s;
     }
     .btn:active { opacity: 0.8; }
-    .btn-photo {
-      background: linear-gradient(135deg, #7c3aed, #a855f7);
-      color: white;
-    }
-    .btn-video {
-      background: linear-gradient(135deg, #1d4ed8, #3b82f6);
-      color: white;
-    }
+    .btn-photo { background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; }
+    .btn-video { background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: white; }
+    .btn-motion { background: linear-gradient(135deg, #15803d, #22c55e); color: white; }
+
+    /* LOADING */
+    .loading-bar { display: none; margin-bottom: 10px; height: 2px; background: #1a1a1a; border-radius: 2px; overflow: hidden; }
+    .loading-bar-inner { height: 100%; width: 0%; border-radius: 2px; animation: load 3s ease forwards; }
+    .lb-photo { background: linear-gradient(90deg, #a855f7, #ec4899); }
+    .lb-video { background: linear-gradient(90deg, #3b82f6, #06b6d4); }
+    .lb-motion { background: linear-gradient(90deg, #22c55e, #84cc16); }
+    @keyframes load { to { width: 90%; } }
 
     /* RESULT */
-    .result {
-      margin-top: 10px;
-      border-radius: 10px;
-      overflow: hidden;
-      display: none;
-      background: #0a0a0a;
-      border: 1px solid #1e1e1e;
-    }
-    .result-inner {
-      padding: 14px;
-      text-align: center;
-      color: #444;
-      font-size: 13px;
-    }
-    .loading-bar {
-      display: none;
-      margin-top: 10px;
-      height: 3px;
-      background: #1a1a1a;
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .loading-bar-inner {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #a855f7, #3b82f6);
-      border-radius: 3px;
-      animation: load 2s ease forwards;
-    }
-    @keyframes load {
-      to { width: 100%; }
-    }
+    .result { display: none; margin-top: 10px; padding: 14px; background: #0a0a0a; border: 1px solid #1e1e1e; border-radius: 10px; text-align: center; color: #444; font-size: 13px; }
 
     /* BOTTOM NAV */
     .bottom-nav {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(8,8,8,0.9);
+      bottom: 0; left: 0; right: 0;
+      background: rgba(8,8,8,0.95);
       backdrop-filter: blur(20px);
       border-top: 1px solid #1a1a1a;
       padding: 10px 0 20px;
       display: flex;
       justify-content: space-around;
     }
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      color: #333;
-      font-size: 10px;
-      cursor: pointer;
-    }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: #333; font-size: 10px; cursor: pointer; }
     .nav-item.active { color: white; }
     .nav-icon { font-size: 20px; }
-    .pb { padding-bottom: 80px; }
+    .pb { padding-bottom: 90px; }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="logo">Vision<span>Morph</span></div>
-    <div class="badge">Beta</div>
+
+<div class="header">
+  <div class="logo">Vision<span>Morph</span></div>
+  <div class="badge">Beta</div>
+</div>
+
+<div class="hero">
+  <h1>Создавай контент<br>с помощью <em>ИИ</em></h1>
+  <p>Фото и видео за секунды</p>
+</div>
+
+<div class="tabs">
+  <div class="tab active">Все</div>
+  <div class="tab">📸 Фото</div>
+  <div class="tab">🎬 Видео</div>
+  <div class="tab">⭐ Популярное</div>
+</div>
+
+<div class="section-title">Инструменты</div>
+
+<div class="cards pb">
+
+  <!-- NANO BANANA 2 -->
+  <div class="card">
+    <div class="card-preview card-preview-photo">
+      ✨
+      <div class="card-tag tag-photo">Image</div>
+    </div>
+    <div class="card-body">
+      <div class="card-title">Nano Banana 2</div>
+      <div class="card-desc">Генерация фото нового поколения от Google</div>
+      <textarea id="photoPrompt" placeholder="девушка в розовом платье на фоне заката в Дубае, фотореализм, 8k..."></textarea>
+      <div class="loading-bar" id="photoBar"><div class="loading-bar-inner lb-photo"></div></div>
+      <button class="btn btn-photo" onclick="generatePhoto()">✦ Создать фото</button>
+      <div class="result" id="photoResult">Здесь появится фото</div>
+    </div>
   </div>
 
-  <div class="hero">
-    <h1>Создавай контент<br>с помощью <em>ИИ</em></h1>
-    <p>Фото и видео за секунды — просто опиши что хочешь</p>
-  </div>
+  <!-- KLING 3.0 -->
+  <div class="card">
+    <div class="card-preview card-preview-video">
+      🎬
+      <div class="card-tag tag-video">Video</div>
+    </div>
+    <div class="card-body">
+      <div class="card-title">Kling 3.0</div>
+      <div class="card-desc">Создай видео из текста или оживи своё фото</div>
 
-  <div class="tabs">
-    <div class="tab active">Все</div>
-    <div class="tab">📸 Фото</div>
-    <div class="tab">🎬 Видео</div>
-    <div class="tab">⭐ Популярное</div>
-  </div>
-
-  <div class="section-title">Инструменты</div>
-
-  <div class="cards pb">
-
-    <!-- PHOTO CARD -->
-    <div class="card">
-      <div class="card-preview card-preview-photo">
-        ✨
-        <div class="card-tag photo">Image</div>
+      <div class="mode-switch">
+        <div class="mode-btn active" id="kling-tab-text" onclick="switchKling('text')">✍️ Из текста</div>
+        <div class="mode-btn" id="kling-tab-photo" onclick="switchKling('photo')">🖼 Оживить фото</div>
       </div>
-      <div class="card-body">
-        <div class="card-title">Nano Banana 2</div>
-        <div class="card-desc">Gemini генерирует фото по твоему описанию</div>
-        <textarea class="card-input" id="photoPrompt" placeholder="девушка в розовом платье на фоне заката в Дубае, фотореализм..."></textarea>
-        <div class="loading-bar" id="photoBar"><div class="loading-bar-inner"></div></div>
-        <button class="btn btn-photo" onclick="generatePhoto()">
-          <span>✦</span> Создать фото
-        </button>
-        <div class="result" id="photoResult">
-          <div class="result-inner">Здесь появится фото</div>
+
+      <div id="kling-text-mode">
+        <textarea id="videoPrompt" placeholder="девушка идёт по ночному Токио под дождём, кинематограф, slow motion..."></textarea>
+      </div>
+
+      <div id="kling-photo-mode" style="display:none;">
+        <div class="upload-area" id="klingPhotoArea" onclick="document.getElementById('klingPhotoInput').click()">
+          <input type="file" id="klingPhotoInput" accept="image/*" onchange="handleFile(this,'klingPhotoArea','klingPhotoLabel')">
+          <div class="upload-icon">🖼</div>
+          <div class="upload-title" id="klingPhotoLabel">Загрузить фото</div>
+          <div class="upload-sub">JPG, PNG — фото которое нужно оживить</div>
+        </div>
+        <textarea id="videoPromptPhoto" placeholder="опиши как должно двигаться — улыбается, моргает, ветер в волосах..."></textarea>
+      </div>
+
+      <div class="loading-bar" id="videoBar"><div class="loading-bar-inner lb-video"></div></div>
+      <button class="btn btn-video" onclick="generateVideo()">▶ Создать видео</button>
+      <div class="result" id="videoResult">Здесь появится видео</div>
+    </div>
+  </div>
+
+  <!-- KLING MOTION CONTROL -->
+  <div class="card">
+    <div class="card-preview card-preview-motion">
+      🎮
+      <div class="card-tag tag-motion">Motion</div>
+    </div>
+    <div class="card-body">
+      <div class="card-title">Kling Motion Control</div>
+      <div class="card-desc">Персонаж с фото повторяет все движения с видео — мимику, руки, ноги, моргание</div>
+
+      <div class="upload-area" id="motionPhotoArea" onclick="document.getElementById('motionPhotoInput').click()">
+        <input type="file" id="motionPhotoInput" accept="image/*" onchange="handleFile(this,'motionPhotoArea','motionPhotoLabel')">
+        <div class="upload-icon">👤</div>
+        <div class="upload-title" id="motionPhotoLabel">Загрузить фото персонажа</div>
+        <div class="upload-sub">Фото человека или персонажа</div>
+      </div>
+
+      <div class="upload-area" id="motionVideoArea" onclick="document.getElementById('motionVideoInput').click()">
+        <input type="file" id="motionVideoInput" accept="video/*" onchange="handleFile(this,'motionVideoArea','motionVideoLabel')">
+        <div class="upload-icon">🎥</div>
+        <div class="upload-title" id="motionVideoLabel">Загрузить референс видео</div>
+        <div class="upload-sub">Видео с движениями которые нужно повторить</div>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-label">
+          Фон с референс видео
+          <span>Выкл — сохранить фон с фото</span>
+        </div>
+        <div class="toggle" id="bgToggle" onclick="toggleBg()">
+          <div class="toggle-dot"></div>
         </div>
       </div>
-    </div>
 
-    <!-- VIDEO CARD -->
-    <div class="card">
-      <div class="card-preview card-preview-video">
-        🎬
-        <div class="card-tag video">Video</div>
-      </div>
-      <div class="card-body">
-        <div class="card-title">Видео (Kling 3.0)</div>
-        <div class="card-desc">Создай кинематографичное видео из текста</div>
-        <textarea class="card-input" id="videoPrompt" placeholder="девушка идёт по ночному Токио под дождём, кинематограф, slow motion..."></textarea>
-        <div class="loading-bar" id="videoBar"><div class="loading-bar-inner"></div></div>
-        <button class="btn btn-video" onclick="generateVideo()">
-          <span>▶</span> Создать видео
-        </button>
-        <div class="result" id="videoResult">
-          <div class="result-inner">Здесь появится видео</div>
-        </div>
-      </div>
-    </div>
-    <!-- MOTION CONTROL CARD -->
-    <div class="card">
-      <div class="card-preview card-preview-video" style="background: linear-gradient(135deg, #0a2818, #0a3020);">
-        🎮
-        <div class="card-tag video">Motion</div>
-      </div>
-      <div class="card-body">
-        <div class="card-title">Kling Motion Control</div>
-        <div class="card-desc">Управляй движением камеры в видео</div>
-        <textarea class="card-input" id="motionPrompt" placeholder="камера медленно приближается к лицу девушки, bokeh эффект..."></textarea>
-        <div class="loading-bar" id="motionBar"><div class="loading-bar-inner"></div></div>
-        <button class="btn btn-video" onclick="generateMotion()">
-          <span>🎮</span> Создать с motion
-        </button>
-        <div class="result" id="motionResult">
-          <div class="result-inner">Здесь появится видео</div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="bottom-nav">
-    <div class="nav-item active">
-      <div class="nav-icon">⚡</div>
-      <div>Создать</div>
-    </div>
-    <div class="nav-item">
-      <div class="nav-icon">🖼</div>
-      <div>Галерея</div>
-    </div>
-    <div class="nav-item">
-      <div class="nav-icon">👤</div>
-      <div>Профиль</div>
+      <div class="loading-bar" id="motionBar"><div class="loading-bar-inner lb-motion"></div></div>
+      <button class="btn btn-motion" onclick="generateMotion()">🎮 Применить движения</button>
+      <div class="result" id="motionResult">Здесь появится видео</div>
     </div>
   </div>
 
-  <script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
+</div>
 
-    function generatePhoto() {
-      const prompt = document.getElementById('photoPrompt').value;
-      if (!prompt) { alert('Опиши фото'); return; }
-      const bar = document.getElementById('photoBar');
-      const result = document.getElementById('photoResult');
-      bar.style.display = 'block';
-      bar.innerHTML = '<div class="loading-bar-inner"></div>';
-      result.style.display = 'none';
-      setTimeout(() => {
-        bar.style.display = 'none';
-        result.innerHTML = '<div class="result-inner">API будет подключён на следующем шаге 🔜</div>';
-        result.style.display = 'block';
-      }, 2000);
+<div class="bottom-nav">
+  <div class="nav-item active"><div class="nav-icon">⚡</div><div>Создать</div></div>
+  <div class="nav-item"><div class="nav-icon">🖼</div><div>Галерея</div></div>
+  <div class="nav-item"><div class="nav-icon">👤</div><div>Профиль</div></div>
+</div>
+
+<script>
+  const tg = window.Telegram.WebApp;
+  tg.ready();
+  tg.expand();
+
+  let bgFromVideo = false;
+  let klingMode = 'text';
+
+  function switchKling(mode) {
+    klingMode = mode;
+    document.getElementById('kling-text-mode').style.display = mode === 'text' ? 'block' : 'none';
+    document.getElementById('kling-photo-mode').style.display = mode === 'photo' ? 'block' : 'none';
+    document.getElementById('kling-tab-text').className = 'mode-btn' + (mode === 'text' ? ' active' : '');
+    document.getElementById('kling-tab-photo').className = 'mode-btn' + (mode === 'photo' ? ' active' : '');
+  }
+
+  function toggleBg() {
+    bgFromVideo = !bgFromVideo;
+    const t = document.getElementById('bgToggle');
+    t.className = 'toggle' + (bgFromVideo ? ' on' : '');
+  }
+
+  function handleFile(input, areaId, labelId) {
+    if (input.files[0]) {
+      document.getElementById(areaId).classList.add('has-file');
+      document.getElementById(labelId).textContent = '✓ ' + input.files[0].name;
     }
+  }
 
-    function generateVideo() {
-      const prompt = document.getElementById('videoPrompt').value;
-      if (!prompt) { alert('Опиши видео'); return; }
-      const bar = document.getElementById('videoBar');
-      const result = document.getElementById('videoResult');
-      bar.style.display = 'block';
-      bar.innerHTML = '<div class="loading-bar-inner"></div>';
-      result.style.display = 'none';
-      setTimeout(() => {
-        bar.style.display = 'none';
-        result.innerHTML = '<div class="result-inner">API будет подключён на следующем шаге 🔜</div>';
-        result.style.display = 'block';
-      }, 2000);
+  function showLoading(barId) {
+    const bar = document.getElementById(barId);
+    bar.style.display = 'block';
+    bar.innerHTML = bar.innerHTML;
+    const inner = bar.querySelector('div');
+    inner.style.animation = 'none';
+    inner.offsetHeight;
+    inner.style.animation = '';
+  }
+
+  function generatePhoto() {
+    const prompt = document.getElementById('photoPrompt').value;
+    if (!prompt) { alert('Опиши фото'); return; }
+    showLoading('photoBar');
+    document.getElementById('photoResult').style.display = 'none';
+    setTimeout(() => {
+      document.getElementById('photoBar').style.display = 'none';
+      document.getElementById('photoResult').style.display = 'block';
+      document.getElementById('photoResult').textContent = 'API Gemini будет подключён на следующем шаге 🔜';
+    }, 3000);
+  }
+
+  function generateVideo() {
+    if (klingMode === 'text') {
+      if (!document.getElementById('videoPrompt').value) { alert('Опиши видео'); return; }
+    } else {
+      if (!document.getElementById('klingPhotoInput').files[0]) { alert('Загрузи фото'); return; }
     }
-  </script>
+    showLoading('videoBar');
+    document.getElementById('videoResult').style.display = 'none';
+    setTimeout(() => {
+      document.getElementById('videoBar').style.display = 'none';
+      document.getElementById('videoResult').style.display = 'block';
+      document.getElementById('videoResult').textContent = 'API Kling будет подключён на следующем шаге 🔜';
+    }, 3000);
+  }
+
+  function generateMotion() {
+    if (!document.getElementById('motionPhotoInput').files[0]) { alert('Загрузи фото персонажа'); return; }
+    if (!document.getElementById('motionVideoInput').files[0]) { alert('Загрузи референс видео'); return; }
+    showLoading('motionBar');
+    document.getElementById('motionResult').style.display = 'none';
+    setTimeout(() => {
+      document.getElementById('motionBar').style.display = 'none';
+      document.getElementById('motionResult').style.display = 'block';
+      document.getElementById('motionResult').textContent = 'API Kling Motion будет подключён на следующем шаге 🔜';
+    }, 3000);
+  }
+</script>
 </body>
 </html>
