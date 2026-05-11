@@ -296,8 +296,20 @@
     </div>
     <div class="card-body">
       <div class="card-title">Nano Banana 2</div>
-      <div class="card-desc">Генерация фото нового поколения от Google</div>
-      <textarea id="photoPrompt" placeholder="девушка в розовом платье на фоне заката в Дубае, фотореализм, 8k..."></textarea>
+      <div class="card-desc">Загрузи своё фото и референс — ИИ создаст нужный образ</div>
+
+      <div style="margin-bottom:10px;">
+        <div style="font-size:11px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Фотографии (до 10 штук)</div>
+        <div id="photoGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;"></div>
+        <div class="upload-area" id="nbUploadArea" onclick="document.getElementById('nbFileInput').click()" style="padding:12px;">
+          <input type="file" id="nbFileInput" accept="image/*" multiple onchange="handleNBFiles(this)">
+          <div class="upload-icon" style="font-size:20px;">＋</div>
+          <div class="upload-title" id="nbUploadLabel">Добавить фото</div>
+          <div class="upload-sub" id="nbUploadSub">Первое фото — ваше, остальные — референсы</div>
+        </div>
+      </div>
+
+      <textarea id="photoPrompt" placeholder="опиши что хочешь получить — стиль, образ, атмосферу..."></textarea>
       <div class="loading-bar" id="photoBar"><div class="loading-bar-inner lb-photo"></div></div>
       <button class="btn btn-photo" onclick="generatePhoto()">✦ Создать фото</button>
       <div class="result" id="photoResult">Здесь появится фото</div>
@@ -394,6 +406,47 @@
 
   let bgFromVideo = false;
   let klingMode = 'text';
+
+  let nbFiles = [];
+
+  function handleNBFiles(input) {
+    const newFiles = Array.from(input.files);
+    nbFiles = [...nbFiles, ...newFiles].slice(0, 10);
+    const grid = document.getElementById('photoGrid');
+    grid.innerHTML = '';
+    nbFiles.forEach((file, i) => {
+      const url = URL.createObjectURL(file);
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;background:#0a0a0a;border:1px solid #1e1e1e;';
+      wrapper.innerHTML = `
+        <img src="${url}" style="width:100%;height:100%;object-fit:cover;">
+        <div style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.7);border-radius:4px;padding:2px 6px;font-size:10px;font-weight:600;color:${i===0?'#a855f7':'#888'}">${i === 0 ? 'Моё фото' : 'Реф ' + i}</div>
+        <div onclick="removeNBFile(${i})" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.7);border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;">✕</div>
+      `;
+      grid.appendChild(wrapper);
+    });
+    document.getElementById('nbUploadSub').textContent = nbFiles.length >= 10 ? 'Максимум 10 фото загружено' : `${nbFiles.length}/10 — добавить ещё`;
+    if (nbFiles.length >= 10) document.getElementById('nbUploadArea').style.display = 'none';
+  }
+
+  function removeNBFile(index) {
+    nbFiles.splice(index, 1);
+    const grid = document.getElementById('photoGrid');
+    grid.innerHTML = '';
+    nbFiles.forEach((file, i) => {
+      const url = URL.createObjectURL(file);
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;background:#0a0a0a;border:1px solid #1e1e1e;';
+      wrapper.innerHTML = `
+        <img src="${url}" style="width:100%;height:100%;object-fit:cover;">
+        <div style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.7);border-radius:4px;padding:2px 6px;font-size:10px;font-weight:600;color:${i===0?'#a855f7':'#888'}">${i === 0 ? 'Моё фото' : 'Реф ' + i}</div>
+        <div onclick="removeNBFile(${i})" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.7);border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;">✕</div>
+      `;
+      grid.appendChild(wrapper);
+    });
+    document.getElementById('nbUploadSub').textContent = `${nbFiles.length}/10 — добавить ещё`;
+    document.getElementById('nbUploadArea').style.display = 'block';
+  }
 
   function switchKling(mode) {
     klingMode = mode;
