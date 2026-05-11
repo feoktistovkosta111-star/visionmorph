@@ -304,7 +304,7 @@
         <div class="card-tag photo">Image</div>
       </div>
       <div class="card-body">
-        <div class="card-title">Нейрофотосессия</div>
+        <div class="card-title">Nano Banana 2</div>
         <div class="card-desc">Gemini генерирует фото по твоему описанию</div>
         <textarea class="card-input" id="photoPrompt" placeholder="девушка в розовом платье на фоне заката в Дубае, фотореализм..."></textarea>
         <div class="loading-bar" id="photoBar"><div class="loading-bar-inner"></div></div>
@@ -332,6 +332,25 @@
           <span>▶</span> Создать видео
         </button>
         <div class="result" id="videoResult">
+          <div class="result-inner">Здесь появится видео</div>
+        </div>
+      </div>
+    </div>
+    <!-- MOTION CONTROL CARD -->
+    <div class="card">
+      <div class="card-preview card-preview-video" style="background: linear-gradient(135deg, #0a2818, #0a3020);">
+        🎮
+        <div class="card-tag video">Motion</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Kling Motion Control</div>
+        <div class="card-desc">Управляй движением камеры в видео</div>
+        <textarea class="card-input" id="motionPrompt" placeholder="камера медленно приближается к лицу девушки, bokeh эффект..."></textarea>
+        <div class="loading-bar" id="motionBar"><div class="loading-bar-inner"></div></div>
+        <button class="btn btn-video" onclick="generateMotion()">
+          <span>🎮</span> Создать с motion
+        </button>
+        <div class="result" id="motionResult">
           <div class="result-inner">Здесь появится видео</div>
         </div>
       </div>
