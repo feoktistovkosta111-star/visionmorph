@@ -1,0 +1,131 @@
+ <!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VisionMorph</title>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+      background: #0f0f0f;
+      color: white;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    .header {
+      text-align: center;
+      padding: 30px 0 20px;
+    }
+    .header h1 {
+      font-size: 28px;
+      background: linear-gradient(135deg, #a855f7, #3b82f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .header p { color: #888; margin-top: 8px; font-size: 14px; }
+    .section {
+      background: #1a1a1a;
+      border-radius: 16px;
+      padding: 20px;
+      margin-bottom: 16px;
+      border: 1px solid #2a2a2a;
+    }
+    .section h2 { font-size: 18px; margin-bottom: 6px; }
+    .section p { color: #888; font-size: 13px; margin-bottom: 16px; }
+    textarea {
+      width: 100%;
+      background: #0f0f0f;
+      border: 1px solid #333;
+      border-radius: 10px;
+      color: white;
+      padding: 12px;
+      font-size: 14px;
+      resize: none;
+      height: 90px;
+    }
+    textarea:focus { outline: none; border-color: #a855f7; }
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+    .btn-photo { background: linear-gradient(135deg, #a855f7, #7c3aed); color: white; }
+    .btn-video { background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; }
+    .result {
+      margin-top: 16px;
+      border-radius: 12px;
+      overflow: hidden;
+      display: none;
+    }
+    .result img, .result video { width: 100%; border-radius: 12px; }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #888;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>✨ VisionMorph</h1>
+    <p>Создавай фото и видео с помощью ИИ</p>
+  </div>
+
+  <div class="section">
+    <h2>📸 Нейрофотосессия</h2>
+    <p>Опиши образ — ИИ создаст фото</p>
+    <textarea id="photoPrompt" placeholder="Например: девушка в розовом платье на фоне заката в Дубае..."></textarea>
+    <button class="btn btn-photo" onclick="generatePhoto()">Создать фото</button>
+    <div class="loading" id="photoLoading">⏳ Генерируем фото...</div>
+    <div class="result" id="photoResult"></div>
+  </div>
+
+  <div class="section">
+    <h2>🎬 Видео (Kling)</h2>
+    <p>Опиши сцену — ИИ создаст видео</p>
+    <textarea id="videoPrompt" placeholder="Например: девушка идёт по ночному Токио под дождём..."></textarea>
+    <button class="btn btn-video" onclick="generateVideo()">Создать видео</button>
+    <div class="loading" id="videoLoading">⏳ Генерируем видео... (1-2 мин)</div>
+    <div class="result" id="videoResult"></div>
+  </div>
+
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+
+    function generatePhoto() {
+      const prompt = document.getElementById('photoPrompt').value;
+      if (!prompt) { alert('Введи описание фото'); return; }
+      document.getElementById('photoLoading').style.display = 'block';
+      document.getElementById('photoResult').style.display = 'none';
+      // Здесь будет подключение к API
+      setTimeout(() => {
+        document.getElementById('photoLoading').style.display = 'none';
+        document.getElementById('photoResult').innerHTML = '<p style="color:#888;text-align:center;padding:20px">API будет подключён на следующем шаге</p>';
+        document.getElementById('photoResult').style.display = 'block';
+      }, 2000);
+    }
+
+    function generateVideo() {
+      const prompt = document.getElementById('videoPrompt').value;
+      if (!prompt) { alert('Введи описание видео'); return; }
+      document.getElementById('videoLoading').style.display = 'block';
+      document.getElementById('videoResult').style.display = 'none';
+      setTimeout(() => {
+        document.getElementById('videoLoading').style.display = 'none';
+        document.getElementById('videoResult').innerHTML = '<p style="color:#888;text-align:center;padding:20px">API будет подключён на следующем шаге</p>';
+        document.getElementById('videoResult').style.display = 'block';
+      }, 2000);
+    }
+  </script>
+</body>
+</html>
