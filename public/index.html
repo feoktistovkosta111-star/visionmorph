@@ -479,16 +479,51 @@
     inner.style.animation = '';
   }
 
-  function generatePhoto() {
+ async function generatePhoto() {
     const prompt = document.getElementById('photoPrompt').value;
-    if (!prompt) { alert('Опиши фото'); return; }
+    if (!prompt) { alert('Опиши что хочешь получить'); return; }
+
     showLoading('photoBar');
     document.getElementById('photoResult').style.display = 'none';
-    setTimeout(() => {
+
+    try {
+      // Конвертируем загруженные файлы в base64
+      const imagePromises = nbFiles.map(file => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      });
+      const images = await Promise.all(imagePromises);
+
+      // Отправляем запрос на наш сервер
+      const response = await fetch('/api/generate-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, images })
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Ошибка генерации');
+      }
+
+      // Показываем готовую картинку
       document.getElementById('photoBar').style.display = 'none';
-      document.getElementById('photoResult').style.display = 'block';
-      document.getElementById('photoResult').textContent = 'API Gemini будет подключён на следующем шаге 🔜';
-    }, 3000);
+      const result = document.getElementById('photoResult');
+      result.style.display = 'block';
+      result.innerHTML = `<img src="${data.imageUrl}" style="width:100%;border-radius:10px;display:block;" alt="Сгенерированное фото">`;
+
+    } catch (error) {
+      console.error('Ошибка:', error);
+      document.getElementById('photoBar').style.display = 'none';
+      const result = document.getElementById('photoResult');
+      result.style.display = 'block';
+      result.textContent = '⚠️ Ошибка: ' + error.message;
+    }
   }
 
   function generateVideo() {
