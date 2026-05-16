@@ -539,19 +539,88 @@
     }
   }
 
-  function generateVideo() {
+  async function generateVideo() {
+    let prompt = '';
+    let image = null;
+
     if (klingMode === 'text') {
-      if (!document.getElementById('videoPrompt').value) { alert('Опиши видео'); return; }
+      prompt = document.getElementById('videoPrompt').value;
+      if (!prompt) { alert('Опиши видео'); return; }
     } else {
-      if (!document.getElementById('klingPhotoInput').files[0]) { alert('Загрузи фото'); return; }
+      const file = document.getElementById('klingPhotoInput').files[0];
+      if (!file) { alert('Загрузи фото'); return; }
+      prompt = document.getElementById('videoPromptPhoto').value;
+
+      // Сжимаем фото перед отправкой
+      image = await new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            let w = img.width, h = img.height;
+            const maxSize = 1024;
+            if (w > h && w > maxSize) { h = (h * maxSize) / w; w = maxSize; }
+            else if (h > maxSize) { w = (w * maxSize) / h; h = maxSize; }
+            canvas.width = w;
+            canvas.height = h;
+            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+            resolve(canvas.toDataURL('image/jpeg', 0.85));
+          };
+          img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
     }
+
     showLoading('videoBar');
     document.getElementById('videoResult').style.display = 'none';
-    setTimeout(() => {
+
+    try {
+      // Запускаем задачу в очередь
+      const startResponse = await fetch('/api/generate-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mode: klingMode, prompt, image })
+      });
+
+      const startData = await startResponse.json();
+      if (!startResponse.ok) throw new Error(startData.error || 'Ошибка запуска');
+
+      const { request_id, endpoint } = startData;
+
+      // Показываем что задача в работе
+      const result = document.getElementById('videoResult');
+      result.style.display = 'block';
+      result.textContent = '⏳ Генерация видео... (1-3 минуты)';
+
+      // Опрашиваем статус каждые 5 секунд (максимум 5 минут)
+      const maxAttempts = 60;
+      for (let i = 0; i < maxAttempts; i++) {
+        await new Promise(r => setTimeout(r, 5000));
+
+        const checkResponse = await fetch(`/api/check-video?request_id=${request_id}&endpoint=${encodeURIComponent(endpoint)}`);
+        const checkData = await checkResponse.json();
+
+        if (checkData.status === 'completed') {
+          document.getElementById('videoBar').style.display = 'none';
+          result.innerHTML = `<video src="${checkData.videoUrl}" controls autoplay loop style="width:100%;border-radius:10px;display:block;"></video>`;
+          return;
+        }
+
+        // Обновляем индикатор
+        result.textContent = `⏳ Генерация видео... (${(i+1)*5} сек)`;
+      }
+
+      throw new Error('Превышено время ожидания (5 минут)');
+
+    } catch (error) {
+      console.error('Ошибка:', error);
       document.getElementById('videoBar').style.display = 'none';
-      document.getElementById('videoResult').style.display = 'block';
-      document.getElementById('videoResult').textContent = 'API Kling будет подключён на следующем шаге 🔜';
-    }, 3000);
+      const result = document.getElementById('videoResult');
+      result.style.display = 'block';
+      result.textContent = '⚠️ Ошибка: ' + error.message;
+    }
   }
 
   function generateMotion() {
