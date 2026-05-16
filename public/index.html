@@ -408,6 +408,65 @@
   let klingMode = 'text';
 
   let nbFiles = [];
+  function handleNBFiles(input) {
+    const newFiles = Array.from(input.files);
+    nbFiles = [...nbFiles, ...newFiles].slice(0, 10);
+    const grid = document.getElementById('photoGrid');
+    grid.innerHTML = '';
+    nbFiles.forEach((file, i) => {
+      const url = URL.createObjectURL(file);
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;background:#0a0a0a;border:1px solid #1e1e1e;';
+      wrapper.innerHTML = `
+        <img src="${url}" style="width:100%;height:100%;object-fit:cover;">
+        <div style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.7);border-radius:4px;padding:2px 6px;font-size:10px;font-weight:600;color:${i===0?'#a855f7':'#888'}">${i === 0 ? 'Моё фото' : 'Реф ' + i}</div>
+        <div onclick="removeNBFile(${i})" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.7);border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;">✕</div>
+      `;
+      grid.appendChild(wrapper);
+    });
+    document.getElementById('nbUploadSub').textContent = nbFiles.length >= 10 ? 'Максимум 10 фото загружено' : `${nbFiles.length}/10 — добавить ещё`;
+    if (nbFiles.length >= 10) document.getElementById('nbUploadArea').style.display = 'none';
+  }
+
+  function removeNBFile(index) {
+    nbFiles.splice(index, 1);
+    const grid = document.getElementById('photoGrid');
+    grid.innerHTML = '';
+    nbFiles.forEach((file, i) => {
+      const url = URL.createObjectURL(file);
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;background:#0a0a0a;border:1px solid #1e1e1e;';
+      wrapper.innerHTML = `
+        <img src="${url}" style="width:100%;height:100%;object-fit:cover;">
+        <div style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.7);border-radius:4px;padding:2px 6px;font-size:10px;font-weight:600;color:${i===0?'#a855f7':'#888'}">${i === 0 ? 'Моё фото' : 'Реф ' + i}</div>
+        <div onclick="removeNBFile(${i})" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.7);border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;">✕</div>
+      `;
+      grid.appendChild(wrapper);
+    });
+    document.getElementById('nbUploadSub').textContent = `${nbFiles.length}/10 — добавить ещё`;
+    document.getElementById('nbUploadArea').style.display = 'block';
+  }
+
+  function switchKling(mode) {
+    klingMode = mode;
+    document.getElementById('kling-text-mode').style.display = mode === 'text' ? 'block' : 'none';
+    document.getElementById('kling-photo-mode').style.display = mode === 'photo' ? 'block' : 'none';
+    document.getElementById('kling-tab-text').className = 'mode-btn' + (mode === 'text' ? ' active' : '');
+    document.getElementById('kling-tab-photo').className = 'mode-btn' + (mode === 'photo' ? ' active' : '');
+  }
+
+  function toggleBg() {
+    bgFromVideo = !bgFromVideo;
+    const t = document.getElementById('bgToggle');
+    t.className = 'toggle' + (bgFromVideo ? ' on' : '');
+  }
+
+  function handleFile(input, areaId, labelId) {
+    if (input.files[0]) {
+      document.getElementById(areaId).classList.add('has-file');
+      document.getElementById(labelId).textContent = '✓ ' + input.files[0].name;
+    }
+  }
 
   function handleNBFiles(input) {
     const newFiles = Array.from(input.files);
