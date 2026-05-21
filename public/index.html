@@ -399,6 +399,10 @@
   <div class="nav-item"><div class="nav-icon">👤</div><div>Профиль</div></div>
 </div>
 
+<script type="module">
+    import { upload } from 'https://esm.sh/@vercel/blob/client@latest';
+    window.vercelBlobUpload = upload;
+  </script>
 <script>
   const tg = window.Telegram.WebApp;
   tg.ready();
@@ -622,16 +626,15 @@
     }
   }
 
-  async function generateMotion() {
+ async function generateMotion() {
     const photoFile = document.getElementById('motionPhotoInput').files[0];
     const videoFile = document.getElementById('motionVideoInput').files[0];
 
     if (!photoFile) { alert('Загрузи фото персонажа'); return; }
     if (!videoFile) { alert('Загрузи референс видео'); return; }
 
-    // Проверяем размер видео (Vercel лимит ~4.5 МБ)
-    if (videoFile.size > 4 * 1024 * 1024) {
-      alert('Видео слишком большое. Используй короткий ролик (3-5 сек, низкое разрешение, до 4 МБ)');
+    if (!window.vercelBlobUpload) {
+      alert('Сервис загрузки ещё инициализируется, подожди пару секунд');
       return;
     }
 
@@ -639,7 +642,7 @@
     document.getElementById('motionResult').style.display = 'none';
 
     try {
-      // Сжимаем фото
+      // Сжимаем фото персонажа (как раньше)
       const image = await new Promise((resolve) => {
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -660,19 +663,29 @@
         reader.readAsDataURL(photoFile);
       });
 
-      // Конвертируем видео в base64 (без сжатия — отправляем как есть)
-      const video = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(videoFile);
-      });
+      // Показываем что грузим
+      const result = document.getElementById('motionResult');
+      result.style.display = 'block';
+      result.textContent = '⏳ Загружаем видео в хранилище...';
 
-      // Запускаем задачу в очередь
+      // Грузим видео НАПРЯМУЮ в Vercel Blob (минуя серверную функцию)
+      const safeName = videoFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
+      const videoBlob = await window.vercelBlobUpload(
+        `motion-videos/${Date.now()}-${safeName}`,
+        videoFile,
+        {
+          access: 'public',
+          handleUploadUrl: '/api/upload-token',
+        }
+      );
+
+      result.textContent = '⏳ Запускаем генерацию...';
+
+      // Запускаем задачу с URL вместо base64
       const startResponse = await fetch('/api/generate-motion', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ image, video, bgFromVideo })
+        body: JSON.stringify({ image, video: videoBlob.url, bgFromVideo })
       });
 
       const startData = await startResponse.json();
@@ -680,9 +693,6 @@
 
       const { request_id, endpoint } = startData;
 
-      // Показываем что задача в работе
-      const result = document.getElementById('motionResult');
-      result.style.display = 'block';
       result.textContent = '⏳ Применяем движения... (1-3 минуты)';
 
       // Опрашиваем статус каждые 5 секунд
