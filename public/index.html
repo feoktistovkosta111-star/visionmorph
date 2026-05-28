@@ -2,333 +2,320 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VisionMorph</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Luxora</title>
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #080808;
-      color: white;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #050816;
+      color: #f0f4ff;
       min-height: 100vh;
       overflow-x: hidden;
-    }
-    .header {
-      padding: 20px 16px 0;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    .logo { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
-    .logo span { color: #a855f7; }
-    .badge {
-      background: #1a1a1a;
-      border: 1px solid #2a2a2a;
-      color: #888;
-      font-size: 11px;
-      padding: 4px 10px;
-      border-radius: 20px;
-    }
-    .hero { padding: 24px 16px 16px; }
-    .hero h1 {
-      font-size: 26px;
-      font-weight: 800;
-      line-height: 1.2;
-      letter-spacing: -0.5px;
-      margin-bottom: 6px;
-    }
-    .hero h1 em {
-      font-style: normal;
-      background: linear-gradient(90deg, #a855f7, #ec4899);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-    .hero p { color: #555; font-size: 14px; }
-    .tabs {
-      display: flex;
-      gap: 8px;
-      padding: 0 16px;
-      margin-bottom: 20px;
-      overflow-x: auto;
-      scrollbar-width: none;
-    }
-    .tabs::-webkit-scrollbar { display: none; }
-    .tab {
-      padding: 8px 16px;
-      border-radius: 20px;
-      font-size: 13px;
-      font-weight: 500;
-      cursor: pointer;
-      white-space: nowrap;
-      border: 1px solid transparent;
-    }
-    .tab.active { background: white; color: black; }
-    .tab:not(.active) { background: #141414; border-color: #2a2a2a; color: #888; }
-    .section-title {
-      padding: 0 16px;
-      font-size: 11px;
-      color: #444;
-      font-weight: 600;
-      margin-bottom: 12px;
-      text-transform: uppercase;
-      letter-spacing: 1px;
-    }
-    .cards { padding: 0 16px; display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px; }
-
-    /* CARD */
-    .card {
-      background: #111;
-      border-radius: 20px;
-      overflow: hidden;
-      border: 1px solid #1e1e1e;
-    }
-    .card-preview {
-      width: 100%;
-      height: 140px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 44px;
       position: relative;
     }
-    .card-preview-photo { background: linear-gradient(135deg, #1a0a2e, #2d0a3e); }
-    .card-preview-video { background: linear-gradient(135deg, #0a1628, #0a2040); }
-    .card-preview-motion { background: linear-gradient(135deg, #0a2818, #1a2808); }
-    .card-tag {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      background: rgba(0,0,0,0.6);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.1);
-      font-size: 10px;
-      padding: 3px 8px;
-      border-radius: 6px;
-      font-weight: 700;
-      letter-spacing: 0.5px;
-    }
-    .tag-photo { color: #a855f7; }
-    .tag-video { color: #3b82f6; }
-    .tag-motion { color: #22c55e; }
 
-    .card-body { padding: 16px; }
-    .card-title { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
-    .card-desc { font-size: 13px; color: #555; margin-bottom: 16px; line-height: 1.4; }
+    /* AURORA BACKGROUND */
+    .aurora-bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+    .blob { position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.65; will-change: transform; }
+    .blob1 { width: 480px; height: 480px; top: -160px; left: -120px; background: radial-gradient(circle, #10b981 0%, transparent 65%); animation: b1 22s ease-in-out infinite; }
+    .blob2 { width: 540px; height: 540px; top: 12%; right: -200px; background: radial-gradient(circle, #a855f7 0%, transparent 65%); animation: b2 26s ease-in-out infinite; }
+    .blob3 { width: 440px; height: 440px; bottom: -120px; left: 12%; background: radial-gradient(circle, #06b6d4 0%, transparent 65%); animation: b3 19s ease-in-out infinite; }
+    .blob4 { width: 360px; height: 360px; top: 42%; left: 38%; background: radial-gradient(circle, #ec4899 0%, transparent 65%); animation: b4 24s ease-in-out infinite; opacity: 0.4; }
+    @keyframes b1 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(60px,90px) scale(1.15);} }
+    @keyframes b2 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(-90px,70px) scale(0.9);} }
+    @keyframes b3 { 0%,100%{transform:translate(0,0) scale(1);} 50%{transform:translate(70px,-50px) scale(1.1);} }
+    @keyframes b4 { 0%,100%{transform:translate(0,0) scale(1);} 33%{transform:translate(-50px,40px) scale(1.1);} 66%{transform:translate(40px,-30px) scale(0.95);} }
 
-    /* MODE SWITCHER */
-    .mode-switch {
-      display: flex;
-      background: #0a0a0a;
-      border-radius: 10px;
-      padding: 3px;
-      margin-bottom: 14px;
-      border: 1px solid #1e1e1e;
+    /* TEXT GRADIENT */
+    .aurora-text {
+      background: linear-gradient(135deg, #34d399 0%, #22d3ee 30%, #a78bfa 65%, #f472b6 100%);
+      background-size: 200% 200%;
+      background-clip: text; -webkit-background-clip: text;
+      color: transparent; -webkit-text-fill-color: transparent;
+      animation: shift 7s ease infinite;
     }
-    .mode-btn {
-      flex: 1;
-      padding: 8px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      text-align: center;
-      cursor: pointer;
-      color: #444;
-      transition: all 0.2s;
-    }
-    .mode-btn.active { background: #1e1e1e; color: white; }
+    @keyframes shift { 0%,100%{background-position:0% 50%;} 50%{background-position:100% 50%;} }
+
+    /* GLASS */
+    .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(24px) saturate(180%); -webkit-backdrop-filter: blur(24px) saturate(180%); border: 1px solid rgba(255,255,255,0.07); }
+    .glass-strong { background: rgba(10,14,30,0.7); backdrop-filter: blur(30px) saturate(180%); -webkit-backdrop-filter: blur(30px) saturate(180%); border: 1px solid rgba(255,255,255,0.09); }
+
+    /* SCREENS */
+    .screen { display: none; padding: 0 0 110px; animation: fade 0.4s ease; }
+    .screen.active { display: block; }
+    @keyframes fade { from{opacity:0;transform:translateY(8px);} to{opacity:1;transform:translateY(0);} }
+    .wrap { max-width: 480px; margin: 0 auto; padding: 0 18px; }
+
+    /* HEADER */
+    .topbar { display: flex; align-items: center; justify-content: space-between; padding: 22px 0 8px; }
+    .brand { display: flex; align-items: center; gap: 10px; }
+    .brand-logo { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg,#10b981,#06b6d4,#a855f7); box-shadow: 0 0 35px -8px rgba(168,85,247,0.6); }
+    .brand-logo svg { width: 19px; height: 19px; color: #fff; }
+    .brand-name { font-size: 17px; font-weight: 700; letter-spacing: -0.3px; }
+    .brand-sub { font-size: 10px; color: rgba(255,255,255,0.4); }
+    .credit-pill { display: flex; align-items: center; gap: 6px; border-radius: 999px; padding: 7px 13px; font-size: 12px; font-weight: 600; }
+    .credit-pill svg { width: 14px; height: 14px; color: #34d399; }
+
+    .backbar { display: flex; align-items: center; gap: 12px; padding: 22px 0 8px; }
+    .back-btn { width: 38px; height: 38px; border-radius: 11px; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+    .back-btn svg { width: 18px; height: 18px; color: #fff; }
+    .screen-title { font-size: 18px; font-weight: 700; letter-spacing: -0.3px; }
+
+    /* HERO */
+    .hero { padding: 18px 0 26px; }
+    .hero-tag { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 6px 13px; margin-bottom: 18px; }
+    .hero-dot { width: 6px; height: 6px; border-radius: 50%; background: #34d399; animation: pulse 2s ease-in-out infinite; }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.5;transform:scale(1.3);} }
+    .hero-tag span { font-size: 10px; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.7); font-weight: 600; }
+    .hero h1 { font-size: 40px; line-height: 0.98; font-weight: 600; letter-spacing: -1px; margin-bottom: 16px; }
+    .hero p { font-size: 14px; color: rgba(255,255,255,0.55); line-height: 1.5; max-width: 90%; }
+
+    /* SECTION LABEL */
+    .sec-label { display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 14px; }
+    .sec-label h2 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; color: rgba(255,255,255,0.4); font-weight: 600; }
+    .sec-label span { font-size: 11px; color: rgba(255,255,255,0.3); }
+
+    /* FUNCTION CARDS (home) */
+    .fcards { display: flex; flex-direction: column; gap: 13px; }
+    .fcard { border-radius: 20px; padding: 18px; display: flex; align-items: center; gap: 15px; cursor: pointer; position: relative; overflow: hidden; transition: transform 0.15s, background 0.2s; }
+    .fcard:active { transform: scale(0.98); }
+    .fcard-glow { position: absolute; bottom: -40px; right: -30px; width: 120px; height: 120px; border-radius: 50%; filter: blur(45px); opacity: 0.5; }
+    .fcard-icon { width: 52px; height: 52px; border-radius: 15px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; position: relative; box-shadow: 0 8px 24px -8px rgba(0,0,0,0.5); }
+    .fcard-icon svg { width: 24px; height: 24px; color: #fff; }
+    .ic-photo { background: linear-gradient(135deg,#34d399,#06b6d4); }
+    .ic-video { background: linear-gradient(135deg,#22d3ee,#a855f7); }
+    .ic-motion { background: linear-gradient(135deg,#a78bfa,#ec4899); }
+    .gl-photo { background: #10b981; }
+    .gl-video { background: #06b6d4; }
+    .gl-motion { background: #a855f7; }
+    .fcard-text { flex: 1; position: relative; }
+    .fcard-title { font-size: 16px; font-weight: 600; margin-bottom: 3px; }
+    .fcard-desc { font-size: 12px; color: rgba(255,255,255,0.5); line-height: 1.35; }
+    .fcard-arrow { color: rgba(255,255,255,0.3); position: relative; }
+    .fcard-arrow svg { width: 18px; height: 18px; }
+    .fcard-tag { position: absolute; top: 14px; right: 14px; font-size: 9px; font-weight: 700; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 6px; background: rgba(0,0,0,0.35); }
+    .t-photo { color: #34d399; }
+    .t-video { color: #22d3ee; }
+    .t-motion { color: #c4a4f7; }
+
+    /* FUNCTION SCREEN PANEL */
+    .panel { border-radius: 22px; padding: 20px; margin-bottom: 16px; }
+    .panel-head { display: flex; align-items: center; gap: 13px; margin-bottom: 18px; }
+    .panel-icon { width: 46px; height: 46px; border-radius: 14px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .panel-icon svg { width: 22px; height: 22px; color: #fff; }
+    .panel-title { font-size: 17px; font-weight: 700; }
+    .panel-desc { font-size: 12px; color: rgba(255,255,255,0.5); margin-top: 2px; line-height: 1.35; }
+
+    /* MODE SWITCH */
+    .mode-switch { display: flex; background: rgba(0,0,0,0.3); border-radius: 12px; padding: 4px; margin-bottom: 14px; border: 1px solid rgba(255,255,255,0.06); }
+    .mode-btn { flex: 1; padding: 10px; border-radius: 9px; font-size: 12px; font-weight: 600; text-align: center; cursor: pointer; color: rgba(255,255,255,0.4); transition: all 0.2s; }
+    .mode-btn.active { background: rgba(255,255,255,0.1); color: #fff; }
 
     /* INPUTS */
     textarea {
-      width: 100%;
-      background: #0a0a0a;
-      border: 1px solid #1e1e1e;
-      border-radius: 10px;
-      color: white;
-      padding: 11px 14px;
-      font-size: 13px;
-      resize: none;
-      height: 80px;
-      font-family: inherit;
-      margin-bottom: 10px;
-      transition: border-color 0.2s;
+      width: 100%; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 13px; color: #fff; padding: 13px 15px; font-size: 14px; resize: none;
+      height: 88px; font-family: inherit; margin-bottom: 12px; transition: border-color 0.2s;
     }
-    textarea:focus { outline: none; border-color: #333; }
-    textarea::placeholder { color: #2a2a2a; }
+    textarea:focus { outline: none; border-color: rgba(168,85,247,0.5); }
+    textarea::placeholder { color: rgba(255,255,255,0.25); }
 
     /* UPLOAD */
-    .upload-area {
-      border: 1px dashed #2a2a2a;
-      border-radius: 10px;
-      padding: 16px;
-      text-align: center;
-      margin-bottom: 10px;
-      cursor: pointer;
-      transition: border-color 0.2s;
-      position: relative;
-    }
-    .upload-area:hover { border-color: #444; }
-    .upload-area input {
-      position: absolute;
-      inset: 0;
-      opacity: 0;
-      cursor: pointer;
-      width: 100%;
-      height: 100%;
-    }
-    .upload-icon { font-size: 24px; margin-bottom: 6px; }
-    .upload-title { font-size: 13px; font-weight: 600; color: #888; }
-    .upload-sub { font-size: 11px; color: #444; margin-top: 2px; }
-    .upload-area.has-file { border-color: #22c55e44; background: #0a1a0a; }
-    .upload-area.has-file .upload-title { color: #22c55e; }
+    .upload-area { border: 1.5px dashed rgba(255,255,255,0.15); border-radius: 13px; padding: 18px; text-align: center; margin-bottom: 12px; cursor: pointer; transition: all 0.2s; position: relative; }
+    .upload-area:hover { border-color: rgba(168,85,247,0.5); }
+    .upload-area input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+    .upload-icon { display: flex; justify-content: center; margin-bottom: 8px; }
+    .upload-icon svg { width: 24px; height: 24px; color: rgba(255,255,255,0.4); }
+    .upload-title { font-size: 13px; font-weight: 600; color: rgba(255,255,255,0.6); }
+    .upload-sub { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 3px; }
+    .upload-area.has-file { border-color: rgba(52,211,153,0.5); background: rgba(16,185,129,0.08); }
+    .upload-area.has-file .upload-title { color: #34d399; }
 
     /* TOGGLE */
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 10px 0;
-      border-top: 1px solid #1a1a1a;
-      margin-top: 4px;
-      margin-bottom: 10px;
-    }
-    .toggle-label { font-size: 13px; color: #888; }
-    .toggle-label span { display: block; font-size: 11px; color: #444; margin-top: 2px; }
-    .toggle {
-      width: 44px;
-      height: 24px;
-      background: #1e1e1e;
-      border-radius: 12px;
-      position: relative;
-      cursor: pointer;
-      transition: background 0.2s;
-      border: 1px solid #2a2a2a;
-    }
-    .toggle.on { background: #22c55e; border-color: #22c55e; }
-    .toggle-dot {
-      position: absolute;
-      top: 2px;
-      left: 2px;
-      width: 18px;
-      height: 18px;
-      background: white;
-      border-radius: 50%;
-      transition: transform 0.2s;
-    }
+    .toggle-row { display: flex; align-items: center; justify-content: space-between; padding: 12px 0; border-top: 1px solid rgba(255,255,255,0.06); margin-top: 4px; margin-bottom: 12px; }
+    .toggle-label { font-size: 13px; color: rgba(255,255,255,0.7); }
+    .toggle-label span { display: block; font-size: 11px; color: rgba(255,255,255,0.35); margin-top: 2px; }
+    .toggle { width: 46px; height: 26px; background: rgba(255,255,255,0.1); border-radius: 13px; position: relative; cursor: pointer; transition: background 0.2s; border: 1px solid rgba(255,255,255,0.1); flex-shrink: 0; }
+    .toggle.on { background: #10b981; border-color: #10b981; }
+    .toggle-dot { position: absolute; top: 2px; left: 2px; width: 20px; height: 20px; background: #fff; border-radius: 50%; transition: transform 0.2s; }
     .toggle.on .toggle-dot { transform: translateX(20px); }
 
     /* BUTTON */
-    .btn {
-      width: 100%;
-      padding: 13px;
-      border: none;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: opacity 0.2s;
-    }
-    .btn:active { opacity: 0.8; }
-    .btn-photo { background: linear-gradient(135deg, #7c3aed, #a855f7); color: white; }
-    .btn-video { background: linear-gradient(135deg, #1d4ed8, #3b82f6); color: white; }
-    .btn-motion { background: linear-gradient(135deg, #15803d, #22c55e); color: white; }
+    .btn { width: 100%; padding: 15px; border: none; border-radius: 14px; font-size: 15px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; color: #fff; position: relative; overflow: hidden; transition: transform 0.15s; }
+    .btn:active { transform: scale(0.98); }
+    .btn svg { width: 18px; height: 18px; }
+    .btn-grad { background: linear-gradient(90deg,#10b981,#06b6d4,#a855f7,#ec4899,#10b981); background-size: 200% 100%; animation: ctashift 5s linear infinite; box-shadow: 0 0 40px -12px rgba(168,85,247,0.7); }
+    @keyframes ctashift { 0%{background-position:0% 50%;} 100%{background-position:200% 50%;} }
 
     /* LOADING */
-    .loading-bar { display: none; margin-bottom: 10px; height: 2px; background: #1a1a1a; border-radius: 2px; overflow: hidden; }
-    .loading-bar-inner { height: 100%; width: 0%; border-radius: 2px; animation: load 3s ease forwards; }
-    .lb-photo { background: linear-gradient(90deg, #a855f7, #ec4899); }
-    .lb-video { background: linear-gradient(90deg, #3b82f6, #06b6d4); }
-    .lb-motion { background: linear-gradient(90deg, #22c55e, #84cc16); }
+    .loading-bar { display: none; margin-bottom: 12px; height: 3px; background: rgba(255,255,255,0.08); border-radius: 3px; overflow: hidden; }
+    .loading-bar-inner { height: 100%; width: 0%; border-radius: 3px; animation: load 3s ease forwards; background: linear-gradient(90deg,#34d399,#22d3ee,#a78bfa,#f472b6); }
     @keyframes load { to { width: 90%; } }
 
     /* RESULT */
-    .result { display: none; margin-top: 10px; padding: 14px; background: #0a0a0a; border: 1px solid #1e1e1e; border-radius: 10px; text-align: center; color: #444; font-size: 13px; }
+    .result { display: none; margin-top: 12px; padding: 16px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; text-align: center; color: rgba(255,255,255,0.4); font-size: 13px; }
+
+    /* PLACEHOLDER SCREENS */
+    .soon { text-align: center; padding: 80px 0; }
+    .soon-icon { width: 64px; height: 64px; margin: 0 auto 18px; border-radius: 20px; display: flex; align-items: center; justify-content: center; }
+    .soon-icon svg { width: 30px; height: 30px; color: rgba(255,255,255,0.5); }
+    .soon h3 { font-size: 18px; font-weight: 600; margin-bottom: 8px; }
+    .soon p { font-size: 13px; color: rgba(255,255,255,0.4); line-height: 1.5; }
 
     /* BOTTOM NAV */
-    .bottom-nav {
-      position: fixed;
-      bottom: 0; left: 0; right: 0;
-      background: rgba(8,8,8,0.95);
-      backdrop-filter: blur(20px);
-      border-top: 1px solid #1a1a1a;
-      padding: 10px 0 20px;
-      display: flex;
-      justify-content: space-around;
-    }
-    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: #333; font-size: 10px; cursor: pointer; }
-    .nav-item.active { color: white; }
-    .nav-icon { font-size: 20px; }
-    .pb { padding-bottom: 90px; }
+    .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; z-index: 50; pointer-events: none; }
+    .bottom-nav-inner { max-width: 480px; margin: 0 auto; padding: 0 18px 16px; pointer-events: auto; }
+    .nav-card { border-radius: 20px; padding: 8px; display: flex; justify-content: space-around; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: rgba(255,255,255,0.4); font-size: 9px; font-weight: 600; cursor: pointer; padding: 8px 16px; border-radius: 13px; transition: color 0.2s; }
+    .nav-item svg { width: 21px; height: 21px; }
+    .nav-item.active { color: #fff; }
   </style>
 </head>
 <body>
 
-<div class="header">
-  <div class="logo">Vision<span>Morph</span></div>
-  <div class="badge">Beta</div>
+<div class="aurora-bg">
+  <div class="blob blob1"></div>
+  <div class="blob blob2"></div>
+  <div class="blob blob3"></div>
+  <div class="blob blob4"></div>
 </div>
 
-<div class="hero">
-  <h1>Создавай контент<br>с помощью <em>ИИ</em></h1>
-  <p>Фото и видео за секунды</p>
-</div>
-
-<div class="tabs">
-  <div class="tab active">Все</div>
-  <div class="tab">📸 Фото</div>
-  <div class="tab">🎬 Видео</div>
-  <div class="tab">⭐ Популярное</div>
-</div>
-
-<div class="section-title">Инструменты</div>
-
-<div class="cards pb">
-
-  <!-- NANO BANANA 2 -->
-  <div class="card">
-    <div class="card-preview card-preview-photo">
-      ✨
-      <div class="card-tag tag-photo">Image</div>
+<!-- ============ SCREEN: HOME ============ -->
+<div id="screen-home" class="screen active">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="brand">
+        <div class="brand-logo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2z"/></svg>
+        </div>
+        <div>
+          <div class="brand-name">Luxora</div>
+          <div class="brand-sub">AI генерация контента</div>
+        </div>
+      </div>
+      <div class="credit-pill glass">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2z"/></svg>
+        <span>Free</span>
+      </div>
     </div>
-    <div class="card-body">
-      <div class="card-title">Nano Banana 2</div>
-      <div class="card-desc">Загрузи своё фото и референс — ИИ создаст нужный образ</div>
 
-      <div style="margin-bottom:10px;">
-        <div style="font-size:11px;color:#444;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Фотографии (до 10 штук)</div>
+    <div class="hero">
+      <div class="hero-tag glass"><div class="hero-dot"></div><span>Powered by AI</span></div>
+      <h1><span class="aurora-text">Создавай</span><br>визуал<br>уровня <span class="aurora-text">студии</span></h1>
+      <p>Фото, видео и анимация по твоему фото и описанию. За секунды, прямо в Telegram.</p>
+    </div>
+
+    <div class="sec-label">
+      <h2>Инструменты</h2>
+      <span>3 модуля</span>
+    </div>
+
+    <div class="fcards">
+
+      <!-- PHOTO -->
+      <div class="fcard glass" onclick="showScreen('photo')">
+        <div class="fcard-glow gl-photo"></div>
+        <div class="fcard-icon ic-photo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+        </div>
+        <div class="fcard-text">
+          <div class="fcard-title">Генерация фото</div>
+          <div class="fcard-desc">Создай образ по фото и описанию</div>
+        </div>
+        <div class="fcard-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+        <div class="fcard-tag t-photo">PHOTO</div>
+      </div>
+
+      <!-- VIDEO -->
+      <div class="fcard glass" onclick="showScreen('video')">
+        <div class="fcard-glow gl-video"></div>
+        <div class="fcard-icon ic-video">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+        </div>
+        <div class="fcard-text">
+          <div class="fcard-title">Генерация видео</div>
+          <div class="fcard-desc">Видео из текста или оживи фото</div>
+        </div>
+        <div class="fcard-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+        <div class="fcard-tag t-video">VIDEO</div>
+      </div>
+
+      <!-- MOTION -->
+      <div class="fcard glass" onclick="showScreen('motion')">
+        <div class="fcard-glow gl-motion"></div>
+        <div class="fcard-icon ic-motion">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <div class="fcard-text">
+          <div class="fcard-title">Motion Control</div>
+          <div class="fcard-desc">Персонаж повторяет движения с видео</div>
+        </div>
+        <div class="fcard-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+        <div class="fcard-tag t-motion">MOTION</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREEN: PHOTO ============ -->
+<div id="screen-photo" class="screen">
+  <div class="wrap">
+    <div class="backbar">
+      <div class="back-btn glass" onclick="showScreen('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></div>
+      <div class="screen-title">Генерация фото</div>
+    </div>
+
+    <div class="panel glass">
+      <div class="panel-head">
+        <div class="panel-icon ic-photo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg></div>
+        <div>
+          <div class="panel-title">Nano Banana 2</div>
+          <div class="panel-desc">Загрузи фото и референсы — AI создаст образ</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;">Фотографии (до 10 штук)</div>
         <div id="photoGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:10px;"></div>
-        <div class="upload-area" id="nbUploadArea" onclick="document.getElementById('nbFileInput').click()" style="padding:12px;">
+        <div class="upload-area" id="nbUploadArea" onclick="document.getElementById('nbFileInput').click()" style="padding:14px;">
           <input type="file" id="nbFileInput" accept="image/*" multiple onchange="handleNBFiles(this)">
-          <div class="upload-icon" style="font-size:20px;">＋</div>
+          <div class="upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg></div>
           <div class="upload-title" id="nbUploadLabel">Добавить фото</div>
           <div class="upload-sub" id="nbUploadSub">Первое фото — ваше, остальные — референсы</div>
         </div>
       </div>
 
       <textarea id="photoPrompt" placeholder="опиши что хочешь получить — стиль, образ, атмосферу..."></textarea>
-      <div class="loading-bar" id="photoBar"><div class="loading-bar-inner lb-photo"></div></div>
-      <button class="btn btn-photo" onclick="generatePhoto()">✦ Создать фото</button>
+      <div class="loading-bar" id="photoBar"><div class="loading-bar-inner"></div></div>
+      <button class="btn btn-grad" onclick="generatePhoto()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.8L20 11l-6.1 2.2L12 19l-1.9-5.8L4 11l6.1-2.2z"/></svg>Создать фото</button>
       <div class="result" id="photoResult">Здесь появится фото</div>
     </div>
   </div>
+</div>
 
-  <!-- KLING 3.0 -->
-  <div class="card">
-    <div class="card-preview card-preview-video">
-      🎬
-      <div class="card-tag tag-video">Video</div>
+<!-- ============ SCREEN: VIDEO ============ -->
+<div id="screen-video" class="screen">
+  <div class="wrap">
+    <div class="backbar">
+      <div class="back-btn glass" onclick="showScreen('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></div>
+      <div class="screen-title">Генерация видео</div>
     </div>
-    <div class="card-body">
-      <div class="card-title">Kling 3.0</div>
-      <div class="card-desc">Создай видео из текста или оживи своё фото</div>
+
+    <div class="panel glass">
+      <div class="panel-head">
+        <div class="panel-icon ic-video"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></div>
+        <div>
+          <div class="panel-title">Kling 3.0</div>
+          <div class="panel-desc">Видео из текста или оживи своё фото</div>
+        </div>
+      </div>
 
       <div class="mode-switch">
-        <div class="mode-btn active" id="kling-tab-text" onclick="switchKling('text')">✍️ Из текста</div>
-        <div class="mode-btn" id="kling-tab-photo" onclick="switchKling('photo')">🖼 Оживить фото</div>
+        <div class="mode-btn active" id="kling-tab-text" onclick="switchKling('text')">Из текста</div>
+        <div class="mode-btn" id="kling-tab-photo" onclick="switchKling('photo')">Оживить фото</div>
       </div>
 
       <div id="kling-text-mode">
@@ -338,117 +325,156 @@
       <div id="kling-photo-mode" style="display:none;">
         <div class="upload-area" id="klingPhotoArea" onclick="document.getElementById('klingPhotoInput').click()">
           <input type="file" id="klingPhotoInput" accept="image/*" onchange="handleFile(this,'klingPhotoArea','klingPhotoLabel')">
-          <div class="upload-icon">🖼</div>
+          <div class="upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
           <div class="upload-title" id="klingPhotoLabel">Загрузить фото</div>
           <div class="upload-sub">JPG, PNG — фото которое нужно оживить</div>
         </div>
         <textarea id="videoPromptPhoto" placeholder="опиши как должно двигаться — улыбается, моргает, ветер в волосах..."></textarea>
       </div>
 
-      <div class="loading-bar" id="videoBar"><div class="loading-bar-inner lb-video"></div></div>
-      <button class="btn btn-video" onclick="generateVideo()">▶ Создать видео</button>
+      <div class="loading-bar" id="videoBar"><div class="loading-bar-inner"></div></div>
+      <button class="btn btn-grad" onclick="generateVideo()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>Создать видео</button>
       <div class="result" id="videoResult">Здесь появится видео</div>
     </div>
   </div>
+</div>
 
-  <!-- KLING MOTION CONTROL -->
-  <div class="card">
-    <div class="card-preview card-preview-motion">
-      🎮
-      <div class="card-tag tag-motion">Motion</div>
+<!-- ============ SCREEN: MOTION ============ -->
+<div id="screen-motion" class="screen">
+  <div class="wrap">
+    <div class="backbar">
+      <div class="back-btn glass" onclick="showScreen('home')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg></div>
+      <div class="screen-title">Motion Control</div>
     </div>
-    <div class="card-body">
-      <div class="card-title">Kling Motion Control</div>
-      <div class="card-desc">Персонаж с фото повторяет все движения с видео — мимику, руки, ноги, моргание</div>
+
+    <div class="panel glass">
+      <div class="panel-head">
+        <div class="panel-icon ic-motion"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <div>
+          <div class="panel-title">Kling Motion Control</div>
+          <div class="panel-desc">Персонаж с фото повторяет движения с видео — мимику, руки, ноги</div>
+        </div>
+      </div>
 
       <div class="upload-area" id="motionPhotoArea" onclick="document.getElementById('motionPhotoInput').click()">
         <input type="file" id="motionPhotoInput" accept="image/*" onchange="handleFile(this,'motionPhotoArea','motionPhotoLabel')">
-        <div class="upload-icon">👤</div>
+        <div class="upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
         <div class="upload-title" id="motionPhotoLabel">Загрузить фото персонажа</div>
         <div class="upload-sub">Фото человека или персонажа</div>
       </div>
 
       <div class="upload-area" id="motionVideoArea" onclick="document.getElementById('motionVideoInput').click()">
         <input type="file" id="motionVideoInput" accept="video/*" onchange="handleFile(this,'motionVideoArea','motionVideoLabel')">
-        <div class="upload-icon">🎥</div>
+        <div class="upload-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg></div>
         <div class="upload-title" id="motionVideoLabel">Загрузить референс видео</div>
         <div class="upload-sub">Видео с движениями которые нужно повторить</div>
       </div>
 
       <div class="toggle-row">
-        <div class="toggle-label">
-          Фон с референс видео
-          <span>Выкл — сохранить фон с фото</span>
-        </div>
-        <div class="toggle" id="bgToggle" onclick="toggleBg()">
-          <div class="toggle-dot"></div>
-        </div>
+        <div class="toggle-label">Фон с референс видео<span>Выкл — сохранить фон с фото</span></div>
+        <div class="toggle" id="bgToggle" onclick="toggleBg()"><div class="toggle-dot"></div></div>
       </div>
 
-      <div class="loading-bar" id="motionBar"><div class="loading-bar-inner lb-motion"></div></div>
-      <button class="btn btn-motion" onclick="generateMotion()">🎮 Применить движения</button>
+      <div class="loading-bar" id="motionBar"><div class="loading-bar-inner"></div></div>
+      <button class="btn btn-grad" onclick="generateMotion()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>Применить движения</button>
       <div class="result" id="motionResult">Здесь появится видео</div>
     </div>
   </div>
-
 </div>
 
+<!-- ============ SCREEN: GALLERY ============ -->
+<div id="screen-gallery" class="screen">
+  <div class="wrap">
+    <div class="backbar"><div class="screen-title">Галерея</div></div>
+    <div class="soon">
+      <div class="soon-icon glass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>
+      <h3>Скоро здесь</h3>
+      <p>Все твои созданные фото и видео<br>будут храниться тут</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ SCREEN: PROFILE ============ -->
+<div id="screen-profile" class="screen">
+  <div class="wrap">
+    <div class="backbar"><div class="screen-title">Профиль</div></div>
+    <div class="soon">
+      <div class="soon-icon glass"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+      <h3>Скоро здесь</h3>
+      <p>Кредиты, подписка и настройки<br>появятся в следующем обновлении</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============ BOTTOM NAV ============ -->
 <div class="bottom-nav">
-  <div class="nav-item active"><div class="nav-icon">⚡</div><div>Создать</div></div>
-  <div class="nav-item"><div class="nav-icon">🖼</div><div>Галерея</div></div>
-  <div class="nav-item"><div class="nav-icon">👤</div><div>Профиль</div></div>
+  <div class="bottom-nav-inner">
+    <div class="nav-card glass-strong">
+      <div class="nav-item active" id="nav-home" onclick="showScreen('home')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+        <div>Главная</div>
+      </div>
+      <div class="nav-item" id="nav-gallery" onclick="showScreen('gallery')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        <div>Галерея</div>
+      </div>
+      <div class="nav-item" id="nav-profile" onclick="showScreen('profile')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        <div>Профиль</div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script type="module">
-   import { upload } from 'https://esm.sh/@vercel/blob@latest/client';
-    window.vercelBlobUpload = upload;
-  </script>
+  import { upload } from 'https://esm.sh/@vercel/blob@latest/client';
+  window.vercelBlobUpload = upload;
+</script>
 <script>
   const tg = window.Telegram.WebApp;
   tg.ready();
   tg.expand();
 
+  // ===== NAVIGATION =====
+  function showScreen(id) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + id).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (id === 'home' || id === 'photo' || id === 'video' || id === 'motion') document.getElementById('nav-home').classList.add('active');
+    if (id === 'gallery') document.getElementById('nav-gallery').classList.add('active');
+    if (id === 'profile') document.getElementById('nav-profile').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
   let bgFromVideo = false;
   let klingMode = 'text';
 
   let nbFiles = [];
-  function handleNBFiles(input) {
-    const newFiles = Array.from(input.files);
-    nbFiles = [...nbFiles, ...newFiles].slice(0, 10);
+  function renderNBGrid() {
     const grid = document.getElementById('photoGrid');
     grid.innerHTML = '';
     nbFiles.forEach((file, i) => {
       const url = URL.createObjectURL(file);
       const wrapper = document.createElement('div');
-      wrapper.style.cssText = 'position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;background:#0a0a0a;border:1px solid #1e1e1e;';
+      wrapper.style.cssText = 'position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.08);';
       wrapper.innerHTML = `
         <img src="${url}" style="width:100%;height:100%;object-fit:cover;">
-        <div style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.7);border-radius:4px;padding:2px 6px;font-size:10px;font-weight:600;color:${i===0?'#a855f7':'#888'}">${i === 0 ? 'Моё фото' : 'Реф ' + i}</div>
-        <div onclick="removeNBFile(${i})" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.7);border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;">✕</div>
+        <div style="position:absolute;top:5px;left:5px;background:rgba(0,0,0,0.7);border-radius:5px;padding:2px 7px;font-size:10px;font-weight:600;color:${i===0?'#34d399':'rgba(255,255,255,0.7)'}">${i === 0 ? 'Моё' : 'Реф ' + i}</div>
+        <div onclick="removeNBFile(${i})" style="position:absolute;top:5px;right:5px;background:rgba(0,0,0,0.7);border-radius:50%;width:20px;height:20px;display:flex;align-items:center;justify-content:center;font-size:11px;cursor:pointer;">✕</div>
       `;
       grid.appendChild(wrapper);
     });
     document.getElementById('nbUploadSub').textContent = nbFiles.length >= 10 ? 'Максимум 10 фото загружено' : `${nbFiles.length}/10 — добавить ещё`;
-    if (nbFiles.length >= 10) document.getElementById('nbUploadArea').style.display = 'none';
+    document.getElementById('nbUploadArea').style.display = nbFiles.length >= 10 ? 'none' : 'block';
   }
-
+  function handleNBFiles(input) {
+    const newFiles = Array.from(input.files);
+    nbFiles = [...nbFiles, ...newFiles].slice(0, 10);
+    renderNBGrid();
+  }
   function removeNBFile(index) {
     nbFiles.splice(index, 1);
-    const grid = document.getElementById('photoGrid');
-    grid.innerHTML = '';
-    nbFiles.forEach((file, i) => {
-      const url = URL.createObjectURL(file);
-      const wrapper = document.createElement('div');
-      wrapper.style.cssText = 'position:relative;border-radius:8px;overflow:hidden;aspect-ratio:1;background:#0a0a0a;border:1px solid #1e1e1e;';
-      wrapper.innerHTML = `
-        <img src="${url}" style="width:100%;height:100%;object-fit:cover;">
-        <div style="position:absolute;top:4px;left:4px;background:rgba(0,0,0,0.7);border-radius:4px;padding:2px 6px;font-size:10px;font-weight:600;color:${i===0?'#a855f7':'#888'}">${i === 0 ? 'Моё фото' : 'Реф ' + i}</div>
-        <div onclick="removeNBFile(${i})" style="position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.7);border-radius:50%;width:18px;height:18px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;">✕</div>
-      `;
-      grid.appendChild(wrapper);
-    });
-    document.getElementById('nbUploadSub').textContent = `${nbFiles.length}/10 — добавить ещё`;
-    document.getElementById('nbUploadArea').style.display = 'block';
+    renderNBGrid();
   }
 
   function switchKling(mode) {
@@ -461,8 +487,7 @@
 
   function toggleBg() {
     bgFromVideo = !bgFromVideo;
-    const t = document.getElementById('bgToggle');
-    t.className = 'toggle' + (bgFromVideo ? ' on' : '');
+    document.getElementById('bgToggle').className = 'toggle' + (bgFromVideo ? ' on' : '');
   }
 
   function handleFile(input, areaId, labelId) {
@@ -482,57 +507,44 @@
     inner.style.animation = '';
   }
 
- async function generatePhoto() {
+  function compressImage(file, maxSize = 1024, quality = 0.85) {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let w = img.width, h = img.height;
+          if (w > h && w > maxSize) { h = (h * maxSize) / w; w = maxSize; }
+          else if (h > maxSize) { w = (w * maxSize) / h; h = maxSize; }
+          canvas.width = w; canvas.height = h;
+          canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+          resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function generatePhoto() {
     const prompt = document.getElementById('photoPrompt').value;
     if (!prompt) { alert('Опиши что хочешь получить'); return; }
-
     showLoading('photoBar');
     document.getElementById('photoResult').style.display = 'none';
-
     try {
-      // Сжимаем фото перед отправкой (чтобы влезли в лимит сервера)
-      const compressImage = (file, maxSize = 1024, quality = 0.85) => {
-        return new Promise((resolve) => {
-          const reader = new FileReader();
-          reader.onload = (e) => {
-            const img = new Image();
-            img.onload = () => {
-              const canvas = document.createElement('canvas');
-              let w = img.width, h = img.height;
-              if (w > h && w > maxSize) { h = (h * maxSize) / w; w = maxSize; }
-              else if (h > maxSize) { w = (w * maxSize) / h; h = maxSize; }
-              canvas.width = w;
-              canvas.height = h;
-              canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-              resolve(canvas.toDataURL('image/jpeg', quality));
-            };
-            img.src = e.target.result;
-          };
-          reader.readAsDataURL(file);
-        });
-      };
-
       const images = await Promise.all(nbFiles.map(file => compressImage(file)));
-
-      // Отправляем запрос на наш сервер
       const response = await fetch('/api/generate-image', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ prompt, images })
       });
-
       const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'Ошибка генерации');
-      }
-
-      // Показываем готовую картинку
+      if (!response.ok) throw new Error(data.error || 'Ошибка генерации');
       document.getElementById('photoBar').style.display = 'none';
       const result = document.getElementById('photoResult');
       result.style.display = 'block';
-      result.innerHTML = `<img src="${data.imageUrl}" style="width:100%;border-radius:10px;display:block;" alt="Сгенерированное фото">`;
-
+      result.innerHTML = `<img src="${data.imageUrl}" style="width:100%;border-radius:12px;display:block;" alt="Фото">`;
     } catch (error) {
       console.error('Ошибка:', error);
       document.getElementById('photoBar').style.display = 'none';
@@ -545,7 +557,6 @@
   async function generateVideo() {
     let prompt = '';
     let image = null;
-
     if (klingMode === 'text') {
       prompt = document.getElementById('videoPrompt').value;
       if (!prompt) { alert('Опиши видео'); return; }
@@ -553,70 +564,35 @@
       const file = document.getElementById('klingPhotoInput').files[0];
       if (!file) { alert('Загрузи фото'); return; }
       prompt = document.getElementById('videoPromptPhoto').value;
-
-      // Сжимаем фото перед отправкой
-      image = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            let w = img.width, h = img.height;
-            const maxSize = 1024;
-            if (w > h && w > maxSize) { h = (h * maxSize) / w; w = maxSize; }
-            else if (h > maxSize) { w = (w * maxSize) / h; h = maxSize; }
-            canvas.width = w;
-            canvas.height = h;
-            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-            resolve(canvas.toDataURL('image/jpeg', 0.85));
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(file);
-      });
+      image = await compressImage(file);
     }
-
     showLoading('videoBar');
     document.getElementById('videoResult').style.display = 'none';
-
     try {
-      // Запускаем задачу в очередь
       const startResponse = await fetch('/api/generate-video', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mode: klingMode, prompt, image })
       });
-
       const startData = await startResponse.json();
       if (!startResponse.ok) throw new Error(startData.error || 'Ошибка запуска');
-
       const { request_id, endpoint } = startData;
-
-      // Показываем что задача в работе
       const result = document.getElementById('videoResult');
       result.style.display = 'block';
       result.textContent = '⏳ Генерация видео... (1-3 минуты)';
-
-      // Опрашиваем статус каждые 5 секунд (максимум 5 минут)
       const maxAttempts = 60;
       for (let i = 0; i < maxAttempts; i++) {
         await new Promise(r => setTimeout(r, 5000));
-
         const checkResponse = await fetch(`/api/check-video?request_id=${request_id}&endpoint=${encodeURIComponent(endpoint)}`);
         const checkData = await checkResponse.json();
-
         if (checkData.status === 'completed') {
           document.getElementById('videoBar').style.display = 'none';
-          result.innerHTML = `<video src="${checkData.videoUrl}" controls autoplay loop style="width:100%;border-radius:10px;display:block;"></video>`;
+          result.innerHTML = `<video src="${checkData.videoUrl}" controls autoplay loop style="width:100%;border-radius:12px;display:block;"></video>`;
           return;
         }
-
-        // Обновляем индикатор
         result.textContent = `⏳ Генерация видео... (${(i+1)*5} сек)`;
       }
-
       throw new Error('Превышено время ожидания (5 минут)');
-
     } catch (error) {
       console.error('Ошибка:', error);
       document.getElementById('videoBar').style.display = 'none';
@@ -626,94 +602,48 @@
     }
   }
 
- async function generateMotion() {
+  async function generateMotion() {
     const photoFile = document.getElementById('motionPhotoInput').files[0];
     const videoFile = document.getElementById('motionVideoInput').files[0];
-
     if (!photoFile) { alert('Загрузи фото персонажа'); return; }
     if (!videoFile) { alert('Загрузи референс видео'); return; }
-
-    if (!window.vercelBlobUpload) {
-      alert('Сервис загрузки ещё инициализируется, подожди пару секунд');
-      return;
-    }
-
+    if (!window.vercelBlobUpload) { alert('Сервис загрузки ещё инициализируется, подожди пару секунд'); return; }
     showLoading('motionBar');
     document.getElementById('motionResult').style.display = 'none';
-
     try {
-      // Сжимаем фото персонажа (как раньше)
-      const image = await new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          const img = new Image();
-          img.onload = () => {
-            const canvas = document.createElement('canvas');
-            let w = img.width, h = img.height;
-            const maxSize = 1024;
-            if (w > h && w > maxSize) { h = (h * maxSize) / w; w = maxSize; }
-            else if (h > maxSize) { w = (w * maxSize) / h; h = maxSize; }
-            canvas.width = w;
-            canvas.height = h;
-            canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-            resolve(canvas.toDataURL('image/jpeg', 0.85));
-          };
-          img.src = e.target.result;
-        };
-        reader.readAsDataURL(photoFile);
-      });
-
-      // Показываем что грузим
+      const image = await compressImage(photoFile);
       const result = document.getElementById('motionResult');
       result.style.display = 'block';
       result.textContent = '⏳ Загружаем видео в хранилище...';
-
-      // Грузим видео НАПРЯМУЮ в Vercel Blob (минуя серверную функцию)
       const safeName = videoFile.name.replace(/[^a-zA-Z0-9.-]/g, '_');
       const videoBlob = await window.vercelBlobUpload(
         `motion-videos/${Date.now()}-${safeName}`,
         videoFile,
-        {
-          access: 'public',
-          handleUploadUrl: '/api/upload-token',
-        }
+        { access: 'public', handleUploadUrl: '/api/upload-token' }
       );
-
       result.textContent = '⏳ Запускаем генерацию...';
-
-      // Запускаем задачу с URL вместо base64
       const startResponse = await fetch('/api/generate-motion', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ image, video: videoBlob.url, bgFromVideo })
       });
-
       const startData = await startResponse.json();
       if (!startResponse.ok) throw new Error(startData.error || 'Ошибка запуска');
-
       const { request_id, endpoint } = startData;
-
       result.textContent = '⏳ Применяем движения... (1-3 минуты)';
-
-      // Опрашиваем статус каждые 5 секунд
       const maxAttempts = 60;
       for (let i = 0; i < maxAttempts; i++) {
         await new Promise(r => setTimeout(r, 5000));
-
         const checkResponse = await fetch(`/api/check-video?request_id=${request_id}&endpoint=${encodeURIComponent(endpoint)}`);
         const checkData = await checkResponse.json();
-
         if (checkData.status === 'completed') {
           document.getElementById('motionBar').style.display = 'none';
-          result.innerHTML = `<video src="${checkData.videoUrl}" controls autoplay loop style="width:100%;border-radius:10px;display:block;"></video>`;
+          result.innerHTML = `<video src="${checkData.videoUrl}" controls autoplay loop style="width:100%;border-radius:12px;display:block;"></video>`;
           return;
         }
-
         result.textContent = `⏳ Применяем движения... (${(i+1)*5} сек)`;
       }
-
       throw new Error('Превышено время ожидания (5 минут)');
-
     } catch (error) {
       console.error('Ошибка:', error);
       document.getElementById('motionBar').style.display = 'none';
@@ -722,6 +652,6 @@
       result.textContent = '⚠️ Ошибка: ' + error.message;
     }
   }
-  </script>
+</script>
 </body>
 </html>
