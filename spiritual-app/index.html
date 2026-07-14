@@ -1,0 +1,1612 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Атма — путь к себе</title>
+<style>
+  @property --pct{
+    syntax:'<number>';
+    inherits:false;
+    initial-value:0;
+  }
+  :root{
+    --bg-0:#f8f4ec;
+    --bg-1:#efe4d1;
+    --bg-2:#e7dcc8;
+    --ink:#201d19;
+    --ink-soft:rgba(32,29,25,0.62);
+    --ink-faint:rgba(32,29,25,0.36);
+    --card-solid:#fbf8f2;
+    --glass-strong:rgba(255,255,255,0.68);
+    --line:rgba(32,29,25,0.08);
+    --c-coral:#ff8a65;
+    --c-gold:#f2b84b;
+    --c-violet:#8a7ff0;
+    --c-rose:#ef8fae;
+    --c-sage:#6fa06f;
+    --shadow-card:0 10px 26px rgba(32,29,25,0.08);
+    --shadow-glow:0 26px 60px -14px rgba(138,127,240,0.32), 0 8px 22px rgba(32,29,25,0.07);
+    --grain-tex:none;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;height:100%;}
+  body{
+    font-family:-apple-system,'SF Pro Display','Segoe UI Variable','Segoe UI',system-ui,sans-serif;
+    background:linear-gradient(160deg, var(--bg-0) 0%, var(--bg-1) 55%, var(--bg-2) 100%);
+    color:var(--ink);
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px 0;
+  }
+  h1,h2,h3{font-weight:800;letter-spacing:-0.02em;margin:0 0 6px;text-wrap:balance;}
+  p{line-height:1.5;}
+  .app-shell{
+    width:430px;
+    max-width:100vw;
+    height:900px;
+    max-height:96vh;
+    position:relative;
+    background:var(--card-solid);
+    border-radius:44px;
+    border:1px solid rgba(255,255,255,0.6);
+    box-shadow:0 30px 70px rgba(32,29,25,0.22), inset 0 0 0 6px rgba(255,255,255,0.4);
+    overflow:hidden;
+  }
+  @media (max-width:460px){
+    body{padding:0;}
+    .app-shell{width:100vw;height:100vh;max-height:100vh;border-radius:0;border:none;box-shadow:none;}
+  }
+  .screens{position:absolute;inset:0;bottom:100px;}
+  .screen{position:absolute;inset:0;display:none;flex-direction:column;opacity:0;transform:translateY(6px);}
+  .screen.active{display:flex;}
+  @media (prefers-reduced-motion: no-preference){
+    .screen.screen-enter{opacity:1;transform:translateY(0);transition:opacity .3s ease, transform .3s ease;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .screen{opacity:1;transform:none;}
+  }
+  .header{
+    display:flex;align-items:center;gap:10px;
+    padding:22px 20px 14px;
+    flex-shrink:0;
+  }
+  .header h1{font-size:19px;margin:0;color:var(--ink);}
+  .back-btn{
+    background:var(--card-solid);border:1px solid var(--line);color:var(--ink);
+    width:36px;height:36px;border-radius:50%;cursor:pointer;flex-shrink:0;
+    box-shadow:var(--shadow-card);display:flex;align-items:center;justify-content:center;
+  }
+  .scroll-area{flex:1;overflow-y:auto;padding:6px 20px 30px;-webkit-overflow-scrolling:touch;}
+  .scroll-area::-webkit-scrollbar{width:4px;}
+  .scroll-area::-webkit-scrollbar-thumb{background:rgba(32,29,25,0.15);border-radius:4px;}
+
+  /* film-grain overlay, shared texture generated once via canvas at load time */
+  .grain{position:absolute;inset:0;background-image:var(--grain-tex);background-size:96px 96px;opacity:0.05;mix-blend-mode:overlay;pointer-events:none;}
+
+  /* hero mesh scenes + overlapping sheet */
+  .hero-scene{position:relative;overflow:hidden;flex-shrink:0;height:230px;}
+  .hero-scene.tall{height:280px;}
+  .hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,transparent 32%,rgba(255,255,255,0.55) 100%);pointer-events:none;}
+  .hero-overlay-text{position:absolute;left:22px;right:22px;bottom:20px;color:var(--ink);}
+  .hero-logo{font-size:14px;font-weight:800;letter-spacing:0.02em;margin-bottom:6px;opacity:0.85;}
+  .hero-overlay-text h2{font-size:25px;margin:0;letter-spacing:-0.02em;}
+  .floating-btn{
+    position:absolute;z-index:5;background:rgba(255,255,255,0.78);backdrop-filter:blur(12px) saturate(160%);
+    border:1px solid rgba(255,255,255,0.75);color:var(--ink);width:40px;height:40px;border-radius:50%;
+    box-shadow:var(--shadow-card);display:flex;align-items:center;justify-content:center;cursor:pointer;
+  }
+  .back-float{top:18px;left:18px;}
+  .floating-badge{
+    position:absolute;top:18px;right:18px;background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);
+    color:var(--ink);font-size:12.5px;font-weight:800;padding:8px 14px;border-radius:20px;
+    box-shadow:var(--shadow-card);z-index:5;font-variant-numeric:tabular-nums;
+  }
+  .sheet{
+    background:var(--card-solid);border-radius:32px 32px 0 0;margin-top:-26px;position:relative;z-index:2;
+    box-shadow:0 -16px 34px rgba(32,29,25,0.06);padding:26px 20px 24px;flex:1;overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .meta-line{color:var(--ink-soft);font-size:13px;margin-bottom:16px;}
+
+  /* mesh-gradient scene recipes: layered radial blobs read as painterly photography stand-ins */
+  .scene-sunrise{background:
+    radial-gradient(60% 55% at 22% 20%, #ffdf9a 0%, transparent 60%),
+    radial-gradient(70% 60% at 82% 30%, #ff9d78 0%, transparent 65%),
+    radial-gradient(85% 70% at 50% 100%, #ff7f92 0%, transparent 60%),
+    linear-gradient(160deg,#ffe9b8,#ffb49e 60%,#f28ba0 100%);}
+  .scene-night{background:
+    radial-gradient(circle at 22% 20%, rgba(255,255,255,0.55) 0 1.4px, transparent 1.4px),
+    radial-gradient(circle at 68% 12%, rgba(255,255,255,0.4) 0 1px, transparent 1px),
+    radial-gradient(circle at 82% 42%, rgba(255,255,255,0.5) 0 1.4px, transparent 1.4px),
+    radial-gradient(60% 50% at 78% 22%, #f6ecd0 0%, transparent 40%),
+    radial-gradient(60% 55% at 18% 20%, #7873c9 0%, transparent 60%),
+    radial-gradient(75% 65% at 50% 100%, #c2a9dd 0%, transparent 60%),
+    linear-gradient(170deg,#605ea3,#8b83c9 55%,#c6b6d9 100%);
+    background-size:70px 70px,90px 90px,60px 60px,cover,cover,cover,cover;}
+  .scene-water{background:
+    radial-gradient(60% 50% at 25% 18%, #d3f2e6 0%, transparent 60%),
+    radial-gradient(70% 60% at 82% 40%, #6fc7cb 0%, transparent 65%),
+    radial-gradient(85% 70% at 50% 100%, #357e93 0%, transparent 60%),
+    linear-gradient(170deg,#daf1e6,#7fc3c9 60%,#357e93 100%);}
+  .scene-mist{background:
+    radial-gradient(60% 50% at 22% 15%, #eef4de 0%, transparent 58%),
+    radial-gradient(70% 55% at 82% 32%, #b6c79f 0%, transparent 60%),
+    radial-gradient(80% 65% at 50% 100%, #59684a 0%, transparent 60%),
+    linear-gradient(170deg,#e7ecdc,#a9b894 55%,#5e6d4c 100%);}
+  .scene-mist::before{content:'';position:absolute;left:6%;bottom:-4%;width:24%;height:68%;background:rgba(38,46,30,0.32);clip-path:polygon(50% 0%,0% 100%,100% 100%);}
+  .scene-mist::after{content:'';position:absolute;left:20%;bottom:6%;width:20%;height:52%;background:rgba(38,46,30,0.22);clip-path:polygon(50% 0%,0% 100%,100% 100%);}
+  .scene-golden{background:
+    radial-gradient(65% 55% at 50% 8%, #fff3c4 0%, transparent 55%),
+    radial-gradient(80% 70% at 50% 100%, #e69f4c 0%, transparent 65%),
+    repeating-conic-gradient(from 210deg at 50% 0%, rgba(255,255,255,0.16) 0 3deg, transparent 3deg 14deg),
+    linear-gradient(170deg,#fff2c8,#f5c579 55%,#d99242 100%);}
+  .scene-goldlight{background:
+    radial-gradient(60% 55% at 28% 18%, #ffe6a8 0%, transparent 60%),
+    radial-gradient(70% 60% at 82% 62%, #dd9c3e 0%, transparent 65%),
+    linear-gradient(160deg,#f7deA0,#dda953 55%,#a9702e 100%);}
+  .scene-bloom{background:
+    radial-gradient(60% 50% at 24% 18%, #ffdde9 0%, transparent 60%),
+    radial-gradient(70% 60% at 82% 42%, #ee9ec1 0%, transparent 65%),
+    radial-gradient(80% 65% at 50% 100%, #b8698f 0%, transparent 60%),
+    linear-gradient(160deg,#ffe3ee,#e79fc0 55%,#b8698f 100%);}
+  .scene-rainbow{background:
+    radial-gradient(55% 55% at 14% 22%, #ffb199 0%, transparent 55%),
+    radial-gradient(55% 55% at 44% 12%, #ffe08a 0%, transparent 55%),
+    radial-gradient(55% 55% at 76% 22%, #9be0b0 0%, transparent 55%),
+    radial-gradient(55% 55% at 88% 58%, #8ecfe0 0%, transparent 55%),
+    radial-gradient(60% 55% at 30% 78%, #a6a6ec 0%, transparent 58%),
+    linear-gradient(150deg,#ffe6d2,#d9e8d0 40%,#cfe4ea 70%,#d9d4ef 100%);}
+  .scene-cloud{background:
+    radial-gradient(55% 45% at 25% 65%, #ffffff 0%, transparent 45%),
+    radial-gradient(55% 45% at 72% 78%, #f4f7f5 0%, transparent 40%),
+    radial-gradient(70% 60% at 50% 100%, #9fb0b4 0%, transparent 60%),
+    linear-gradient(170deg,#eef1ee,#cdd6d8 55%,#93a3a7 100%);}
+  .scene-forest{background:
+    radial-gradient(60% 50% at 26% 14%, #dcE9c8 0%, transparent 55%),
+    radial-gradient(70% 60% at 78% 34%, #9cb480 0%, transparent 60%),
+    radial-gradient(80% 65% at 50% 100%, #445536 0%, transparent 60%),
+    linear-gradient(170deg,#e2ead2,#8fa373 55%,#455636 100%);}
+  .scene-forest::before{content:'';position:absolute;left:8%;bottom:-4%;width:22%;height:70%;background:rgba(28,36,20,0.35);clip-path:polygon(50% 0%,0% 100%,100% 100%);}
+  .scene-forest::after{content:'';position:absolute;left:20%;bottom:6%;width:18%;height:55%;background:rgba(28,36,20,0.25);clip-path:polygon(50% 0%,0% 100%,100% 100%);}
+
+  .hero-scene{position:relative;overflow:hidden;}
+  .scene-thumb{position:relative;overflow:hidden;width:56px;height:56px;border-radius:18px;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.5);}
+  .thumb-badge{
+    position:absolute;bottom:-3px;right:-3px;width:22px;height:22px;border-radius:50%;background:var(--card-solid);
+    display:flex;align-items:center;justify-content:center;font-size:11px;box-shadow:var(--shadow-card);
+  }
+
+  /* signature circular progress ring — animates smoothly via @property */
+  .ring-wrap{position:relative;width:168px;height:168px;margin:8px auto 18px;}
+  .ring{
+    position:absolute;inset:0;border-radius:50%;
+    background:conic-gradient(from -90deg, var(--c-violet) 0deg, var(--c-coral) calc(var(--pct) * 1.8deg), var(--c-gold) calc(var(--pct) * 3.6deg), rgba(32,29,25,0.07) calc(var(--pct) * 3.6deg) 360deg);
+    transition:--pct .7s cubic-bezier(.16,.84,.44,1);
+    box-shadow:0 0 26px -6px rgba(138,127,240,0.4);
+  }
+  .ring-inner{position:absolute;inset:15px;background:var(--card-solid);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 2px 8px rgba(32,29,25,0.07);overflow:visible;}
+  .ring-value{font-size:28px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .ring-label{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;font-weight:700;}
+
+  .stat-row{display:flex;justify-content:space-between;gap:6px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);}
+  .stat-row .stat{text-align:center;flex:1;}
+  .stat-row .stat b{display:block;font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums;font-weight:800;}
+  .stat-row .stat span{font-size:10.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.05em;font-weight:700;}
+
+  .card{
+    background:var(--glass-strong);backdrop-filter:blur(16px) saturate(160%);border:1px solid rgba(255,255,255,0.7);border-radius:26px;
+    padding:18px;margin-bottom:16px;box-shadow:var(--shadow-card);
+  }
+  .glow-card{box-shadow:var(--shadow-glow);border:1px solid rgba(255,255,255,0.85);}
+  .card-label{font-size:11.5px;text-transform:uppercase;letter-spacing:0.07em;color:var(--c-violet);margin-bottom:8px;font-weight:800;}
+  .streak-line{color:var(--c-coral);font-size:13px;margin:0 0 10px;font-weight:700;}
+  .big-affirmation{font-size:20px;font-style:italic;font-weight:500;color:var(--ink);margin:0;letter-spacing:-0.01em;}
+  .intention-card{border:1px solid rgba(242,184,75,0.4);}
+
+  /* bento layout for home */
+  .bento-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;}
+  .bento-wide{grid-column:1 / -1;}
+  .bento-row-3{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .quick-tile{cursor:pointer;transition:transform .15s;}
+  .quick-tile:active{transform:scale(0.97);}
+  .quick-tile-title{font-size:14.5px;font-weight:700;color:var(--ink);margin-top:10px;}
+  .quick-small{
+    background:var(--glass-strong);border:1px solid rgba(255,255,255,0.7);border-radius:22px;padding:14px 6px;
+    text-align:center;cursor:pointer;box-shadow:var(--shadow-card);display:flex;flex-direction:column;
+    align-items:center;gap:7px;transition:transform .15s;
+  }
+  .quick-small:active{transform:scale(0.96);}
+  .quick-small span{font-size:11px;font-weight:700;color:var(--ink);}
+  .quick-icon-circle{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .quick-icon-circle svg{width:20px;height:20px;}
+  .quick-small .quick-icon-circle{width:38px;height:38px;}
+  .quick-small .quick-icon-circle svg{width:17px;height:17px;}
+
+  @media (prefers-reduced-motion: no-preference){
+    .bento{opacity:0;animation:fadeUp .5s ease forwards;}
+    .bento:nth-child(1){animation-delay:.02s;}
+    .bento:nth-child(2){animation-delay:.07s;}
+    .bento:nth-child(3){animation-delay:.12s;}
+    .bento:nth-child(4){animation-delay:.16s;}
+    .bento:nth-child(5){animation-delay:.2s;}
+    .bento:nth-child(6){animation-delay:.24s;}
+    .bento:nth-child(7){animation-delay:.28s;}
+    .bento:nth-child(8){animation-delay:.32s;}
+  }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  .list-card{
+    display:flex;align-items:center;gap:14px;background:var(--glass-strong);border:1px solid rgba(255,255,255,0.7);
+    border-radius:22px;padding:12px 14px;margin-bottom:12px;cursor:pointer;transition:transform .15s;
+    box-shadow:var(--shadow-card);
+  }
+  .list-card:active{transform:scale(0.98);}
+  .list-info{flex:1;min-width:0;}
+  .list-title{font-size:15px;font-weight:700;margin:0 0 3px;color:var(--ink);letter-spacing:-0.01em;}
+  .list-sub{font-size:12.5px;color:var(--ink-soft);margin:0;}
+  .list-arrow{color:var(--ink-faint);font-size:16px;}
+
+  .section-sub{font-size:12px;color:var(--c-violet);margin:22px 0 10px;text-transform:uppercase;letter-spacing:0.08em;font-weight:800;}
+
+  .btn{
+    display:block;width:100%;padding:14px;border-radius:18px;border:none;font-size:15px;font-weight:700;
+    cursor:pointer;margin-top:10px;text-align:center;transition:transform .15s;
+  }
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:linear-gradient(120deg,var(--c-coral),var(--c-gold));color:#2c1a0f;box-shadow:0 14px 30px -8px rgba(255,138,101,0.5), inset 0 1px 0 rgba(255,255,255,0.5);}
+  .btn-outline{background:rgba(255,255,255,0.5);border:1px solid var(--line);color:var(--ink);}
+  .link-btn{background:none;border:none;color:var(--c-violet);font-size:13px;cursor:pointer;padding:6px 0;font-weight:700;}
+  .center-link{display:block;margin:6px auto 0;}
+
+  .chip-grid{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px;}
+  .chip{
+    background:rgba(255,255,255,0.5);border:1px solid var(--line);color:var(--ink);
+    padding:9px 14px;border-radius:20px;font-size:13px;cursor:pointer;font-weight:600;transition:transform .15s;
+  }
+  .chip:active{transform:scale(0.96);}
+  .chip-active{background:linear-gradient(120deg,var(--c-coral),var(--c-gold));color:#2c1a0f;border-color:transparent;}
+
+  .affirm-card{
+    background:linear-gradient(160deg, rgba(255,255,255,0.78), rgba(255,205,190,0.35));
+    border:1px solid rgba(255,255,255,0.85);border-radius:26px;padding:34px 20px;text-align:center;margin:14px 0;
+    min-height:120px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-glow);
+  }
+  .affirm-card p{font-size:20px;font-style:italic;font-weight:500;color:var(--ink);letter-spacing:-0.01em;}
+  .affirm-actions{display:flex;gap:10px;}
+  .icon-btn{
+    background:var(--card-solid);border:1px solid var(--line);color:var(--ink);
+    width:52px;height:52px;border-radius:18px;font-size:20px;cursor:pointer;flex-shrink:0;
+  }
+  .icon-btn.fav-active{color:var(--c-rose);border-color:var(--c-rose);}
+  .affirm-list-item{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;
+    background:var(--card-solid);border:1px solid var(--line);border-radius:16px;
+    padding:12px 14px;margin-bottom:10px;font-size:13.5px;color:var(--ink);
+  }
+  .affirm-list-item button{background:none;border:none;font-size:17px;cursor:pointer;color:var(--ink-faint);}
+  .affirm-list-item button.fav-active{color:var(--c-rose);}
+
+  .med-timer{font-size:26px;font-weight:800;letter-spacing:-0.01em;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .med-play-btn{
+    width:56px;height:56px;border-radius:50%;border:none;
+    background:linear-gradient(120deg,var(--c-coral),var(--c-gold));font-size:20px;cursor:pointer;
+    box-shadow:0 12px 26px -6px rgba(255,138,101,0.5);margin-bottom:8px;transition:transform .15s;
+  }
+  .med-play-btn:active{transform:scale(0.94);}
+  .med-play-btn.standalone{display:block;margin:4px auto 4px;}
+  .step-card p{margin:0;font-size:15px;color:var(--ink);text-align:center;min-height:44px;}
+
+  .breath-phase-label{font-size:19px;color:var(--c-violet);margin-bottom:6px;letter-spacing:0.01em;text-align:center;font-weight:800;}
+  .breath-circle{
+    width:100px;height:100px;border-radius:50%;
+    background:radial-gradient(circle, rgba(138,127,240,0.5), rgba(138,127,240,0.06));
+    border:1px solid rgba(138,127,240,0.45);
+    transition:transform 1s linear;
+  }
+  .rounds-select{display:flex;gap:8px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;}
+
+  .practice-desc{color:var(--ink-soft);font-size:14px;margin-bottom:16px;}
+  .steps-list{padding-left:20px;margin:0 0 16px;}
+  .steps-list li{margin-bottom:10px;font-size:14.5px;line-height:1.5;color:var(--ink);}
+  .field{margin-bottom:16px;}
+  .field label{display:block;font-size:13px;color:var(--c-violet);margin-bottom:6px;font-weight:700;}
+  .field textarea, .field input[type=text]{
+    width:100%;background:rgba(255,255,255,0.55);border:1px solid var(--line);border-radius:14px;
+    color:var(--ink);padding:11px 12px;font-size:14px;font-family:inherit;resize:vertical;min-height:44px;
+  }
+  .field textarea{min-height:70px;}
+
+  .challenge-grid{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
+  .challenge-item{
+    display:flex;align-items:center;gap:10px;background:var(--card-solid);border:1px solid var(--line);
+    border-radius:14px;padding:10px 12px;cursor:pointer;font-size:13px;
+  }
+  .challenge-item.done{border-color:var(--c-sage);background:rgba(111,160,111,0.12);}
+  .day-num{color:var(--c-violet);font-weight:800;flex-shrink:0;width:60px;}
+  .day-task{flex:1;color:var(--ink);}
+  .check{color:var(--c-sage);font-weight:800;width:16px;}
+
+  .wheel-row{margin-bottom:14px;}
+  .wheel-label{font-size:13.5px;margin-bottom:4px;color:var(--ink);}
+  .wheel-label b{color:var(--c-violet);}
+  input[type=range]{width:100%;accent-color:var(--c-violet);}
+
+  .chakra-card{background:var(--card-solid);border:1px solid var(--line);border-radius:18px;padding:12px 14px;margin-bottom:10px;}
+  .chakra-card summary{cursor:pointer;font-weight:700;font-size:14.5px;list-style:none;display:flex;align-items:center;gap:8px;color:var(--ink);}
+  .chakra-card summary::-webkit-details-marker{display:none;}
+  .chakra-dot{width:12px;height:12px;border-radius:50%;display:inline-block;flex-shrink:0;}
+  .chakra-card p{font-size:13.5px;margin:8px 0 0;color:var(--ink-soft);}
+
+  .mood-row{display:flex;gap:10px;}
+  .mood-btn{background:var(--card-solid);border:1px solid var(--line);border-radius:16px;font-size:22px;
+    width:48px;height:48px;cursor:pointer;transition:transform .15s;}
+  .mood-btn:active{transform:scale(0.94);}
+  .mood-btn.active{border-color:var(--c-gold);background:rgba(242,184,75,0.18);}
+  .journal-entry{background:var(--card-solid);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px;font-size:13.5px;color:var(--ink);}
+  .je-head{color:var(--c-violet);margin-bottom:6px;font-size:13px;font-weight:800;}
+  .journal-entry p{margin:2px 0;}
+  .empty-hint{color:var(--ink-soft);font-size:13.5px;}
+
+  .profile-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
+  .avatar{width:56px;height:56px;border-radius:50%;background:var(--card-solid);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;box-shadow:var(--shadow-card);}
+  .profile-header input{
+    background:transparent;border:none;border-bottom:1px solid var(--line);color:var(--ink);
+    font-size:19px;font-weight:700;padding:4px 0;flex:1;
+  }
+
+  .plan-day{background:var(--card-solid);border:1px solid var(--line);border-radius:20px;padding:14px 16px;margin-bottom:12px;}
+  .plan-day summary{cursor:pointer;font-weight:700;font-size:14.5px;list-style:none;color:var(--ink);}
+  .plan-day summary::-webkit-details-marker{display:none;}
+  .plan-task{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px;}
+  .plan-task label{display:flex;align-items:center;gap:8px;color:var(--ink);}
+  .plan-task.done label{color:var(--c-sage);}
+
+  .hub-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+
+  .bottom-nav{
+    position:absolute;left:16px;right:16px;bottom:16px;height:68px;border-radius:34px;
+    display:flex;background:rgba(255,255,255,0.66);backdrop-filter:blur(20px) saturate(160%);
+    border:1px solid rgba(255,255,255,0.78);box-shadow:var(--shadow-glow);
+  }
+  .nav-item{
+    flex:1;background:none;border:none;color:var(--ink-faint);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    cursor:pointer;padding-top:4px;transition:color .15s;
+  }
+  .nav-item span{font-size:10.5px;font-weight:700;}
+  .nav-item.active{color:var(--c-violet);}
+  .nav-item.active::after{content:'';display:block;width:4px;height:4px;border-radius:50%;background:var(--c-violet);}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <main class="screens">
+
+    <section id="screen-home" class="screen active screen-enter">
+      <div class="hero-scene tall" id="home-hero">
+        <div class="grain"></div>
+        <div class="hero-scrim"></div>
+        <button class="floating-btn" style="top:18px;right:18px;" onclick="goTo('screen-profile')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.4M12 18.6V21M5 5l1.7 1.7M17.3 17.3 19 19M3 12h2.4M18.6 12H21M5 19l1.7-1.7M17.3 6.7 19 5"/></svg>
+        </button>
+        <div class="hero-overlay-text">
+          <div class="hero-logo">🪷 АТМА</div>
+          <h2 id="home-greeting-text"></h2>
+        </div>
+      </div>
+      <div class="sheet" id="home-body"></div>
+    </section>
+
+    <section id="screen-meditations" class="screen">
+      <header class="header"><h1>Медитации</h1></header>
+      <div class="scroll-area" id="meditations-body"></div>
+    </section>
+
+    <section id="screen-meditation-player" class="screen">
+      <div class="hero-scene" id="med-hero">
+        <div class="grain"></div>
+        <div class="hero-scrim"></div>
+        <button class="floating-btn back-float" onclick="closeMeditationPlayer()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="floating-badge" id="med-step-badge">1/1</div>
+      </div>
+      <div class="sheet" id="meditation-player-body"></div>
+    </section>
+
+    <section id="screen-breathing" class="screen">
+      <header class="header"><h1>Дыхательные техники</h1></header>
+      <div class="scroll-area" id="breathing-body"></div>
+    </section>
+
+    <section id="screen-breathing-session" class="screen">
+      <div class="hero-scene" id="breath-hero">
+        <div class="grain"></div>
+        <div class="hero-scrim"></div>
+        <button class="floating-btn back-float" onclick="closeBreathingSession()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
+        <div class="floating-badge" id="breath-round-badge">0/6</div>
+      </div>
+      <div class="sheet" id="breathing-session-body"></div>
+    </section>
+
+    <section id="screen-affirmations" class="screen">
+      <header class="header"><h1>Аффирмации</h1></header>
+      <div class="scroll-area" id="affirmations-body"></div>
+    </section>
+
+    <section id="screen-practices" class="screen">
+      <header class="header"><h1>Практики</h1></header>
+      <div class="scroll-area" id="practices-body"></div>
+    </section>
+
+    <section id="screen-money-list" class="screen">
+      <header class="header"><button class="back-btn" onclick="goBack()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h1>Изобилие и деньги</h1></header>
+      <div class="scroll-area" id="money-list-body"></div>
+    </section>
+
+    <section id="screen-mindfulness-list" class="screen">
+      <header class="header"><button class="back-btn" onclick="goBack()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h1>Осознанность</h1></header>
+      <div class="scroll-area" id="mindfulness-list-body"></div>
+    </section>
+
+    <section id="screen-spiritual-list" class="screen">
+      <header class="header"><button class="back-btn" onclick="goBack()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h1>Духовные практики</h1></header>
+      <div class="scroll-area" id="spiritual-list-body"></div>
+    </section>
+
+    <section id="screen-practice-detail" class="screen">
+      <header class="header"><button class="back-btn" onclick="goBack()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h1 id="practice-title"></h1></header>
+      <div class="scroll-area" id="practice-body"></div>
+    </section>
+
+    <section id="screen-plan" class="screen">
+      <header class="header"><h1>Мой план</h1></header>
+      <div class="scroll-area" id="plan-body"></div>
+    </section>
+
+    <section id="screen-journal" class="screen">
+      <header class="header"><button class="back-btn" onclick="goBack()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h1>Дневник</h1></header>
+      <div class="scroll-area" id="journal-body"></div>
+    </section>
+
+    <section id="screen-profile" class="screen">
+      <header class="header"><button class="back-btn" onclick="goBack()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h1>Профиль</h1></header>
+      <div class="scroll-area" id="profile-body"></div>
+    </section>
+
+  </main>
+
+  <nav class="bottom-nav">
+    <button class="nav-item active" data-nav="screen-home" onclick="navRoot('screen-home')">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9"/></svg>
+      <span>Главная</span>
+    </button>
+    <button class="nav-item" data-nav="screen-meditations" onclick="navRoot('screen-meditations')">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6.2" r="2"/><path d="M12 8.2v3.3"/><path d="M6.5 19.5c0-3.3 2.3-5 5.5-5s5.5 1.7 5.5 5"/><path d="M4 19c1-1.8 2-2.6 2.7-3M20 19c-1-1.8-2-2.6-2.7-3"/></svg>
+      <span>Медитации</span>
+    </button>
+    <button class="nav-item" data-nav="screen-breathing" onclick="navRoot('screen-breathing')">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10.5a2.8 2.8 0 1 0-2.3-4.4"/><path d="M3 12.3h15.2a2.8 2.8 0 1 1-2.1 4.7"/><path d="M3 16.6h8.4a2.3 2.3 0 1 1-1.8 3.7"/></svg>
+      <span>Дыхание</span>
+    </button>
+    <button class="nav-item" data-nav="screen-affirmations" onclick="navRoot('screen-affirmations')">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 3c.5 3.4 1.7 5.7 4.5 6.5-2.8.8-4 3.1-4.5 6.5-.5-3.4-1.7-5.7-4.5-6.5 2.8-.8 4-3.1 4.5-6.5z"/></svg>
+      <span>Аффирмации</span>
+    </button>
+    <button class="nav-item" data-nav="screen-practices" onclick="navRoot('screen-practices')">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>
+      <span>Практики</span>
+    </button>
+  </nav>
+</div>
+
+<script>
+/* ===================== DATA ===================== */
+
+const MEDITATIONS = [
+  {id:'m1', title:'Утренняя медитация пробуждения', category:'Утро', duration:7, scene:'scene-sunrise', icon:'🌅',
+    steps:[
+      'Сядь удобно или ляг, позволь телу расслабиться.',
+      'Сделай глубокий вдох через нос и медленный выдох через рот.',
+      'Почувствуй, как новый день наполняет тебя энергией.',
+      'Мысленно поблагодари себя за то, что проснулся(лась).',
+      'Представь, как хочешь себя чувствовать сегодня.',
+      'Скажи себе: «Я готов(а) принять этот день с открытым сердцем».',
+      'Сделай ещё три глубоких вдоха и медленно возвращайся.'
+    ]},
+  {id:'m2', title:'Медитация для глубокого сна', category:'Сон', duration:12, scene:'scene-night', icon:'🌙',
+    steps:[
+      'Ляг в удобное положение, позволь телу стать тяжёлым.',
+      'Начни с макушки головы — расслабь лоб, брови, челюсть.',
+      'Опусти внимание к плечам, рукам, кистям — отпусти напряжение.',
+      'Расслабь грудь и живот, дыхание становится медленнее.',
+      'Отпусти бёдра, колени, стопы — всё тело тяжелеет.',
+      'Представь тихое, безопасное место, где тебе спокойно.',
+      'Позволь мыслям утихнуть, как рябь на воде.',
+      'С каждым выдохом ты погружаешься глубже в отдых.',
+      'Спи спокойно, ты в безопасности.'
+    ]},
+  {id:'m3', title:'Снятие тревоги здесь и сейчас', category:'Стресс', duration:8, scene:'scene-water', icon:'🍃',
+    steps:[
+      'Заметь, что ты сейчас чувствуешь, без осуждения.',
+      'Положи руку на грудь или живот.',
+      'Сделай вдох на 4 счёта, выдох на 6 счётов.',
+      'Повтори про себя: «Это чувство временно, оно пройдёт».',
+      'Замечай ощущения в теле, не пытаясь их изменить.',
+      'Напомни себе: «Прямо сейчас я в безопасности».',
+      'Продолжай дышать медленно, отпуская напряжение с каждым выдохом.'
+    ]},
+  {id:'m4', title:'Сканирование тела', category:'Тело', duration:10, scene:'scene-mist', icon:'🧘',
+    steps:[
+      'Начни с внимания к стопам — просто замечай ощущения.',
+      'Перемести внимание к голеням и коленям.',
+      'Заметь ощущения в бёдрах и тазу.',
+      'Пройдись вниманием по животу и пояснице.',
+      'Заметь грудную клетку и своё дыхание.',
+      'Перейди к плечам, рукам и кистям.',
+      'Заметь шею, лицо, макушку головы.',
+      'Ощути тело целиком, как единое целое.'
+    ]},
+  {id:'m5', title:'Медитация благодарности', category:'Благодарность', duration:6, scene:'scene-golden', icon:'🙏',
+    steps:[
+      'Вспомни одного человека, за которого ты благодарен(на).',
+      'Вспомни момент этого дня, который порадовал тебя.',
+      'Поблагодари своё тело за то, что оно для тебя делает.',
+      'Поблагодари себя за усилия, которые ты прикладываешь.',
+      'Позволь чувству благодарности наполнить грудь теплом.',
+      'Улыбнись — даже мысленно.'
+    ]},
+  {id:'m6', title:'Любящая доброта (метта)', category:'Любовь', duration:9, scene:'scene-bloom', icon:'💗',
+    steps:[
+      'Направь тёплое пожелание себе: «Пусть я буду счастлив(а), пусть я буду в безопасности».',
+      'Представь близкого человека и пожелай ему того же.',
+      'Представь нейтрального человека и пожелай ему добра.',
+      'Представь того, с кем сложно, и попробуй пожелать блага и ему(ей).',
+      'Расширь пожелание на всех живых существ.',
+      'Заверши, вернув тепло себе: «Пусть я буду свободен(на) от страданий».'
+    ]},
+  {id:'m7', title:'Медитация изобилия и денежного потока', category:'Изобилие', duration:10, scene:'scene-goldlight', icon:'💰',
+    steps:[
+      'Устройся удобно, сделай несколько глубоких вдохов.',
+      'Представь тёплый золотой свет над головой — энергию изобилия.',
+      'Позволь этому свету медленно спускаться через всё тело.',
+      'Почувствуй, как внутри рождается ощущение достатка уже сейчас.',
+      'Представь, как деньги и возможности легко приходят в твою жизнь.',
+      'Скажи себе: «Вселенная щедра, и я открыт(а) принимать».',
+      'Представь, как делишься своим изобилием с другими.',
+      'Поблагодари за то, что уже есть в твоей жизни.'
+    ]},
+  {id:'m8', title:'Путешествие по семи чакрам', category:'Энергия', duration:15, scene:'scene-rainbow', icon:'🌈',
+    steps:[
+      'Муладхара, копчик — представь красный свет и ощущение опоры.',
+      'Свадхистана, низ живота — оранжевый свет, поток творчества.',
+      'Манипура, солнечное сплетение — жёлтый свет, личная сила.',
+      'Анахата, сердце — зелёный свет, любовь и принятие.',
+      'Вишуддха, горло — голубой свет, искренний голос.',
+      'Аджна, межбровье — свет индиго, ясность и интуиция.',
+      'Сахасрара, макушка — фиолетово-белый свет, связь с высшим.',
+      'Позволь всем цветам объединиться в единый поток света через тело.'
+    ]},
+  {id:'m9', title:'Отпускание и прощение', category:'Исцеление', duration:8, scene:'scene-cloud', icon:'🕊️',
+    steps:[
+      'Вспомни ситуацию, которую хочешь отпустить.',
+      'Позволь себе почувствовать связанные с ней эмоции, не подавляя их.',
+      'Скажи мысленно: «Я готов(а) отпустить то, что больше мне не служит».',
+      'Если есть кого простить, в том числе себя — произнеси: «Я прощаю и отпускаю».',
+      'Представь, как груз спадает с твоих плеч.',
+      'Сделай глубокий вдох свободы и лёгкости.'
+    ]},
+  {id:'m10', title:'Встреча с внутренней мудростью', category:'Осознанность', duration:10, scene:'scene-forest', icon:'🦉',
+    steps:[
+      'Расслабься и представь тихое место в природе.',
+      'Представь, что навстречу идёт твоя мудрая часть — та, что знает верный путь.',
+      'Спроси её о том, что сейчас важно для тебя.',
+      'Слушай ответ без ожиданий — это может быть образ, слово или просто чувство.',
+      'Поблагодари эту часть себя.',
+      'Пообещай возвращаться к ней снова.'
+    ]}
+];
+
+const BREATHING = [
+  {id:'b1', title:'Квадратное дыхание', desc:'Концентрация и снятие стресса. Равные фазы вдоха, задержки и выдоха.',
+    pattern:[4,4,4,4], rounds:6, scene:'scene-mist'},
+  {id:'b2', title:'Дыхание 4-7-8', desc:'Глубокое расслабление, помогает уснуть.',
+    pattern:[4,7,8,0], rounds:4, scene:'scene-night'},
+  {id:'b3', title:'Диафрагмальное дыхание', desc:'Базовое дыхание животом для быстрого успокоения нервной системы.',
+    pattern:[4,0,6,0], rounds:8, scene:'scene-water'},
+  {id:'b4', title:'Когерентное дыхание', desc:'Ровное дыхание 5 на 5 — баланс нервной системы, спокойствие ума.',
+    pattern:[5,0,5,0], rounds:10, scene:'scene-cloud'},
+  {id:'b5', title:'Бодрящее дыхание', desc:'Быстрые ровные циклы для энергии и бодрости. Не подходит при беременности и заболеваниях сердца.',
+    pattern:[2,0,2,0], rounds:15, scene:'scene-sunrise'},
+  {id:'b6', title:'Попеременное дыхание через ноздри', desc:'Баланс и ясность ума. Дыши в своём темпе, поочерёдно прикрывая ноздри пальцами.',
+    pattern:[4,2,4,0], rounds:8, scene:'scene-bloom'}
+];
+
+const AFFIRMATIONS = {
+  self_love:{title:'Любовь к себе', icon:'💗', items:[
+    'Я принимаю себя таким(ой), какой(ая) я есть, прямо сейчас.',
+    'Я достоин(на) любви и уважения.',
+    'Я говорю с собой по-доброму.',
+    'Моя ценность не зависит от чужого мнения.',
+    'Я прощаю себя за прошлые ошибки.',
+    'Я забочусь о себе так же, как заботился(ась) бы о близком человеке.',
+    'Я разрешаю себе отдыхать без чувства вины.',
+    'Я горжусь тем, как далеко я уже прошёл(ла).',
+    'Моё тело — мой дом, и я отношусь к нему с уважением.',
+    'Я выбираю себя каждый день.'
+  ]},
+  money:{title:'Изобилие и деньги', icon:'💰', items:[
+    'Деньги приходят ко мне легко и часто.',
+    'Я открыт(а) для новых источников дохода.',
+    'Вселенная щедра, и я часть этого изобилия.',
+    'Я достоин(на) финансового благополучия.',
+    'Я мудро распоряжаюсь тем, что у меня есть.',
+    'Каждый день приносит новые возможности для роста моего дохода.',
+    'Я отпускаю страх нехватки и выбираю доверие.',
+    'Мои финансы растут стабильно и уверенно.',
+    'Я благодарен(на) за всё, что у меня уже есть.',
+    'Я создаю ценность, и мир щедро вознаграждает меня за это.'
+  ]},
+  confidence:{title:'Уверенность', icon:'💪', items:[
+    'Я верю в свои силы.',
+    'Я способен(на) справиться с любым вызовом.',
+    'Моё мнение имеет значение.',
+    'Я двигаюсь вперёд, даже когда боюсь.',
+    'Я разрешаю себе занимать место в этом мире.',
+    'Я доверяю своим решениям.',
+    'С каждым днём я становлюсь увереннее.',
+    'Я горжусь своей уникальностью.',
+    'Я имею право говорить «нет».',
+    'Я — источник своей силы.'
+  ]},
+  health:{title:'Здоровье и энергия', icon:'🌿', items:[
+    'Моё тело сильное и полное энергии.',
+    'Я выбираю привычки, которые поддерживают моё здоровье.',
+    'Каждой клеткой я исцеляюсь и восстанавливаюсь.',
+    'Я слушаю сигналы своего тела с уважением.',
+    'Я наполнен(а) жизненной силой.',
+    'Сон, движение и питание — мои союзники.',
+    'Я легко отпускаю напряжение из тела.',
+    'Моя энергия растёт с каждым вдохом.',
+    'Я забочусь о своём теле с любовью, а не с критикой.',
+    'Я живу в согласии со своим телом.'
+  ]},
+  relationships:{title:'Отношения', icon:'💞', items:[
+    'Я привлекаю в свою жизнь тёплые и честные отношения.',
+    'Я умею выражать свои чувства спокойно и открыто.',
+    'Я достоин(на) быть услышанным(ой).',
+    'Я строю границы с любовью и уважением к себе.',
+    'Мои отношения основаны на доверии и поддержке.',
+    'Я притягиваю людей, которые ценят меня по-настоящему.',
+    'Я умею прощать и отпускать обиды.',
+    'Я даю и принимаю любовь свободно.',
+    'Я благодарен(на) за людей рядом со мной.',
+    'Я — хороший друг и партнёр для себя самого(ой).'
+  ]},
+  purpose:{title:'Предназначение', icon:'🧭', items:[
+    'Я нахожусь на своём пути в нужное время.',
+    'Моя жизнь имеет смысл и направление.',
+    'Я доверяю процессу своего развития.',
+    'Мои таланты нужны этому миру.',
+    'Каждый шаг приближает меня к моему предназначению.',
+    'Я разрешаю себе пробовать и ошибаться в поиске своего пути.',
+    'Вселенная поддерживает меня на моём пути.',
+    'Я живу в согласии со своими ценностями.',
+    'Моё дело — это моё призвание, растущее день за днём.',
+    'Я доверяю своей внутренней навигации.'
+  ]},
+  gratitude:{title:'Благодарность', icon:'🙏', items:[
+    'Я благодарен(на) за этот новый день.',
+    'Я замечаю красоту в простых вещах.',
+    'Моё сердце открыто благодарности.',
+    'Я благодарен(на) за уроки, которые преподносит жизнь.',
+    'Я ценю то, что у меня есть, прямо сейчас.',
+    'Благодарность наполняет меня спокойствием.',
+    'Я благодарен(на) своему телу и разуму.',
+    'Каждый вызов — это тоже дар для роста.',
+    'Я благодарен(на) за людей в моей жизни.',
+    'Изобилие начинается с благодарности.'
+  ]}
+};
+
+const MONEY_CHALLENGE_TASKS = [
+  'Составь список 10 вещей, за которые ты благодарен(на) в финансовой сфере.',
+  'Наведи порядок в кошельке и в финансовых документах.',
+  'Произнеси вслух 10 денежных аффирмаций перед зеркалом.',
+  'Запиши свою денежную историю из детства — какие установки ты получил(а)?',
+  'Сделай визуализацию желаемой финансовой жизни во всех деталях (5 минут).',
+  'Подари что-то небольшое без ожидания отдачи.',
+  'Запиши 3 своих главных финансовых достижения за последний год.',
+  'Найди одно ограничивающее убеждение о деньгах и перепиши его в поддерживающее.',
+  'Проведи медитацию «Денежный поток» из раздела медитаций.',
+  'Отследи все траты за день с чувством благодарности, а не вины.',
+  'Напиши письмо себе через год — у которого уже есть желаемый уровень дохода.',
+  'Сделай список желаний, связанных с финансовой свободой.',
+  'Поблагодари деньги, которые пришли к тебе на этой неделе.',
+  'Изучи одну новую тему про финансовую грамотность (15 минут).',
+  'Сделай доброе дело для кого-то, не связанное с деньгами.',
+  'Повтори фразу «Деньги приходят ко мне легко и часто» 21 раз.',
+  'Отпусти одну старую вещь, которая держит тебя в прошлом.',
+  'Составь план одного маленького шага к финансовой цели на этой неделе.',
+  'Проведи вечер без трат и сравнений себя с другими.',
+  'Запиши, как изменилось твоё отношение к деньгам за 20 дней.',
+  'Отпразднуй! Поблагодари себя и загадай новое денежное намерение.'
+];
+
+const CHAKRAS = [
+  {name:'Муладхара', ru:'Корневая чакра', color:'#e05252', location:'Основание позвоночника', theme:'Опора, безопасность, выживание', affirmation:'Я в безопасности и твёрдо стою на земле.', practice:'Постой босиком на земле 5 минут, представляя красный свет у основания позвоночника.'},
+  {name:'Свадхистана', ru:'Сакральная чакра', color:'#e8944a', location:'Низ живота', theme:'Творчество, удовольствие, эмоции', affirmation:'Я разрешаю себе радость и творчество.', practice:'Потанцуй под любимую музыку 5 минут без цели, просто ради удовольствия.'},
+  {name:'Манипура', ru:'Чакра солнечного сплетения', color:'#dcb35a', location:'Область желудка', theme:'Личная сила, воля, уверенность', affirmation:'Я уверенно иду к своим целям.', practice:'Сделай 10 глубоких вдохов животом, представляя жёлтое солнце в центре тела.'},
+  {name:'Анахата', ru:'Сердечная чакра', color:'#7fae7f', location:'Центр груди', theme:'Любовь, сострадание, принятие', affirmation:'Моё сердце открыто для любви.', practice:'Положи руку на сердце и вспомни момент, когда чувствовал(а) любовь.'},
+  {name:'Вишуддха', ru:'Горловая чакра', color:'#6fa8c9', location:'Горло', theme:'Голос, честность, самовыражение', affirmation:'Я говорю свою правду с любовью.', practice:'Пропой любой звук вслух в течение минуты, отпуская зажим в горле.'},
+  {name:'Аджна', ru:'Чакра третьего глаза', color:'#7d84b8', location:'Межбровье', theme:'Интуиция, ясность, видение', affirmation:'Я доверяю своей внутренней мудрости.', practice:'Закрой глаза и 2 минуты просто наблюдай за пространством перед внутренним взором.'},
+  {name:'Сахасрара', ru:'Коронная чакра', color:'#a993c9', location:'Макушка головы', theme:'Связь с высшим, единство, духовность', affirmation:'Я связан(а) с чем-то большим, чем я сам(а).', practice:'Посиди в тишине 3 минуты, представляя свет над макушкой, соединяющий тебя со Вселенной.'}
+];
+
+const VALUES_LIST = ['Свобода','Семья','Творчество','Здоровье','Любовь','Честность','Рост','Служение','Приключения','Стабильность','Духовность','Дружба','Успех','Красота','Мудрость','Справедливость','Благодарность','Радость','Смелость','Гармония'];
+
+const WHEEL_AREAS = ['Здоровье','Деньги','Карьера','Отношения','Личностный рост','Отдых','Дом','Духовность'];
+
+const INTENTION_SUGGESTIONS = ['Сегодня я выбираю спокойствие','Сегодня я замечаю хорошее','Сегодня я действую из любви, а не страха','Сегодня я доверяю процессу','Сегодня я забочусь о себе'];
+
+const PRACTICE_DATA = {
+  money:[
+    {id:'morning_ritual', title:'Утренний ритуал изобилия', icon:'🌅', scene:'scene-sunrise', desc:'Начни день с чувства достатка вместо тревоги о деньгах.', type:'steps',
+      steps:['Проснувшись, ещё лёжа в постели, вспомни 3 вещи, за которые ты благодарен(на) в финансовой сфере.','Произнеси вслух: «Я открыт(а) принимать изобилие».','Улыбнись и начни день с чувства достатка.']},
+    {id:'visualization', title:'Визуализация денежного потока', icon:'💫', scene:'scene-goldlight', desc:'Короткая практика, чтобы прочувствовать желаемую финансовую реальность.', type:'steps',
+      steps:['Закрой глаза и сделай три глубоких вдоха.','Представь во всех деталях, как выглядит твоя желаемая финансовая жизнь.','Почувствуй эмоции так, будто это уже произошло — спокойствие, радость, свободу.','Поблагодари за то, что это уже в пути к тебе.']},
+    {id:'abundance_journal', title:'Дневник изобилия', icon:'📓', scene:'scene-golden', desc:'Регулярные короткие записи меняют отношение к деньгам.', type:'journal',
+      prompts:['Что хорошего в финансовом плане произошло сегодня?','За что я благодарен(на) деньгам сегодня?','Какую возможность я заметил(а) сегодня?']},
+    {id:'already_have', title:'Практика «Я уже имею»', icon:'✅', scene:'scene-goldlight', desc:'Техника проживания цели в настоящем времени.', type:'journal',
+      prompts:['Составь список из 10 пунктов так, будто желаемое финансовое положение уже есть, и прочитай его вслух.']},
+    {id:'money_challenge21', title:'21-дневный челлендж изобилия', icon:'🔥', scene:'scene-goldlight', desc:'Ежедневная практика для трансформации отношения к деньгам за 21 день.', type:'challenge21'},
+    {id:'money_beliefs', title:'Работа с денежными установками', icon:'🧩', scene:'scene-mist', desc:'Найди и перепиши убеждения, которые мешают твоему изобилию.', type:'journal',
+      prompts:['Что говорили о деньгах в моей семье, когда я рос(ла)?','Какое убеждение о деньгах мешает мне сейчас больше всего?','Как я могу переписать это убеждение в поддерживающее?']},
+    {id:'gratitude_ritual', title:'Ритуал благодарности деньгам', icon:'🙌', scene:'scene-golden', desc:'Меняет отношение к тратам и доходам на более лёгкое.', type:'steps',
+      steps:['Когда платишь за что-то — мысленно поблагодари деньги за услугу, которую они тебе оказали.','Когда получаешь деньги — прими их с благодарностью, а не с тревогой о том, что скоро закончатся.']},
+    {id:'money_meditation_link', title:'Медитация на привлечение денег', icon:'🧘', scene:'scene-goldlight', desc:'Guided-медитация из раздела медитаций для настройки на изобилие.', type:'meditation-link', meditationId:'m7'}
+  ],
+  mindfulness:[
+    {id:'mindfulness_journal', title:'Дневник осознанности', icon:'📔', scene:'scene-cloud', desc:'Простая практика возвращения в настоящий момент.', type:'journal',
+      prompts:['Что я чувствую прямо сейчас?','Что я заметил(а) сегодня, на что раньше не обращал(а) внимания?','За что я благодарен(на) себе сегодня?']},
+    {id:'who_am_i', title:'Практика «Кто я?»', icon:'❓', scene:'scene-mist', desc:'Классическая практика самоисследования.', type:'steps',
+      steps:['Сядь удобно, закрой глаза, сделай три глубоких вдоха.','Спроси себя: «Кто я?» — и просто наблюдай, какие ответы приходят.','Продолжай мягко спрашивать: «А кто наблюдает эти мысли?»','Позволь себе побыть в тишине без ответа, просто в присутствии.','Запиши после практики любые инсайты в дневнике.']},
+    {id:'shadow_work', title:'Работа с тенью', icon:'🌗', scene:'scene-night', desc:'Мягкое исследование вытесненных частей себя.', type:'journal',
+      prompts:['Что во мне я больше всего стараюсь скрыть от других?','Какие черты в других людях вызывают у меня сильное раздражение?','Каким я боюсь показаться?','Что я разрешаю себе только наедине с собой?','Какое качество из детства я подавил(а), чтобы быть «удобным»?','Как я могу отнестись к этой части себя с добротой, а не с осуждением?']},
+    {id:'wheel_of_life', title:'Колесо баланса жизни', icon:'☸️', scene:'scene-forest', desc:'Оцени 8 сфер жизни и увидь, где нужно внимание.', type:'wheel'},
+    {id:'grounding', title:'Заземление 5-4-3-2-1', icon:'🌳', scene:'scene-forest', desc:'Быстрая техника возвращения в тело при тревоге.', type:'steps',
+      steps:['Назови 5 вещей, которые ты видишь вокруг.','Назови 4 вещи, которые можешь потрогать.','Назови 3 звука, которые слышишь.','Назови 2 запаха, которые чувствуешь.','Назови 1 вкус во рту или то, за что благодарен(на) прямо сейчас.']},
+    {id:'letter', title:'Письмо себе', icon:'✉️', scene:'scene-cloud', desc:'Тёплые слова себе — то, что ты хотел(а) бы услышать.', type:'journal',
+      prompts:['Напиши письмо себе — что бы ты хотел(а) услышать сегодня?']},
+    {id:'values', title:'Список ценностей', icon:'🧭', scene:'scene-bloom', desc:'Определи главные жизненные ориентиры.', type:'values'},
+    {id:'evening_reflection', title:'Вечерняя рефлексия', icon:'🌆', scene:'scene-night', desc:'Мягкое подведение итогов дня.', type:'journal',
+      prompts:['3 победы сегодняшнего дня','1 урок, который я вынес(ла) из сегодняшнего дня','За что я благодарен(на) сегодня?']}
+  ],
+  spiritual:[
+    {id:'chakras', title:'Путешествие по чакрам', icon:'🌈', scene:'scene-rainbow', desc:'Обзор 7 энергетических центров и практики для каждого.', type:'chakras'},
+    {id:'moon_ritual', title:'Лунные ритуалы', icon:'🌙', scene:'scene-night', desc:'Ставь намерения в новолуние и отпускай в полнолуние.', type:'journal',
+      prompts:['Новолуние: что я хочу привлечь в этом цикле?','Полнолуние: что я готов(а) отпустить?']},
+    {id:'space_clearing', title:'Энергетическая очистка пространства', icon:'🕯️', scene:'scene-cloud', desc:'Наведи порядок в доме и в энергии одновременно.', type:'steps',
+      steps:['Открой окна на несколько минут, впусти свежий воздух.','Убери один захламлённый угол или поверхность.','Мысленно или вслух задай намерение: «Это пространство наполнено спокойствием и светом».','Зажги свечу или благовоние, если это тебе откликается.']},
+    {id:'forgiveness', title:'Практика прощения', icon:'🕊️', scene:'scene-bloom', desc:'Отпускание обид ради собственной свободы.', type:'steps',
+      steps:['Вспомни ситуацию или человека, которого хочешь простить, включая, возможно, себя.','Признай боль, не подавляя её.','Произнеси: «Я прощаю тебя (себя) и отпускаю эту историю».','Представь, как отпускаешь этот груз с выдохом.']},
+    {id:'intuition_journal', title:'Дневник интуиции', icon:'🔮', scene:'scene-rainbow', desc:'Учись замечать и доверять внутреннему голосу.', type:'journal',
+      prompts:['Какие совпадения или знаки я заметил(а) на этой неделе?','Что подсказывает мне интуиция прямо сейчас?']},
+    {id:'daily_intention', title:'Намерение дня', icon:'☀️', scene:'scene-sunrise', desc:'Задай тон дню одной ясной фразой.', type:'intention'},
+    {id:'higher_self', title:'Связь с высшим Я', icon:'✨', scene:'scene-night', desc:'Короткая созерцательная практика для внутренней связи.', type:'steps',
+      steps:['Сядь в тишине и сделай несколько медленных вдохов.','Представь свою высшую, мудрую версию себя рядом.','Спроси у неё: «Что мне нужно помнить сегодня?»','Прими любой ответ с благодарностью, даже если это просто тишина.']}
+  ]
+};
+
+const AREA_CONFIG = {
+  money:{label:'Изобилие и деньги', icon:'💰', meditation:'m7', breathing:'b4', affirm:'money', practiceCat:'money', practiceId:'abundance_journal'},
+  calm:{label:'Осознанность и покой', icon:'🧘', meditation:'m3', breathing:'b2', affirm:'gratitude', practiceCat:'mindfulness', practiceId:'grounding'},
+  confidence:{label:'Уверенность и любовь к себе', icon:'💪', meditation:'m6', breathing:'b1', affirm:'self_love', practiceCat:'mindfulness', practiceId:'values'},
+  health:{label:'Здоровье и энергия', icon:'🌿', meditation:'m4', breathing:'b3', affirm:'health', practiceCat:'mindfulness', practiceId:'grounding'},
+  relationships:{label:'Отношения', icon:'💞', meditation:'m6', breathing:'b1', affirm:'relationships', practiceCat:'mindfulness', practiceId:'letter'},
+  purpose:{label:'Предназначение и смысл', icon:'🧭', meditation:'m10', breathing:'b4', affirm:'purpose', practiceCat:'mindfulness', practiceId:'who_am_i'},
+  spiritual:{label:'Духовный рост', icon:'🌙', meditation:'m8', breathing:'b6', affirm:'gratitude', practiceCat:'spiritual', practiceId:'moon_ritual'}
+};
+const WEEKDAYS = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
+
+const ICON_PATHS = {
+  meditate:'<circle cx="12" cy="6.2" r="2"/><path d="M12 8.2v3.3"/><path d="M6.5 19.5c0-3.3 2.3-5 5.5-5s5.5 1.7 5.5 5"/><path d="M4 19c1-1.8 2-2.6 2.7-3M20 19c-1-1.8-2-2.6-2.7-3"/>',
+  wind:'<path d="M3 8h10.5a2.8 2.8 0 1 0-2.3-4.4"/><path d="M3 12.3h15.2a2.8 2.8 0 1 1-2.1 4.7"/><path d="M3 16.6h8.4a2.3 2.3 0 1 1-1.8 3.7"/>',
+  sparkle:'<path d="M12 3c.5 3.4 1.7 5.7 4.5 6.5-2.8.8-4 3.1-4.5 6.5-.5-3.4-1.7-5.7-4.5-6.5 2.8-.8 4-3.1 4.5-6.5z" fill="currentColor" stroke="none"/>',
+  target:'<circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/>',
+  coin:'<circle cx="12" cy="12" r="8.2"/><path d="M12 7.3v9.4"/><path d="M9.3 9.4c0-1.1 1.1-1.9 2.7-1.9s2.7.8 2.7 1.8c0 2.5-5.4 1.3-5.4 3.8 0 1 1.1 1.9 2.7 1.9s2.7-.8 2.7-1.9"/>',
+  compass:'<circle cx="12" cy="12" r="8.6"/><path d="M15.2 8.8l-2.1 4.9-5 2.1 2.1-4.9 5-2.1z"/>',
+  moon:'<path d="M19.2 13.8A7.6 7.6 0 1 1 10.2 4.8a6.1 6.1 0 0 0 9 9z"/>',
+  book:'<path d="M4 5.6A1.6 1.6 0 0 1 5.6 4H12v16H5.6A1.6 1.6 0 0 1 4 18.4V5.6z"/><path d="M20 5.6A1.6 1.6 0 0 0 18.4 4H12v16h6.4a1.6 1.6 0 0 0 1.6-1.6V5.6z"/>'
+};
+function icon(name, size){
+  size = size || 20;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICON_PATHS[name]}</svg>`;
+}
+
+/* ===================== STATE ===================== */
+
+const STORAGE_KEY = 'atma_app_state';
+function defaultState(){
+  return {
+    name:'Друг', streak:0, lastActiveDate:null,
+    totalMeditations:0, totalBreathing:0, totalJournal:0,
+    favorites:[], todayMood:null,
+    journalEntries:[], practiceJournals:{}, practiceCompletions:{},
+    wheelOfLife:null, values:{selected:[], note:''},
+    intention:{date:'', text:''}, challenge21:{startedAt:null, checkedDays:[]},
+    plan:null
+  };
+}
+let STATE = defaultState();
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if(raw){ STATE = Object.assign(defaultState(), JSON.parse(raw)); }
+  }catch(e){ STATE = defaultState(); }
+}
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE));
+}
+
+/* ===================== UTILS ===================== */
+
+function pad(n){ return n<10 ? '0'+n : ''+n; }
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function yesterdayStr(){
+  const d = new Date();
+  d.setDate(d.getDate()-1);
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function formatDate(s){
+  const parts = s.split('-');
+  return parts[2]+'.'+parts[1];
+}
+function formatTime(sec){
+  sec = Math.max(0,sec);
+  const m = Math.floor(sec/60), s = Math.floor(sec%60);
+  return pad(m)+':'+pad(s);
+}
+function pluralDays(n){
+  const mod10=n%10, mod100=n%100;
+  if(mod100>=11 && mod100<=14) return 'дней';
+  if(mod10===1) return 'день';
+  if(mod10>=2 && mod10<=4) return 'дня';
+  return 'дней';
+}
+function hashCode(str){
+  let h=0;
+  for(let i=0;i<str.length;i++){ h=(h<<5)-h+str.charCodeAt(i); h|=0; }
+  return Math.abs(h);
+}
+function pickDailyAffirmation(){
+  const all=[];
+  Object.values(AFFIRMATIONS).forEach(c=>all.push(...c.items));
+  return all[hashCode(todayStr())%all.length];
+}
+function markActivity(){
+  const today = todayStr();
+  if(STATE.lastActiveDate === today) return;
+  if(STATE.lastActiveDate === yesterdayStr()){ STATE.streak++; }
+  else { STATE.streak = 1; }
+  STATE.lastActiveDate = today;
+}
+function val(id){ const el=document.getElementById(id); return el? el.value : ''; }
+function heroSceneForNow(){
+  const h = new Date().getHours();
+  if(h>=5 && h<11) return 'scene-sunrise';
+  if(h>=11 && h<17) return 'scene-golden';
+  if(h>=17 && h<21) return 'scene-bloom';
+  return 'scene-night';
+}
+function buildGrainTexture(){
+  try{
+    const c = document.createElement('canvas');
+    c.width = 96; c.height = 96;
+    const ctx = c.getContext('2d');
+    const imgData = ctx.createImageData(96,96);
+    for(let i=0;i<imgData.data.length;i+=4){
+      const v = Math.floor(Math.random()*255);
+      imgData.data[i]=v; imgData.data[i+1]=v; imgData.data[i+2]=v; imgData.data[i+3]=255;
+    }
+    ctx.putImageData(imgData,0,0);
+    document.documentElement.style.setProperty('--grain-tex', `url(${c.toDataURL()})`);
+  }catch(e){}
+}
+
+/* ===================== NAVIGATION ===================== */
+
+let navStack = ['screen-home'];
+const SCREEN_RENDERERS = {
+  'screen-home': renderHome,
+  'screen-meditations': renderMeditationsList,
+  'screen-meditation-player': renderMeditationPlayerUI,
+  'screen-breathing': renderBreathingList,
+  'screen-breathing-session': renderBreathingSessionUI,
+  'screen-affirmations': renderAffirmations,
+  'screen-practices': renderPracticesHub,
+  'screen-money-list': ()=>renderGenericList('money'),
+  'screen-mindfulness-list': ()=>renderGenericList('mindfulness'),
+  'screen-spiritual-list': ()=>renderGenericList('spiritual'),
+  'screen-practice-detail': renderPracticeDetail,
+  'screen-plan': renderPlanScreen,
+  'screen-journal': renderJournal,
+  'screen-profile': renderProfile
+};
+function renderCurrent(id){ if(SCREEN_RENDERERS[id]) SCREEN_RENDERERS[id](); }
+function updateNavHighlight(id){
+  document.querySelectorAll('.nav-item').forEach(b=>{
+    b.classList.toggle('active', b.getAttribute('data-nav')===id);
+  });
+}
+function showOnly(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active','screen-enter'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('screen-enter')));
+}
+function openScreen(id, opts={}){
+  showOnly(id);
+  if(opts.replaceRoot){ navStack=[id]; } else { navStack.push(id); }
+  updateNavHighlight(id);
+}
+function goTo(id){ openScreen(id); renderCurrent(id); }
+function navRoot(id){ openScreen(id,{replaceRoot:true}); renderCurrent(id); }
+function goBack(){
+  if(navStack.length>1) navStack.pop();
+  const prev = navStack[navStack.length-1] || 'screen-home';
+  showOnly(prev);
+  updateNavHighlight(prev);
+  renderCurrent(prev);
+}
+function goHome(){ navStack=['screen-home']; showOnly('screen-home'); updateNavHighlight('screen-home'); renderHome(); }
+
+/* ===================== HOME ===================== */
+
+function renderHome(){
+  const heroEl = document.getElementById('home-hero');
+  heroEl.className = 'hero-scene tall '+heroSceneForNow();
+  heroEl.innerHTML = `
+    <div class="grain"></div>
+    <div class="hero-scrim"></div>
+    <button class="floating-btn" style="top:18px;right:18px;" onclick="goTo('screen-profile')">${icon('meditate',18).replace('20','18')}</button>
+    <div class="hero-overlay-text">
+      <div class="hero-logo">🪷 АТМА</div>
+      <h2 id="home-greeting-text"></h2>
+    </div>
+  `;
+  const hour = new Date().getHours();
+  const greeting = hour<5?'Доброй ночи':hour<12?'Доброе утро':hour<18?'Добрый день':'Добрый вечер';
+  document.getElementById('home-greeting-text').textContent = greeting+', '+STATE.name;
+  const el = document.getElementById('home-body');
+  const todaysAffirmation = pickDailyAffirmation();
+  const showIntention = STATE.intention && STATE.intention.date===todayStr() && STATE.intention.text;
+  el.innerHTML = `
+    <div class="bento-grid">
+      <div class="bento bento-wide card glow-card">
+        <p class="streak-line">🔥 ${STATE.streak} ${pluralDays(STATE.streak)} подряд</p>
+        <div class="card-label">Аффирмация дня</div>
+        <p class="big-affirmation">«${todaysAffirmation}»</p>
+      </div>
+      ${showIntention? `<div class="bento bento-wide card intention-card"><div class="card-label">🌙 Намерение дня</div><p>${STATE.intention.text}</p></div>` : ''}
+      <div class="bento card quick-tile" onclick="goTo('screen-plan')">
+        <div class="quick-icon-circle" style="background:#f4e0c3;color:#a06a1f;">${icon('target')}</div>
+        <div class="quick-tile-title">Мой план</div>
+      </div>
+      <div class="bento card quick-tile" onclick="goTo('screen-journal')">
+        <div class="quick-icon-circle" style="background:#e2e7ea;color:#4c6068;">${icon('book')}</div>
+        <div class="quick-tile-title">Дневник</div>
+      </div>
+      <div class="bento-row-3">
+        <div class="quick-small" onclick="navRoot('screen-meditations')">
+          <div class="quick-icon-circle" style="background:#ffe3c2;color:#b5651d;">${icon('meditate')}</div>
+          <span>Медитации</span>
+        </div>
+        <div class="quick-small" onclick="navRoot('screen-breathing')">
+          <div class="quick-icon-circle" style="background:#cdeceb;color:#2f7d78;">${icon('wind')}</div>
+          <span>Дыхание</span>
+        </div>
+        <div class="quick-small" onclick="navRoot('screen-affirmations')">
+          <div class="quick-icon-circle" style="background:#f7e0ee;color:#a4488a;">${icon('sparkle')}</div>
+          <span>Аффирмации</span>
+        </div>
+      </div>
+      <div class="bento card quick-tile" onclick="goTo('screen-money-list')">
+        <div class="quick-icon-circle" style="background:#f3dca3;color:#8a5a10;">${icon('coin')}</div>
+        <div class="quick-tile-title">Изобилие</div>
+      </div>
+      <div class="bento card quick-tile" onclick="goTo('screen-mindfulness-list')">
+        <div class="quick-icon-circle" style="background:#d9e3c9;color:#4c6b34;">${icon('compass')}</div>
+        <div class="quick-tile-title">Осознанность</div>
+      </div>
+      <div class="bento bento-wide card quick-tile" onclick="goTo('screen-spiritual-list')">
+        <div class="quick-icon-circle" style="background:#ded6ee;color:#6650a3;">${icon('moon')}</div>
+        <div class="quick-tile-title">Духовные практики</div>
+      </div>
+    </div>
+  `;
+}
+
+/* ===================== MEDITATIONS ===================== */
+
+function renderMeditationsList(){
+  const el = document.getElementById('meditations-body');
+  el.innerHTML = MEDITATIONS.map(m=>`
+    <div class="list-card" onclick="openMeditation('${m.id}')">
+      <div class="scene-thumb ${m.scene}"><div class="grain"></div><span class="thumb-badge">${m.icon}</span></div>
+      <div class="list-info"><p class="list-title">${m.title}</p><p class="list-sub">${m.category} · ${m.duration} мин</p></div>
+      <div class="list-arrow">→</div>
+    </div>`).join('');
+}
+
+let currentMeditation=null, medTimer=null, medElapsed=0, medTotal=0, medPlaying=false;
+function openMeditation(id){
+  currentMeditation = MEDITATIONS.find(m=>m.id===id);
+  clearInterval(medTimer);
+  medElapsed=0; medTotal=currentMeditation.duration*60; medPlaying=false;
+  goTo('screen-meditation-player');
+}
+function renderMeditationPlayerUI(){
+  const m = currentMeditation;
+  document.getElementById('med-hero').className = 'hero-scene '+m.scene;
+  document.getElementById('med-step-badge').textContent = `1/${m.steps.length}`;
+  const el = document.getElementById('meditation-player-body');
+  el.innerHTML = `
+    <h2>${m.title}</h2>
+    <p class="meta-line">${m.category} · ${m.duration} мин</p>
+    <div class="ring-wrap">
+      <div class="ring" id="med-ring" style="--pct:0"></div>
+      <div class="ring-inner" id="med-ring-inner">
+        <button class="med-play-btn" id="med-play-btn" onclick="toggleMedPlay()">▶</button>
+        <div class="med-timer" id="med-timer">${formatTime(medTotal)}</div>
+      </div>
+    </div>
+    <div class="card step-card"><p id="med-step">${m.steps[0]}</p></div>
+    <button class="link-btn center-link" onclick="finishMeditation()">Завершить</button>
+  `;
+}
+function toggleMedPlay(){ medPlaying ? pauseMed() : playMed(); }
+function playMed(){
+  medPlaying=true;
+  document.getElementById('med-play-btn').textContent='❚❚';
+  medTimer = setInterval(()=>{
+    medElapsed++;
+    if(medElapsed>=medTotal){ finishMeditation(); return; }
+    updateMedUI();
+  },1000);
+}
+function pauseMed(){
+  medPlaying=false;
+  clearInterval(medTimer);
+  const btn=document.getElementById('med-play-btn');
+  if(btn) btn.textContent='▶';
+}
+function updateMedUI(){
+  const remaining = medTotal-medElapsed;
+  const timerEl=document.getElementById('med-timer');
+  if(timerEl) timerEl.textContent = formatTime(remaining);
+  const ringEl=document.getElementById('med-ring');
+  if(ringEl) ringEl.style.setProperty('--pct', (medElapsed/medTotal*100).toFixed(1));
+  const stepDur = medTotal/currentMeditation.steps.length;
+  const idx = Math.min(currentMeditation.steps.length-1, Math.floor(medElapsed/stepDur));
+  const stepEl=document.getElementById('med-step');
+  if(stepEl) stepEl.textContent = currentMeditation.steps[idx];
+  const badgeEl=document.getElementById('med-step-badge');
+  if(badgeEl) badgeEl.textContent = `${idx+1}/${currentMeditation.steps.length}`;
+}
+function finishMeditation(){
+  clearInterval(medTimer); medPlaying=false;
+  STATE.totalMeditations++;
+  markActivity(); saveState();
+  alert('Медитация завершена 🙏');
+  closeMeditationPlayer();
+}
+function closeMeditationPlayer(){
+  clearInterval(medTimer); medPlaying=false;
+  goBack();
+}
+
+/* ===================== BREATHING ===================== */
+
+function renderBreathingList(){
+  const el = document.getElementById('breathing-body');
+  el.innerHTML = BREATHING.map(b=>`
+    <div class="list-card" onclick="openBreathing('${b.id}')">
+      <div class="scene-thumb ${b.scene}"><div class="grain"></div><span class="thumb-badge">🌬</span></div>
+      <div class="list-info"><p class="list-title">${b.title}</p><p class="list-sub">${b.desc}</p></div>
+      <div class="list-arrow">→</div>
+    </div>`).join('');
+}
+
+let currentBreath=null, breathTimer=null, breathPlaying=false, breathRound=0, breathRoundsTotal=6, phaseIndex=0, phaseTimeLeft=0;
+const PHASE_NAMES=['Вдох','Задержка','Выдох','Задержка'];
+function openBreathing(id){
+  currentBreath = BREATHING.find(b=>b.id===id);
+  clearInterval(breathTimer);
+  breathPlaying=false; breathRound=0; phaseIndex=0; phaseTimeLeft=0;
+  breathRoundsTotal = currentBreath.rounds;
+  goTo('screen-breathing-session');
+}
+function renderBreathingSessionUI(){
+  const b = currentBreath;
+  document.getElementById('breath-hero').className = 'hero-scene '+b.scene;
+  document.getElementById('breath-round-badge').textContent = `0/${breathRoundsTotal}`;
+  const el = document.getElementById('breathing-session-body');
+  el.innerHTML = `
+    <h2>${b.title}</h2>
+    <p class="meta-line">${b.desc}</p>
+    <div class="rounds-select" id="rounds-select">
+      ${[4,6,10,15].map(r=>`<button class="chip ${breathRoundsTotal===r?'chip-active':''}" onclick="setBreathRounds(${r})">${r} циклов</button>`).join('')}
+    </div>
+    <div class="breath-phase-label" id="breath-phase-label">Готов(а)?</div>
+    <div class="ring-wrap">
+      <div class="ring" id="breath-ring" style="--pct:0"></div>
+      <div class="ring-inner"><div class="breath-circle" id="breath-circle"></div></div>
+    </div>
+    <button class="med-play-btn standalone" id="breath-play-btn" onclick="toggleBreathPlay()">▶</button>
+    <button class="link-btn center-link" onclick="finishBreathing()">Завершить</button>
+  `;
+}
+function setBreathRounds(r){
+  if(breathPlaying) return;
+  breathRoundsTotal=r;
+  renderBreathingSessionUI();
+}
+function toggleBreathPlay(){ breathPlaying ? pauseBreath() : startBreath(); }
+function getPhaseDuration(i){ return currentBreath.pattern[i]; }
+function nextPhaseIndex(i){
+  let n=(i+1)%4, guard=0;
+  while(getPhaseDuration(n)===0 && guard<4){ n=(n+1)%4; guard++; }
+  return n;
+}
+function startBreath(){
+  breathPlaying=true;
+  document.getElementById('breath-play-btn').textContent='❚❚';
+  if(phaseTimeLeft<=0){ phaseTimeLeft=getPhaseDuration(phaseIndex); }
+  animateCirclePhase();
+  updateBreathUI();
+  breathTimer = setInterval(()=>{
+    phaseTimeLeft--;
+    if(phaseTimeLeft<=0){
+      phaseIndex = nextPhaseIndex(phaseIndex);
+      if(phaseIndex===0){
+        breathRound++;
+        if(breathRound>=breathRoundsTotal){ finishBreathing(); return; }
+      }
+      phaseTimeLeft = getPhaseDuration(phaseIndex);
+      animateCirclePhase();
+    }
+    updateBreathUI();
+  },1000);
+}
+function pauseBreath(){
+  breathPlaying=false; clearInterval(breathTimer);
+  const btn=document.getElementById('breath-play-btn');
+  if(btn) btn.textContent='▶';
+}
+function animateCirclePhase(){
+  const circle=document.getElementById('breath-circle');
+  if(!circle) return;
+  const dur=Math.max(getPhaseDuration(phaseIndex),1);
+  circle.style.transition=`transform ${dur}s linear`;
+  if(phaseIndex===0){ circle.style.transform='scale(1.7)'; }
+  else if(phaseIndex===2){ circle.style.transform='scale(0.65)'; }
+  const label=document.getElementById('breath-phase-label');
+  if(label) label.textContent = PHASE_NAMES[phaseIndex];
+}
+function updateBreathUI(){
+  const roundEl=document.getElementById('breath-round-badge');
+  if(roundEl) roundEl.textContent = `${Math.min(breathRound,breathRoundsTotal)}/${breathRoundsTotal}`;
+  const ringEl=document.getElementById('breath-ring');
+  if(ringEl) ringEl.style.setProperty('--pct', (breathRound/breathRoundsTotal*100).toFixed(1));
+}
+function finishBreathing(){
+  clearInterval(breathTimer); breathPlaying=false;
+  STATE.totalBreathing++;
+  markActivity(); saveState();
+  alert('Дыхательная практика завершена 🌬');
+  closeBreathingSession();
+}
+function closeBreathingSession(){
+  clearInterval(breathTimer); breathPlaying=false; phaseTimeLeft=0;
+  goBack();
+}
+
+/* ===================== AFFIRMATIONS ===================== */
+
+let currentAffirmCategory='self_love';
+let currentAffirmIndex=0;
+function renderAffirmations(){
+  const el = document.getElementById('affirmations-body');
+  const cats = Object.keys(AFFIRMATIONS);
+  const chips = cats.map(k=>`<button class="chip ${currentAffirmCategory===k?'chip-active':''}" onclick="setAffirmCategory('${k}')">${AFFIRMATIONS[k].icon} ${AFFIRMATIONS[k].title}</button>`).join('')
+    + `<button class="chip ${currentAffirmCategory==='favorites'?'chip-active':''}" onclick="setAffirmCategory('favorites')">⭐ Избранное</button>`;
+  let bigCardHtml='', listHtml='';
+  if(currentAffirmCategory==='favorites'){
+    const favs = STATE.favorites;
+    if(!favs.length){ listHtml = '<p class="empty-hint">Пока нет избранных аффирмаций — нажми на сердечко у понравившейся.</p>'; }
+    else {
+      listHtml = favs.map(key=>{
+        const [cat,idx]=key.split('|');
+        const text = AFFIRMATIONS[cat].items[Number(idx)];
+        return `<div class="affirm-list-item"><span>${text}</span><button class="fav-active" onclick="toggleFavorite('${cat}',${idx})">♥</button></div>`;
+      }).join('');
+    }
+  } else {
+    const cat = AFFIRMATIONS[currentAffirmCategory];
+    const text = cat.items[currentAffirmIndex];
+    const key = currentAffirmCategory+'|'+currentAffirmIndex;
+    const isFav = STATE.favorites.includes(key);
+    bigCardHtml = `
+      <div class="affirm-card"><p>«${text}»</p></div>
+      <div class="affirm-actions" style="display:flex;gap:10px;">
+        <button class="icon-btn ${isFav?'fav-active':''}" onclick="toggleFavorite('${currentAffirmCategory}',${currentAffirmIndex})">${isFav?'♥':'♡'}</button>
+        <button class="btn btn-primary" style="flex:1;" onclick="shuffleAffirmation()">Другая аффирмация</button>
+      </div>
+    `;
+    listHtml = cat.items.map((t,i)=>{
+      const k = currentAffirmCategory+'|'+i;
+      const fav = STATE.favorites.includes(k);
+      return `<div class="affirm-list-item"><span>${t}</span><button class="${fav?'fav-active':''}" onclick="toggleFavorite('${currentAffirmCategory}',${i})">${fav?'♥':'♡'}</button></div>`;
+    }).join('');
+  }
+  el.innerHTML = `<div class="chip-grid">${chips}</div>${bigCardHtml}<div class="section-sub">Все аффирмации</div>${listHtml}`;
+}
+function setAffirmCategory(k){
+  currentAffirmCategory=k;
+  currentAffirmIndex = hashCode(todayStr()+k) % (AFFIRMATIONS[k]? AFFIRMATIONS[k].items.length : 1);
+  renderAffirmations();
+}
+function shuffleAffirmation(){
+  const len = AFFIRMATIONS[currentAffirmCategory].items.length;
+  let next;
+  do { next = Math.floor(Math.random()*len); } while(next===currentAffirmIndex && len>1);
+  currentAffirmIndex = next;
+  renderAffirmations();
+}
+function toggleFavorite(cat, idx){
+  const key = cat+'|'+idx;
+  const i = STATE.favorites.indexOf(key);
+  if(i>-1) STATE.favorites.splice(i,1); else STATE.favorites.push(key);
+  saveState();
+  renderAffirmations();
+}
+
+/* ===================== PRACTICES HUB & LISTS ===================== */
+
+function renderPracticesHub(){
+  const el = document.getElementById('practices-body');
+  el.innerHTML = `
+    <div class="hub-grid">
+      <div class="list-card" onclick="goTo('screen-plan')"><div class="scene-thumb scene-golden"><div class="grain"></div><span class="thumb-badge">🎯</span></div><div class="list-info"><p class="list-title">План саморазвития</p><p class="list-sub">Персональный план по твоим целям</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-money-list')"><div class="scene-thumb scene-goldlight"><div class="grain"></div><span class="thumb-badge">💰</span></div><div class="list-info"><p class="list-title">Денежные практики</p><p class="list-sub">Изобилие и денежный поток</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-mindfulness-list')"><div class="scene-thumb scene-forest"><div class="grain"></div><span class="thumb-badge">🧭</span></div><div class="list-info"><p class="list-title">Осознанность и поиск себя</p><p class="list-sub">Дневники, рефлексия, ценности</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-spiritual-list')"><div class="scene-thumb scene-rainbow"><div class="grain"></div><span class="thumb-badge">🌙</span></div><div class="list-info"><p class="list-title">Духовные практики</p><p class="list-sub">Чакры, луна, интуиция</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-journal')"><div class="scene-thumb scene-cloud"><div class="grain"></div><span class="thumb-badge">📔</span></div><div class="list-info"><p class="list-title">Дневник</p><p class="list-sub">Ежедневные заметки и настроение</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-profile')"><div class="scene-thumb scene-sunrise"><div class="grain"></div><span class="thumb-badge">⚙️</span></div><div class="list-info"><p class="list-title">Профиль и статистика</p><p class="list-sub">Серия дней, прогресс, настройки</p></div><div class="list-arrow">→</div></div>
+    </div>
+  `;
+}
+
+const LIST_BODY_IDS = {money:'money-list-body', mindfulness:'mindfulness-list-body', spiritual:'spiritual-list-body'};
+function renderGenericList(cat){
+  const el = document.getElementById(LIST_BODY_IDS[cat]);
+  el.innerHTML = PRACTICE_DATA[cat].map(p=>`
+    <div class="list-card" onclick="goToPractice('${cat}','${p.id}')">
+      <div class="scene-thumb ${p.scene}"><div class="grain"></div><span class="thumb-badge">${p.icon}</span></div>
+      <div class="list-info"><p class="list-title">${p.title}</p><p class="list-sub">${p.desc}</p></div>
+      <div class="list-arrow">→</div>
+    </div>`).join('');
+}
+
+let currentPracticeCategory=null, currentPracticeId=null;
+function goToPractice(cat,id){ currentPracticeCategory=cat; currentPracticeId=id; goTo('screen-practice-detail'); }
+function findPractice(){ return PRACTICE_DATA[currentPracticeCategory].find(p=>p.id===currentPracticeId); }
+function practiceKey(){ return currentPracticeCategory+'_'+currentPracticeId; }
+
+function renderPracticeDetail(){
+  const p = findPractice();
+  document.getElementById('practice-title').textContent = p.title;
+  const el = document.getElementById('practice-body');
+  let html = `<p class="practice-desc">${p.desc}</p>`;
+  if(p.type==='steps'){
+    html += '<ol class="steps-list">' + p.steps.map(s=>`<li>${s}</li>`).join('') + '</ol>';
+    html += `<button class="btn btn-primary" onclick="completePractice()">Отметить выполненным</button>`;
+  } else if(p.type==='journal'){
+    html += p.prompts.map((pr,i)=>`<div class="field"><label>${pr}</label><textarea id="pj-${i}"></textarea></div>`).join('');
+    html += `<button class="btn btn-primary" onclick="saveJournalPractice(${p.prompts.length})">Сохранить</button>`;
+    html += renderJournalPracticeHistory();
+  } else if(p.type==='challenge21'){
+    html += renderChallenge21();
+  } else if(p.type==='wheel'){
+    html += renderWheel();
+  } else if(p.type==='values'){
+    html += renderValues();
+  } else if(p.type==='chakras'){
+    html += renderChakras();
+  } else if(p.type==='intention'){
+    html += renderIntention();
+  } else if(p.type==='meditation-link'){
+    html += `<button class="btn btn-primary" onclick="openMeditation('${p.meditationId}')">Начать медитацию</button>`;
+  }
+  el.innerHTML = html;
+}
+function completePractice(){
+  const key = practiceKey();
+  STATE.practiceCompletions[key] = (STATE.practiceCompletions[key]||0)+1;
+  markActivity(); saveState();
+  alert('Готово! Ты молодец 🌟');
+}
+function saveJournalPractice(n){
+  const answers=[];
+  for(let i=0;i<n;i++) answers.push(val('pj-'+i));
+  const key = practiceKey();
+  if(!STATE.practiceJournals[key]) STATE.practiceJournals[key]=[];
+  STATE.practiceJournals[key].unshift({date:todayStr(), answers});
+  markActivity(); saveState();
+  alert('Сохранено 📓');
+  renderPracticeDetail();
+}
+function renderJournalPracticeHistory(){
+  const key = practiceKey();
+  const entries = STATE.practiceJournals[key]||[];
+  if(!entries.length) return '';
+  return '<div class="section-sub">История</div>' + entries.slice(0,5).map(e=>`
+    <div class="journal-entry"><div class="je-head">${formatDate(e.date)}</div>${e.answers.filter(Boolean).map(a=>`<p>${a}</p>`).join('')}</div>
+  `).join('');
+}
+function renderChallenge21(){
+  const c = STATE.challenge21;
+  const pct = Math.round(c.checkedDays.length/21*100);
+  const items = MONEY_CHALLENGE_TASKS.map((t,i)=>{
+    const done = c.checkedDays.includes(i);
+    return `<div class="challenge-item ${done?'done':''}" onclick="toggleChallengeDay(${i})"><span class="day-num">День ${i+1}</span><span class="day-task">${t}</span><span class="check">${done?'✓':''}</span></div>`;
+  }).join('');
+  return `
+    <div class="ring-wrap">
+      <div class="ring" style="--pct:${pct}"></div>
+      <div class="ring-inner"><div class="ring-value">${c.checkedDays.length}/21</div><div class="ring-label">дней пройдено</div></div>
+    </div>
+    <div class="challenge-grid">${items}</div>`;
+}
+function toggleChallengeDay(i){
+  const idx = STATE.challenge21.checkedDays.indexOf(i);
+  if(idx>-1) STATE.challenge21.checkedDays.splice(idx,1); else STATE.challenge21.checkedDays.push(i);
+  if(!STATE.challenge21.startedAt) STATE.challenge21.startedAt = todayStr();
+  markActivity(); saveState();
+  renderPracticeDetail();
+}
+function renderWheel(){
+  const current = (STATE.wheelOfLife && STATE.wheelOfLife.values) || {};
+  const rows = WHEEL_AREAS.map(a=>{
+    const slug = a.replace(/\s+/g,'_');
+    const v = current[a]!==undefined ? current[a] : 5;
+    return `<div class="wheel-row"><div class="wheel-label">${a} <b id="wv-${slug}">${v}</b></div><input type="range" min="0" max="10" value="${v}" oninput="document.getElementById('wv-${slug}').textContent=this.value" id="wheel-${slug}"></div>`;
+  }).join('');
+  const note = (STATE.wheelOfLife && STATE.wheelOfLife.note) || '';
+  return `<div class="wheel-list">${rows}</div><div class="field"><label>Какая сфера сейчас нуждается в внимании и почему?</label><textarea id="wheel-note">${note}</textarea></div><button class="btn btn-primary" onclick="saveWheel()">Сохранить</button>`;
+}
+function saveWheel(){
+  const values={};
+  WHEEL_AREAS.forEach(a=>{ const slug=a.replace(/\s+/g,'_'); values[a]=Number(val('wheel-'+slug)); });
+  STATE.wheelOfLife = {date: todayStr(), values, note: val('wheel-note')};
+  markActivity(); saveState();
+  alert('Сохранено!');
+}
+function renderValues(){
+  const selected = STATE.values.selected || [];
+  const chips = VALUES_LIST.map(v=>`<button class="chip ${selected.includes(v)?'chip-active':''}" onclick="toggleValue('${v}')">${v}</button>`).join('');
+  return `<p>Выбери до 5 главных ценностей:</p><div class="chip-grid">${chips}</div><div class="field"><label>Как ты можешь жить в большем согласии с этими ценностями?</label><textarea id="values-note">${STATE.values.note||''}</textarea></div><button class="btn btn-primary" onclick="saveValuesNote()">Сохранить</button>`;
+}
+function toggleValue(v){
+  const sel = STATE.values.selected;
+  const idx = sel.indexOf(v);
+  if(idx>-1){ sel.splice(idx,1); }
+  else { if(sel.length>=5){ alert('Можно выбрать не более 5 ценностей'); return; } sel.push(v); }
+  saveState(); renderPracticeDetail();
+}
+function saveValuesNote(){
+  STATE.values.note = val('values-note');
+  markActivity(); saveState();
+  alert('Сохранено!');
+}
+function renderChakras(){
+  return CHAKRAS.map(c=>`<details class="chakra-card" style="border-left:4px solid ${c.color}"><summary><span class="chakra-dot" style="background:${c.color}"></span> ${c.name} — ${c.ru}</summary><p><b>Расположение:</b> ${c.location}</p><p><b>Тема:</b> ${c.theme}</p><p><b>Аффирмация:</b> «${c.affirmation}»</p><p><b>Практика:</b> ${c.practice}</p></details>`).join('')
+    + `<button class="btn btn-primary" onclick="openMeditation('m8')">Медитация по чакрам</button>`;
+}
+function renderIntention(){
+  const today = todayStr();
+  const current = (STATE.intention.date===today) ? STATE.intention.text : '';
+  const chips = INTENTION_SUGGESTIONS.map(s=>`<button class="chip" onclick="setIntentionText(this)" data-text="${s}">${s}</button>`).join('');
+  return `<div class="chip-grid">${chips}</div><div class="field"><label>Моё намерение на сегодня</label><textarea id="intention-text">${current}</textarea></div><button class="btn btn-primary" onclick="saveIntention()">Сохранить намерение</button>`;
+}
+function setIntentionText(btn){
+  document.getElementById('intention-text').value = btn.getAttribute('data-text');
+}
+function saveIntention(){
+  STATE.intention = {date: todayStr(), text: val('intention-text')};
+  markActivity(); saveState();
+  alert('Намерение установлено на сегодня 🌙');
+}
+
+/* ===================== PLAN ===================== */
+
+let wizardSelected=[], wizardTime='';
+function renderPlanScreen(){
+  const el = document.getElementById('plan-body');
+  el.innerHTML = STATE.plan ? renderPlanView() : renderPlanWizard();
+}
+function renderPlanWizard(){
+  const areas = Object.keys(AREA_CONFIG);
+  const chips = areas.map(k=>`<button class="chip ${wizardSelected.includes(k)?'chip-active':''}" onclick="toggleWizardArea('${k}')">${AREA_CONFIG[k].icon} ${AREA_CONFIG[k].label}</button>`).join('');
+  const timeChips = ['5-10 мин','15-20 мин','30+ мин'].map(t=>`<button class="chip ${wizardTime===t?'chip-active':''}" onclick="setWizardTime('${t}')">${t}</button>`).join('');
+  return `
+    <h3>Выбери, над чем хочешь работать</h3>
+    <div class="chip-grid">${chips}</div>
+    <div class="section-sub">Сколько времени готов(а) уделять в день?</div>
+    <div class="chip-grid">${timeChips}</div>
+    <button class="btn btn-primary" onclick="generatePlan()">Составить план на неделю</button>
+  `;
+}
+function toggleWizardArea(k){
+  const i = wizardSelected.indexOf(k);
+  if(i>-1) wizardSelected.splice(i,1); else wizardSelected.push(k);
+  renderPlanScreen();
+}
+function setWizardTime(t){ wizardTime=t; renderPlanScreen(); }
+function generatePlan(){
+  if(!wizardSelected.length){ alert('Выбери хотя бы одну сферу для работы'); return; }
+  if(!wizardTime){ alert('Выбери, сколько времени готов(а) уделять в день'); return; }
+  const days = WEEKDAYS.map((wd,i)=>{
+    const areaKey = wizardSelected[i % wizardSelected.length];
+    return { weekday: wd, area: areaKey, tasks:{
+      meditation:{done:false}, breathing:{done:false}, affirmation:{done:false}, practice:{done:false}
+    }};
+  });
+  STATE.plan = { areas: wizardSelected.slice(), timeCommitment: wizardTime, createdAt: todayStr(), days };
+  markActivity(); saveState();
+  renderPlanScreen();
+}
+const PLAN_TASK_LABELS = {meditation:'Медитация', breathing:'Дыхание', affirmation:'Аффирмация', practice:'Практика'};
+function renderPlanView(){
+  const plan = STATE.plan;
+  let doneCount=0, totalCount=0;
+  const daysHtml = plan.days.map((d,di)=>{
+    const cfg = AREA_CONFIG[d.area];
+    const taskRows = Object.entries(d.tasks).map(([key,t])=>{
+      totalCount++; if(t.done) doneCount++;
+      return `<div class="plan-task ${t.done?'done':''}">
+        <label><input type="checkbox" ${t.done?'checked':''} onchange="togglePlanTask(${di},'${key}')"> ${PLAN_TASK_LABELS[key]}</label>
+        <button class="link-btn" onclick="openPlanTask(${di},'${key}')">Открыть →</button>
+      </div>`;
+    }).join('');
+    return `<details class="plan-day" ${di===0?'open':''}><summary>${d.weekday} — ${cfg.icon} ${cfg.label}</summary>${taskRows}</details>`;
+  }).join('');
+  const pct = totalCount? Math.round(doneCount/totalCount*100):0;
+  return `
+    <div class="ring-wrap">
+      <div class="ring" style="--pct:${pct}"></div>
+      <div class="ring-inner"><div class="ring-value">${pct}%</div><div class="ring-label">за неделю</div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><b>${doneCount}</b><span>Выполнено</span></div>
+      <div class="stat"><b>${totalCount-doneCount}</b><span>Осталось</span></div>
+      <div class="stat"><b>${totalCount}</b><span>Всего</span></div>
+    </div>
+    <div class="section-sub">Дни недели</div>
+    ${daysHtml}
+    <button class="btn btn-outline" onclick="resetPlan()">Составить новый план</button>
+  `;
+}
+function togglePlanTask(di,key){
+  const t = STATE.plan.days[di].tasks[key];
+  t.done = !t.done;
+  if(t.done) markActivity();
+  saveState();
+  renderPlanScreen();
+}
+function openPlanTask(di,key){
+  const d = STATE.plan.days[di];
+  const cfg = AREA_CONFIG[d.area];
+  if(key==='meditation') openMeditation(cfg.meditation);
+  else if(key==='breathing') openBreathing(cfg.breathing);
+  else if(key==='affirmation'){ currentAffirmCategory=cfg.affirm; currentAffirmIndex=0; goTo('screen-affirmations'); }
+  else if(key==='practice'){ goToPractice(cfg.practiceCat, cfg.practiceId); }
+}
+function resetPlan(){
+  if(confirm('Составить новый план вместо текущего?')){
+    STATE.plan=null; wizardSelected=[]; wizardTime='';
+    saveState();
+    renderPlanScreen();
+  }
+}
+
+/* ===================== JOURNAL ===================== */
+
+function renderJournal(){
+  const el = document.getElementById('journal-body');
+  const moods=['😊','🙂','😐','😔','😢'];
+  el.innerHTML = `
+    <div class="field"><label>Настроение сегодня</label><div class="mood-row">${moods.map(m=>`<button class="mood-btn ${STATE.todayMood===m?'active':''}" onclick="setMood('${m}')">${m}</button>`).join('')}</div></div>
+    <div class="field"><label>3 вещи, за которые я благодарен(на)</label>
+      <input type="text" id="j-g1" placeholder="1...">
+      <input type="text" id="j-g2" placeholder="2..." style="margin-top:8px;">
+      <input type="text" id="j-g3" placeholder="3..." style="margin-top:8px;">
+    </div>
+    <div class="field"><label>Что получилось сегодня?</label><textarea id="j-win"></textarea></div>
+    <div class="field"><label>Чему я научился(лась)?</label><textarea id="j-lesson"></textarea></div>
+    <button class="btn btn-primary" onclick="saveJournalEntry()">Сохранить запись</button>
+    <div class="section-sub">История</div>
+    <div id="journal-history">${renderJournalEntries()}</div>
+  `;
+}
+function setMood(m){ STATE.todayMood=m; saveState(); renderJournal(); }
+function saveJournalEntry(){
+  const entry = {
+    date: todayStr(), mood: STATE.todayMood||'🙂',
+    gratitude:[val('j-g1'),val('j-g2'),val('j-g3')].filter(Boolean),
+    win: val('j-win'), lesson: val('j-lesson')
+  };
+  STATE.journalEntries.unshift(entry);
+  STATE.totalJournal++;
+  markActivity(); saveState();
+  alert('Запись сохранена 📖');
+  renderJournal();
+}
+function renderJournalEntries(){
+  if(!STATE.journalEntries.length) return '<p class="empty-hint">Пока нет записей — начни сегодня.</p>';
+  return STATE.journalEntries.slice(0,10).map(e=>`
+    <div class="journal-entry"><div class="je-head">${e.mood} ${formatDate(e.date)}</div>
+      ${e.win?`<p><b>Победа:</b> ${e.win}</p>`:''}
+      ${e.lesson?`<p><b>Урок:</b> ${e.lesson}</p>`:''}
+      ${e.gratitude.length?`<p><b>Благодарность:</b> ${e.gratitude.join(', ')}</p>`:''}
+    </div>`).join('');
+}
+
+/* ===================== PROFILE ===================== */
+
+function renderProfile(){
+  const el = document.getElementById('profile-body');
+  el.innerHTML = `
+    <div class="profile-header"><div class="avatar">🧘</div><input id="profile-name" value="${STATE.name}" onchange="updateName()"></div>
+    <div class="card">
+      <div class="stat-row" style="margin-top:0;padding-top:0;border-top:none;">
+        <div class="stat"><b>${STATE.streak}🔥</b><span>${pluralDays(STATE.streak)}</span></div>
+        <div class="stat"><b>${STATE.totalMeditations}</b><span>Медитаций</span></div>
+        <div class="stat"><b>${STATE.totalBreathing}</b><span>Дыхания</span></div>
+        <div class="stat"><b>${STATE.totalJournal}</b><span>Записей</span></div>
+      </div>
+    </div>
+    <button class="btn btn-outline" onclick="resetAllData()">Сбросить весь прогресс</button>
+  `;
+}
+function updateName(){ STATE.name = val('profile-name') || 'Друг'; saveState(); }
+function resetAllData(){
+  if(confirm('Точно сбросить весь прогресс? Это действие нельзя отменить.')){
+    localStorage.removeItem(STORAGE_KEY);
+    STATE = defaultState();
+    wizardSelected=[]; wizardTime='';
+    goHome();
+  }
+}
+
+/* ===================== INIT ===================== */
+
+document.addEventListener('DOMContentLoaded', ()=>{
+  buildGrainTexture();
+  loadState();
+  if(STATE.plan) wizardSelected = STATE.plan.areas.slice();
+  renderHome();
+});
+</script>
+</body>
+</html>
