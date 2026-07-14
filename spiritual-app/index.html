@@ -5,30 +5,35 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>Атма — путь к себе</title>
 <style>
+  @property --pct{
+    syntax:'<number>';
+    inherits:false;
+    initial-value:0;
+  }
   :root{
-    --bg-a:#e3e9ea;
-    --bg-b:#ece2cf;
-    --bg-c:#f4ede0;
-    --ink:#332f28;
-    --ink-soft:#7a7466;
-    --ink-faint:#a39c8c;
-    --card:rgba(255,255,255,0.6);
-    --card-solid:#fbf9f4;
-    --card-border:rgba(255,255,255,0.75);
-    --line:rgba(70,55,25,0.08);
-    --gold:#c9a768;
-    --gold-soft:#e6d3a3;
-    --gold-deep:#a6803f;
-    --sage:#8fa377;
-    --rose:#cf9e9a;
-    --shadow-soft:0 18px 40px rgba(70,55,25,0.12);
-    --shadow-card:0 10px 24px rgba(70,55,25,0.08);
+    --bg-0:#f8f4ec;
+    --bg-1:#efe4d1;
+    --bg-2:#e7dcc8;
+    --ink:#201d19;
+    --ink-soft:rgba(32,29,25,0.62);
+    --ink-faint:rgba(32,29,25,0.36);
+    --card-solid:#fbf8f2;
+    --glass-strong:rgba(255,255,255,0.68);
+    --line:rgba(32,29,25,0.08);
+    --c-coral:#ff8a65;
+    --c-gold:#f2b84b;
+    --c-violet:#8a7ff0;
+    --c-rose:#ef8fae;
+    --c-sage:#6fa06f;
+    --shadow-card:0 10px 26px rgba(32,29,25,0.08);
+    --shadow-glow:0 26px 60px -14px rgba(138,127,240,0.32), 0 8px 22px rgba(32,29,25,0.07);
+    --grain-tex:none;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;height:100%;}
   body{
-    font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
-    background:linear-gradient(160deg, var(--bg-a) 0%, var(--bg-b) 55%, var(--bg-c) 100%);
+    font-family:-apple-system,'SF Pro Display','Segoe UI Variable','Segoe UI',system-ui,sans-serif;
+    background:linear-gradient(160deg, var(--bg-0) 0%, var(--bg-1) 55%, var(--bg-2) 100%);
     color:var(--ink);
     min-height:100vh;
     display:flex;
@@ -36,7 +41,7 @@
     justify-content:center;
     padding:24px 0;
   }
-  h1,h2,h3{font-family:Georgia,'Times New Roman',serif;font-weight:600;margin:0 0 6px;text-wrap:balance;}
+  h1,h2,h3{font-weight:800;letter-spacing:-0.02em;margin:0 0 6px;text-wrap:balance;}
   p{line-height:1.5;}
   .app-shell{
     width:430px;
@@ -47,7 +52,7 @@
     background:var(--card-solid);
     border-radius:44px;
     border:1px solid rgba(255,255,255,0.6);
-    box-shadow:var(--shadow-soft), inset 0 0 0 6px rgba(255,255,255,0.4);
+    box-shadow:0 30px 70px rgba(32,29,25,0.22), inset 0 0 0 6px rgba(255,255,255,0.4);
     overflow:hidden;
   }
   @media (max-width:460px){
@@ -55,190 +60,250 @@
     .app-shell{width:100vw;height:100vh;max-height:100vh;border-radius:0;border:none;box-shadow:none;}
   }
   .screens{position:absolute;inset:0;bottom:100px;}
-  .screen{position:absolute;inset:0;display:none;flex-direction:column;}
+  .screen{position:absolute;inset:0;display:none;flex-direction:column;opacity:0;transform:translateY(6px);}
   .screen.active{display:flex;}
+  @media (prefers-reduced-motion: no-preference){
+    .screen.screen-enter{opacity:1;transform:translateY(0);transition:opacity .3s ease, transform .3s ease;}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .screen{opacity:1;transform:none;}
+  }
   .header{
     display:flex;align-items:center;gap:10px;
     padding:22px 20px 14px;
     flex-shrink:0;
   }
   .header h1{font-size:19px;margin:0;color:var(--ink);}
-  .header .logo{font-size:20px;font-weight:700;background:linear-gradient(90deg,var(--gold-deep),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
   .back-btn{
     background:var(--card-solid);border:1px solid var(--line);color:var(--ink);
-    width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;flex-shrink:0;
-    box-shadow:var(--shadow-card);
+    width:36px;height:36px;border-radius:50%;cursor:pointer;flex-shrink:0;
+    box-shadow:var(--shadow-card);display:flex;align-items:center;justify-content:center;
   }
   .scroll-area{flex:1;overflow-y:auto;padding:6px 20px 30px;-webkit-overflow-scrolling:touch;}
   .scroll-area::-webkit-scrollbar{width:4px;}
-  .scroll-area::-webkit-scrollbar-thumb{background:rgba(70,55,25,0.15);border-radius:4px;}
+  .scroll-area::-webkit-scrollbar-thumb{background:rgba(32,29,25,0.15);border-radius:4px;}
 
-  /* hero photo scenes + overlapping sheet, echoing the reference's photo-card + info-panel layout */
+  /* film-grain overlay, shared texture generated once via canvas at load time */
+  .grain{position:absolute;inset:0;background-image:var(--grain-tex);background-size:96px 96px;opacity:0.05;mix-blend-mode:overlay;pointer-events:none;}
+
+  /* hero mesh scenes + overlapping sheet */
   .hero-scene{position:relative;overflow:hidden;flex-shrink:0;height:230px;}
   .hero-scene.tall{height:280px;}
-  .hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(255,255,255,0.55) 100%);pointer-events:none;}
+  .hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,transparent 32%,rgba(255,255,255,0.55) 100%);pointer-events:none;}
   .hero-overlay-text{position:absolute;left:22px;right:22px;bottom:20px;color:var(--ink);}
-  .hero-logo{font-size:15px;font-weight:700;letter-spacing:0.3px;margin-bottom:6px;}
-  .hero-overlay-text h2{font-size:23px;margin:0;}
+  .hero-logo{font-size:14px;font-weight:800;letter-spacing:0.02em;margin-bottom:6px;opacity:0.85;}
+  .hero-overlay-text h2{font-size:25px;margin:0;letter-spacing:-0.02em;}
   .floating-btn{
-    position:absolute;z-index:5;background:rgba(255,255,255,0.75);backdrop-filter:blur(10px);
-    border:1px solid rgba(255,255,255,0.7);color:var(--ink);width:40px;height:40px;border-radius:50%;
-    box-shadow:var(--shadow-card);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;
+    position:absolute;z-index:5;background:rgba(255,255,255,0.78);backdrop-filter:blur(12px) saturate(160%);
+    border:1px solid rgba(255,255,255,0.75);color:var(--ink);width:40px;height:40px;border-radius:50%;
+    box-shadow:var(--shadow-card);display:flex;align-items:center;justify-content:center;cursor:pointer;
   }
   .back-float{top:18px;left:18px;}
   .floating-badge{
     position:absolute;top:18px;right:18px;background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);
-    color:var(--ink);font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:20px;
+    color:var(--ink);font-size:12.5px;font-weight:800;padding:8px 14px;border-radius:20px;
     box-shadow:var(--shadow-card);z-index:5;font-variant-numeric:tabular-nums;
   }
   .sheet{
-    background:var(--card-solid);border-radius:28px 28px 0 0;margin-top:-24px;position:relative;z-index:2;
-    box-shadow:0 -14px 30px rgba(70,55,25,0.06);padding:24px 20px 24px;flex:1;overflow-y:auto;
+    background:var(--card-solid);border-radius:32px 32px 0 0;margin-top:-26px;position:relative;z-index:2;
+    box-shadow:0 -16px 34px rgba(32,29,25,0.06);padding:26px 20px 24px;flex:1;overflow-y:auto;
     -webkit-overflow-scrolling:touch;
   }
   .meta-line{color:var(--ink-soft);font-size:13px;margin-bottom:16px;}
 
-  /* scene backgrounds — abstract, painterly stand-ins for photography, tuned to each practice's mood */
+  /* mesh-gradient scene recipes: layered radial blobs read as painterly photography stand-ins */
   .scene-sunrise{background:
-    radial-gradient(circle at 50% 60%, #fff2cf 0%, #ffe4a3 9%, transparent 10%),
-    linear-gradient(180deg,#ffd9a6 0%,#f7b98d 40%,#eb9c8e 62%,#d7e0d2 62%,#e9eee3 100%);}
+    radial-gradient(60% 55% at 22% 20%, #ffdf9a 0%, transparent 60%),
+    radial-gradient(70% 60% at 82% 30%, #ff9d78 0%, transparent 65%),
+    radial-gradient(85% 70% at 50% 100%, #ff7f92 0%, transparent 60%),
+    linear-gradient(160deg,#ffe9b8,#ffb49e 60%,#f28ba0 100%);}
   .scene-night{background:
-    radial-gradient(circle at 22% 22%, rgba(255,255,255,0.55) 0 1.5px, transparent 1.5px),
-    radial-gradient(circle at 68% 14%, rgba(255,255,255,0.4) 0 1px, transparent 1px),
-    radial-gradient(circle at 82% 45%, rgba(255,255,255,0.5) 0 1.5px, transparent 1.5px),
-    radial-gradient(circle at 76% 26%, #f2ead2 0%, #f2ead2 7%, transparent 8%),
-    linear-gradient(180deg,#8d93ab 0%,#a7add0 42%,#c9c2d4 72%,#ded5d2 100%);
-    background-size:70px 70px,90px 90px,60px 60px,cover,cover;}
+    radial-gradient(circle at 22% 20%, rgba(255,255,255,0.55) 0 1.4px, transparent 1.4px),
+    radial-gradient(circle at 68% 12%, rgba(255,255,255,0.4) 0 1px, transparent 1px),
+    radial-gradient(circle at 82% 42%, rgba(255,255,255,0.5) 0 1.4px, transparent 1.4px),
+    radial-gradient(60% 50% at 78% 22%, #f6ecd0 0%, transparent 40%),
+    radial-gradient(60% 55% at 18% 20%, #7873c9 0%, transparent 60%),
+    radial-gradient(75% 65% at 50% 100%, #c2a9dd 0%, transparent 60%),
+    linear-gradient(170deg,#605ea3,#8b83c9 55%,#c6b6d9 100%);
+    background-size:70px 70px,90px 90px,60px 60px,cover,cover,cover,cover;}
   .scene-water{background:
-    repeating-linear-gradient(180deg, transparent 0 20px, rgba(255,255,255,0.12) 20px 21px),
-    linear-gradient(180deg,#d3e7e6 0%,#a8cdd0 45%,#7cb0b6 75%,#5c949c 100%);}
-  .scene-mist{background:linear-gradient(180deg,#e2e8de 0%,#c6d0bf 42%,#9fae95 72%,#7c8b74 100%);}
-  .scene-mist::before{content:'';position:absolute;left:-8%;bottom:-6%;width:65%;height:55%;background:rgba(58,68,50,0.28);clip-path:polygon(0% 100%,45% 12%,100% 100%);}
-  .scene-mist::after{content:'';position:absolute;right:-12%;bottom:-9%;width:75%;height:46%;background:rgba(58,68,50,0.18);clip-path:polygon(0% 100%,55% 22%,100% 100%);}
+    radial-gradient(60% 50% at 25% 18%, #d3f2e6 0%, transparent 60%),
+    radial-gradient(70% 60% at 82% 40%, #6fc7cb 0%, transparent 65%),
+    radial-gradient(85% 70% at 50% 100%, #357e93 0%, transparent 60%),
+    linear-gradient(170deg,#daf1e6,#7fc3c9 60%,#357e93 100%);}
+  .scene-mist{background:
+    radial-gradient(60% 50% at 22% 15%, #eef4de 0%, transparent 58%),
+    radial-gradient(70% 55% at 82% 32%, #b6c79f 0%, transparent 60%),
+    radial-gradient(80% 65% at 50% 100%, #59684a 0%, transparent 60%),
+    linear-gradient(170deg,#e7ecdc,#a9b894 55%,#5e6d4c 100%);}
+  .scene-mist::before{content:'';position:absolute;left:6%;bottom:-4%;width:24%;height:68%;background:rgba(38,46,30,0.32);clip-path:polygon(50% 0%,0% 100%,100% 100%);}
+  .scene-mist::after{content:'';position:absolute;left:20%;bottom:6%;width:20%;height:52%;background:rgba(38,46,30,0.22);clip-path:polygon(50% 0%,0% 100%,100% 100%);}
   .scene-golden{background:
-    repeating-conic-gradient(from 210deg at 50% 0%, rgba(255,255,255,0.20) 0 3deg, transparent 3deg 14deg),
-    linear-gradient(180deg,#fff1d2 0%,#fadb9e 40%,#eeba75 70%,#dd9f5c 100%);}
+    radial-gradient(65% 55% at 50% 8%, #fff3c4 0%, transparent 55%),
+    radial-gradient(80% 70% at 50% 100%, #e69f4c 0%, transparent 65%),
+    repeating-conic-gradient(from 210deg at 50% 0%, rgba(255,255,255,0.16) 0 3deg, transparent 3deg 14deg),
+    linear-gradient(170deg,#fff2c8,#f5c579 55%,#d99242 100%);}
   .scene-goldlight{background:
-    radial-gradient(circle at 55% 40%, rgba(255,255,255,0.35) 0%, transparent 55%),
-    linear-gradient(160deg,#f4dca0 0%,#e2b06b 50%,#c68a48 100%);}
+    radial-gradient(60% 55% at 28% 18%, #ffe6a8 0%, transparent 60%),
+    radial-gradient(70% 60% at 82% 62%, #dd9c3e 0%, transparent 65%),
+    linear-gradient(160deg,#f7deA0,#dda953 55%,#a9702e 100%);}
   .scene-bloom{background:
-    radial-gradient(circle at 28% 28%, rgba(255,255,255,0.5) 0%, transparent 40%),
-    linear-gradient(160deg,#ffd9e1 0%,#f2b6c6 45%,#d99cb4 75%,#c48ba3 100%);}
+    radial-gradient(60% 50% at 24% 18%, #ffdde9 0%, transparent 60%),
+    radial-gradient(70% 60% at 82% 42%, #ee9ec1 0%, transparent 65%),
+    radial-gradient(80% 65% at 50% 100%, #b8698f 0%, transparent 60%),
+    linear-gradient(160deg,#ffe3ee,#e79fc0 55%,#b8698f 100%);}
   .scene-rainbow{background:
-    linear-gradient(rgba(255,255,255,0.4),rgba(255,255,255,0.4)),
-    linear-gradient(115deg,#ffd6bd,#ffe9b8,#dbedc7,#c2e2e6,#cfd2ee,#e6cbe8);}
+    radial-gradient(55% 55% at 14% 22%, #ffb199 0%, transparent 55%),
+    radial-gradient(55% 55% at 44% 12%, #ffe08a 0%, transparent 55%),
+    radial-gradient(55% 55% at 76% 22%, #9be0b0 0%, transparent 55%),
+    radial-gradient(55% 55% at 88% 58%, #8ecfe0 0%, transparent 55%),
+    radial-gradient(60% 55% at 30% 78%, #a6a6ec 0%, transparent 58%),
+    linear-gradient(150deg,#ffe6d2,#d9e8d0 40%,#cfe4ea 70%,#d9d4ef 100%);}
   .scene-cloud{background:
-    radial-gradient(circle at 25% 70%, rgba(255,255,255,0.6) 0%, transparent 30%),
-    radial-gradient(circle at 60% 80%, rgba(255,255,255,0.5) 0%, transparent 26%),
-    radial-gradient(circle at 80% 55%, rgba(255,255,255,0.45) 0%, transparent 24%),
-    linear-gradient(180deg,#eef2f2 0%,#dde4e6 50%,#c9d3d7 100%);}
-  .scene-forest{background:linear-gradient(180deg,#e7ecdc 0%,#c1cba9 45%,#8fa073 78%,#69795a 100%);}
-  .scene-forest::before{content:'';position:absolute;left:8%;bottom:-4%;width:22%;height:70%;background:rgba(50,60,40,0.35);clip-path:polygon(50% 0%,0% 100%,100% 100%);}
-  .scene-forest::after{content:'';position:absolute;left:20%;bottom:6%;width:18%;height:55%;background:rgba(50,60,40,0.25);clip-path:polygon(50% 0%,0% 100%,100% 100%);}
+    radial-gradient(55% 45% at 25% 65%, #ffffff 0%, transparent 45%),
+    radial-gradient(55% 45% at 72% 78%, #f4f7f5 0%, transparent 40%),
+    radial-gradient(70% 60% at 50% 100%, #9fb0b4 0%, transparent 60%),
+    linear-gradient(170deg,#eef1ee,#cdd6d8 55%,#93a3a7 100%);}
+  .scene-forest{background:
+    radial-gradient(60% 50% at 26% 14%, #dcE9c8 0%, transparent 55%),
+    radial-gradient(70% 60% at 78% 34%, #9cb480 0%, transparent 60%),
+    radial-gradient(80% 65% at 50% 100%, #445536 0%, transparent 60%),
+    linear-gradient(170deg,#e2ead2,#8fa373 55%,#455636 100%);}
+  .scene-forest::before{content:'';position:absolute;left:8%;bottom:-4%;width:22%;height:70%;background:rgba(28,36,20,0.35);clip-path:polygon(50% 0%,0% 100%,100% 100%);}
+  .scene-forest::after{content:'';position:absolute;left:20%;bottom:6%;width:18%;height:55%;background:rgba(28,36,20,0.25);clip-path:polygon(50% 0%,0% 100%,100% 100%);}
 
   .hero-scene{position:relative;overflow:hidden;}
-  .scene-thumb{position:relative;overflow:hidden;width:56px;height:56px;border-radius:16px;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.5);}
+  .scene-thumb{position:relative;overflow:hidden;width:56px;height:56px;border-radius:18px;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.5);}
   .thumb-badge{
     position:absolute;bottom:-3px;right:-3px;width:22px;height:22px;border-radius:50%;background:var(--card-solid);
     display:flex;align-items:center;justify-content:center;font-size:11px;box-shadow:var(--shadow-card);
   }
 
-  /* circular ring progress — the app's one signature data-viz element, reused sparingly */
+  /* signature circular progress ring — animates smoothly via @property */
   .ring-wrap{position:relative;width:168px;height:168px;margin:8px auto 18px;}
-  .ring{position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--gold) calc(var(--pct) * 3.6deg), rgba(70,55,25,0.08) 0deg);transition:background 0.3s;}
-  .ring-inner{position:absolute;inset:15px;background:var(--card-solid);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 2px 8px rgba(70,55,25,0.07);overflow:visible;}
-  .ring-value{font-size:28px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;}
-  .ring-label{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
+  .ring{
+    position:absolute;inset:0;border-radius:50%;
+    background:conic-gradient(from -90deg, var(--c-violet) 0deg, var(--c-coral) calc(var(--pct) * 1.8deg), var(--c-gold) calc(var(--pct) * 3.6deg), rgba(32,29,25,0.07) calc(var(--pct) * 3.6deg) 360deg);
+    transition:--pct .7s cubic-bezier(.16,.84,.44,1);
+    box-shadow:0 0 26px -6px rgba(138,127,240,0.4);
+  }
+  .ring-inner{position:absolute;inset:15px;background:var(--card-solid);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 2px 8px rgba(32,29,25,0.07);overflow:visible;}
+  .ring-value{font-size:28px;font-weight:800;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .ring-label{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.06em;margin-top:2px;font-weight:700;}
 
   .stat-row{display:flex;justify-content:space-between;gap:6px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);}
   .stat-row .stat{text-align:center;flex:1;}
-  .stat-row .stat b{display:block;font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums;}
-  .stat-row .stat span{font-size:10.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.3px;}
+  .stat-row .stat b{display:block;font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums;font-weight:800;}
+  .stat-row .stat span{font-size:10.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.05em;font-weight:700;}
 
   .card{
-    background:var(--card-solid);border:1px solid var(--line);border-radius:22px;
+    background:var(--glass-strong);backdrop-filter:blur(16px) saturate(160%);border:1px solid rgba(255,255,255,0.7);border-radius:26px;
     padding:18px;margin-bottom:16px;box-shadow:var(--shadow-card);
   }
-  .card-label{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--gold-deep);margin-bottom:8px;}
-  .home-greeting h2{font-size:22px;}
-  .streak-line{color:var(--gold-deep);font-size:14px;margin:0;}
-  .big-affirmation{font-size:18px;font-style:italic;color:var(--ink);margin:0;font-family:Georgia,serif;}
-  .intention-card{border:1px solid rgba(201,167,104,0.35);}
+  .glow-card{box-shadow:var(--shadow-glow);border:1px solid rgba(255,255,255,0.85);}
+  .card-label{font-size:11.5px;text-transform:uppercase;letter-spacing:0.07em;color:var(--c-violet);margin-bottom:8px;font-weight:800;}
+  .streak-line{color:var(--c-coral);font-size:13px;margin:0 0 10px;font-weight:700;}
+  .big-affirmation{font-size:20px;font-style:italic;font-weight:500;color:var(--ink);margin:0;letter-spacing:-0.01em;}
+  .intention-card{border:1px solid rgba(242,184,75,0.4);}
 
-  .quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:6px;}
-  .quick-card{
-    background:var(--card-solid);border:1px solid var(--line);border-radius:20px;
-    padding:16px 12px;text-align:center;cursor:pointer;
-    display:flex;flex-direction:column;align-items:center;gap:10px;transition:transform .15s;
-    box-shadow:var(--shadow-card);
+  /* bento layout for home */
+  .bento-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:4px;}
+  .bento-wide{grid-column:1 / -1;}
+  .bento-row-3{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+  .quick-tile{cursor:pointer;transition:transform .15s;}
+  .quick-tile:active{transform:scale(0.97);}
+  .quick-tile-title{font-size:14.5px;font-weight:700;color:var(--ink);margin-top:10px;}
+  .quick-small{
+    background:var(--glass-strong);border:1px solid rgba(255,255,255,0.7);border-radius:22px;padding:14px 6px;
+    text-align:center;cursor:pointer;box-shadow:var(--shadow-card);display:flex;flex-direction:column;
+    align-items:center;gap:7px;transition:transform .15s;
   }
-  .quick-card:active{transform:scale(0.96);}
-  .quick-icon-circle{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;}
-  .quick-card span{font-size:12.5px;color:var(--ink);font-weight:600;}
+  .quick-small:active{transform:scale(0.96);}
+  .quick-small span{font-size:11px;font-weight:700;color:var(--ink);}
+  .quick-icon-circle{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+  .quick-icon-circle svg{width:20px;height:20px;}
+  .quick-small .quick-icon-circle{width:38px;height:38px;}
+  .quick-small .quick-icon-circle svg{width:17px;height:17px;}
+
+  @media (prefers-reduced-motion: no-preference){
+    .bento{opacity:0;animation:fadeUp .5s ease forwards;}
+    .bento:nth-child(1){animation-delay:.02s;}
+    .bento:nth-child(2){animation-delay:.07s;}
+    .bento:nth-child(3){animation-delay:.12s;}
+    .bento:nth-child(4){animation-delay:.16s;}
+    .bento:nth-child(5){animation-delay:.2s;}
+    .bento:nth-child(6){animation-delay:.24s;}
+    .bento:nth-child(7){animation-delay:.28s;}
+    .bento:nth-child(8){animation-delay:.32s;}
+  }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
 
   .list-card{
-    display:flex;align-items:center;gap:14px;background:var(--card-solid);border:1px solid var(--line);
-    border-radius:20px;padding:12px 14px;margin-bottom:12px;cursor:pointer;transition:transform .15s;
+    display:flex;align-items:center;gap:14px;background:var(--glass-strong);border:1px solid rgba(255,255,255,0.7);
+    border-radius:22px;padding:12px 14px;margin-bottom:12px;cursor:pointer;transition:transform .15s;
     box-shadow:var(--shadow-card);
   }
   .list-card:active{transform:scale(0.98);}
   .list-info{flex:1;min-width:0;}
-  .list-title{font-size:15px;font-weight:600;margin:0 0 3px;color:var(--ink);}
+  .list-title{font-size:15px;font-weight:700;margin:0 0 3px;color:var(--ink);letter-spacing:-0.01em;}
   .list-sub{font-size:12.5px;color:var(--ink-soft);margin:0;}
   .list-arrow{color:var(--ink-faint);font-size:16px;}
 
-  .section-sub{font-size:13px;color:var(--gold-deep);margin:22px 0 10px;text-transform:uppercase;letter-spacing:1px;font-weight:600;}
+  .section-sub{font-size:12px;color:var(--c-violet);margin:22px 0 10px;text-transform:uppercase;letter-spacing:0.08em;font-weight:800;}
 
   .btn{
-    display:block;width:100%;padding:14px;border-radius:16px;border:none;font-size:15px;font-weight:600;
-    cursor:pointer;margin-top:10px;text-align:center;
+    display:block;width:100%;padding:14px;border-radius:18px;border:none;font-size:15px;font-weight:700;
+    cursor:pointer;margin-top:10px;text-align:center;transition:transform .15s;
   }
-  .btn-primary{background:linear-gradient(120deg,var(--gold),var(--gold-soft));color:#3a2c12;box-shadow:0 12px 26px rgba(180,140,60,0.28);}
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{background:linear-gradient(120deg,var(--c-coral),var(--c-gold));color:#2c1a0f;box-shadow:0 14px 30px -8px rgba(255,138,101,0.5), inset 0 1px 0 rgba(255,255,255,0.5);}
   .btn-outline{background:rgba(255,255,255,0.5);border:1px solid var(--line);color:var(--ink);}
-  .link-btn{background:none;border:none;color:var(--gold-deep);font-size:13px;cursor:pointer;padding:6px 0;}
+  .link-btn{background:none;border:none;color:var(--c-violet);font-size:13px;cursor:pointer;padding:6px 0;font-weight:700;}
   .center-link{display:block;margin:6px auto 0;}
 
   .chip-grid{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px;}
   .chip{
-    background:rgba(255,255,255,0.55);border:1px solid var(--line);color:var(--ink);
-    padding:9px 14px;border-radius:20px;font-size:13px;cursor:pointer;
+    background:rgba(255,255,255,0.5);border:1px solid var(--line);color:var(--ink);
+    padding:9px 14px;border-radius:20px;font-size:13px;cursor:pointer;font-weight:600;transition:transform .15s;
   }
-  .chip-active{background:linear-gradient(120deg,var(--gold),var(--gold-soft));color:#3a2c12;border-color:transparent;}
+  .chip:active{transform:scale(0.96);}
+  .chip-active{background:linear-gradient(120deg,var(--c-coral),var(--c-gold));color:#2c1a0f;border-color:transparent;}
 
   .affirm-card{
-    background:linear-gradient(160deg, rgba(255,255,255,0.75), rgba(255,225,190,0.35));
-    border:1px solid rgba(255,255,255,0.8);border-radius:22px;padding:34px 20px;text-align:center;margin:14px 0;
-    min-height:120px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-card);
+    background:linear-gradient(160deg, rgba(255,255,255,0.78), rgba(255,205,190,0.35));
+    border:1px solid rgba(255,255,255,0.85);border-radius:26px;padding:34px 20px;text-align:center;margin:14px 0;
+    min-height:120px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-glow);
   }
-  .affirm-card p{font-size:19px;font-style:italic;font-family:Georgia,serif;color:var(--ink);}
+  .affirm-card p{font-size:20px;font-style:italic;font-weight:500;color:var(--ink);letter-spacing:-0.01em;}
   .affirm-actions{display:flex;gap:10px;}
   .icon-btn{
     background:var(--card-solid);border:1px solid var(--line);color:var(--ink);
-    width:52px;height:52px;border-radius:16px;font-size:20px;cursor:pointer;flex-shrink:0;
+    width:52px;height:52px;border-radius:18px;font-size:20px;cursor:pointer;flex-shrink:0;
   }
-  .icon-btn.fav-active{color:var(--rose);border-color:var(--rose);}
+  .icon-btn.fav-active{color:var(--c-rose);border-color:var(--c-rose);}
   .affirm-list-item{
     display:flex;align-items:center;justify-content:space-between;gap:10px;
-    background:var(--card-solid);border:1px solid var(--line);border-radius:14px;
+    background:var(--card-solid);border:1px solid var(--line);border-radius:16px;
     padding:12px 14px;margin-bottom:10px;font-size:13.5px;color:var(--ink);
   }
   .affirm-list-item button{background:none;border:none;font-size:17px;cursor:pointer;color:var(--ink-faint);}
-  .affirm-list-item button.fav-active{color:var(--rose);}
+  .affirm-list-item button.fav-active{color:var(--c-rose);}
 
-  .med-timer{font-size:26px;font-weight:300;letter-spacing:1px;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .med-timer{font-size:26px;font-weight:800;letter-spacing:-0.01em;color:var(--ink);font-variant-numeric:tabular-nums;}
   .med-play-btn{
     width:56px;height:56px;border-radius:50%;border:none;
-    background:linear-gradient(120deg,var(--gold),var(--gold-soft));font-size:20px;cursor:pointer;
-    box-shadow:0 10px 22px rgba(180,140,60,0.3);margin-bottom:8px;
+    background:linear-gradient(120deg,var(--c-coral),var(--c-gold));font-size:20px;cursor:pointer;
+    box-shadow:0 12px 26px -6px rgba(255,138,101,0.5);margin-bottom:8px;transition:transform .15s;
   }
+  .med-play-btn:active{transform:scale(0.94);}
   .med-play-btn.standalone{display:block;margin:4px auto 4px;}
   .step-card p{margin:0;font-size:15px;color:var(--ink);text-align:center;min-height:44px;}
 
-  .breath-phase-label{font-size:19px;color:var(--gold-deep);margin-bottom:6px;letter-spacing:0.5px;text-align:center;font-weight:600;}
+  .breath-phase-label{font-size:19px;color:var(--c-violet);margin-bottom:6px;letter-spacing:0.01em;text-align:center;font-weight:800;}
   .breath-circle{
     width:100px;height:100px;border-radius:50%;
-    background:radial-gradient(circle, rgba(201,167,104,0.55), rgba(201,167,104,0.08));
-    border:1px solid rgba(201,167,104,0.5);
+    background:radial-gradient(circle, rgba(138,127,240,0.5), rgba(138,127,240,0.06));
+    border:1px solid rgba(138,127,240,0.45);
     transition:transform 1s linear;
   }
   .rounds-select{display:flex;gap:8px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;}
@@ -247,9 +312,9 @@
   .steps-list{padding-left:20px;margin:0 0 16px;}
   .steps-list li{margin-bottom:10px;font-size:14.5px;line-height:1.5;color:var(--ink);}
   .field{margin-bottom:16px;}
-  .field label{display:block;font-size:13px;color:var(--gold-deep);margin-bottom:6px;font-weight:600;}
+  .field label{display:block;font-size:13px;color:var(--c-violet);margin-bottom:6px;font-weight:700;}
   .field textarea, .field input[type=text]{
-    width:100%;background:rgba(255,255,255,0.55);border:1px solid var(--line);border-radius:12px;
+    width:100%;background:rgba(255,255,255,0.55);border:1px solid var(--line);border-radius:14px;
     color:var(--ink);padding:11px 12px;font-size:14px;font-family:inherit;resize:vertical;min-height:44px;
   }
   .field textarea{min-height:70px;}
@@ -257,30 +322,31 @@
   .challenge-grid{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
   .challenge-item{
     display:flex;align-items:center;gap:10px;background:var(--card-solid);border:1px solid var(--line);
-    border-radius:12px;padding:10px 12px;cursor:pointer;font-size:13px;
+    border-radius:14px;padding:10px 12px;cursor:pointer;font-size:13px;
   }
-  .challenge-item.done{border-color:var(--sage);background:rgba(143,163,119,0.12);}
-  .day-num{color:var(--gold-deep);font-weight:600;flex-shrink:0;width:60px;}
+  .challenge-item.done{border-color:var(--c-sage);background:rgba(111,160,111,0.12);}
+  .day-num{color:var(--c-violet);font-weight:800;flex-shrink:0;width:60px;}
   .day-task{flex:1;color:var(--ink);}
-  .check{color:var(--sage);font-weight:700;width:16px;}
+  .check{color:var(--c-sage);font-weight:800;width:16px;}
 
   .wheel-row{margin-bottom:14px;}
   .wheel-label{font-size:13.5px;margin-bottom:4px;color:var(--ink);}
-  .wheel-label b{color:var(--gold-deep);}
-  input[type=range]{width:100%;accent-color:var(--gold-deep);}
+  .wheel-label b{color:var(--c-violet);}
+  input[type=range]{width:100%;accent-color:var(--c-violet);}
 
-  .chakra-card{background:var(--card-solid);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px;}
-  .chakra-card summary{cursor:pointer;font-weight:600;font-size:14.5px;list-style:none;display:flex;align-items:center;gap:8px;color:var(--ink);}
+  .chakra-card{background:var(--card-solid);border:1px solid var(--line);border-radius:18px;padding:12px 14px;margin-bottom:10px;}
+  .chakra-card summary{cursor:pointer;font-weight:700;font-size:14.5px;list-style:none;display:flex;align-items:center;gap:8px;color:var(--ink);}
   .chakra-card summary::-webkit-details-marker{display:none;}
   .chakra-dot{width:12px;height:12px;border-radius:50%;display:inline-block;flex-shrink:0;}
   .chakra-card p{font-size:13.5px;margin:8px 0 0;color:var(--ink-soft);}
 
   .mood-row{display:flex;gap:10px;}
-  .mood-btn{background:var(--card-solid);border:1px solid var(--line);border-radius:14px;font-size:22px;
-    width:48px;height:48px;cursor:pointer;}
-  .mood-btn.active{border-color:var(--gold);background:rgba(201,167,104,0.18);}
-  .journal-entry{background:var(--card-solid);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;font-size:13.5px;color:var(--ink);}
-  .je-head{color:var(--gold-deep);margin-bottom:6px;font-size:13px;font-weight:600;}
+  .mood-btn{background:var(--card-solid);border:1px solid var(--line);border-radius:16px;font-size:22px;
+    width:48px;height:48px;cursor:pointer;transition:transform .15s;}
+  .mood-btn:active{transform:scale(0.94);}
+  .mood-btn.active{border-color:var(--c-gold);background:rgba(242,184,75,0.18);}
+  .journal-entry{background:var(--card-solid);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px;font-size:13.5px;color:var(--ink);}
+  .je-head{color:var(--c-violet);margin-bottom:6px;font-size:13px;font-weight:800;}
   .journal-entry p{margin:2px 0;}
   .empty-hint{color:var(--ink-soft);font-size:13.5px;}
 
@@ -289,43 +355,46 @@
     display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;box-shadow:var(--shadow-card);}
   .profile-header input{
     background:transparent;border:none;border-bottom:1px solid var(--line);color:var(--ink);
-    font-size:19px;font-family:Georgia,serif;padding:4px 0;flex:1;
+    font-size:19px;font-weight:700;padding:4px 0;flex:1;
   }
 
-  .plan-day{background:var(--card-solid);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:12px;}
-  .plan-day summary{cursor:pointer;font-weight:600;font-size:14.5px;list-style:none;color:var(--ink);}
+  .plan-day{background:var(--card-solid);border:1px solid var(--line);border-radius:20px;padding:14px 16px;margin-bottom:12px;}
+  .plan-day summary{cursor:pointer;font-weight:700;font-size:14.5px;list-style:none;color:var(--ink);}
   .plan-day summary::-webkit-details-marker{display:none;}
   .plan-task{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px;}
   .plan-task label{display:flex;align-items:center;gap:8px;color:var(--ink);}
-  .plan-task.done label{color:var(--sage);}
+  .plan-task.done label{color:var(--c-sage);}
 
   .hub-grid{display:grid;grid-template-columns:1fr;gap:12px;}
 
   .bottom-nav{
     position:absolute;left:16px;right:16px;bottom:16px;height:68px;border-radius:34px;
-    display:flex;background:rgba(255,255,255,0.62);backdrop-filter:blur(18px);
-    border:1px solid rgba(255,255,255,0.75);box-shadow:var(--shadow-soft);
+    display:flex;background:rgba(255,255,255,0.66);backdrop-filter:blur(20px) saturate(160%);
+    border:1px solid rgba(255,255,255,0.78);box-shadow:var(--shadow-glow);
   }
   .nav-item{
-    flex:1;background:none;border:none;color:var(--ink-faint);font-size:11px;
+    flex:1;background:none;border:none;color:var(--ink-faint);
     display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
-    cursor:pointer;padding-top:4px;font-size:19px;
+    cursor:pointer;padding-top:4px;transition:color .15s;
   }
-  .nav-item span{font-size:10.5px;font-weight:600;}
-  .nav-item.active{color:var(--gold-deep);}
-  .nav-item.active::after{content:'';display:block;width:4px;height:4px;border-radius:50%;background:var(--gold-deep);}
+  .nav-item span{font-size:10.5px;font-weight:700;}
+  .nav-item.active{color:var(--c-violet);}
+  .nav-item.active::after{content:'';display:block;width:4px;height:4px;border-radius:50%;background:var(--c-violet);}
 </style>
 </head>
 <body>
 <div class="app-shell">
   <main class="screens">
 
-    <section id="screen-home" class="screen active">
+    <section id="screen-home" class="screen active screen-enter">
       <div class="hero-scene tall" id="home-hero">
+        <div class="grain"></div>
         <div class="hero-scrim"></div>
-        <button class="floating-btn" style="top:18px;right:18px;" onclick="goTo('screen-profile')">⚙️</button>
+        <button class="floating-btn" style="top:18px;right:18px;" onclick="goTo('screen-profile')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3v2.4M12 18.6V21M5 5l1.7 1.7M17.3 17.3 19 19M3 12h2.4M18.6 12H21M5 19l1.7-1.7M17.3 6.7 19 5"/></svg>
+        </button>
         <div class="hero-overlay-text">
-          <div class="hero-logo">🪷 Атма</div>
+          <div class="hero-logo">🪷 АТМА</div>
           <h2 id="home-greeting-text"></h2>
         </div>
       </div>
@@ -339,8 +408,11 @@
 
     <section id="screen-meditation-player" class="screen">
       <div class="hero-scene" id="med-hero">
+        <div class="grain"></div>
         <div class="hero-scrim"></div>
-        <button class="floating-btn back-float" onclick="closeMeditationPlayer()">←</button>
+        <button class="floating-btn back-float" onclick="closeMeditationPlayer()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
         <div class="floating-badge" id="med-step-badge">1/1</div>
       </div>
       <div class="sheet" id="meditation-player-body"></div>
@@ -353,8 +425,11 @@
 
     <section id="screen-breathing-session" class="screen">
       <div class="hero-scene" id="breath-hero">
+        <div class="grain"></div>
         <div class="hero-scrim"></div>
-        <button class="floating-btn back-float" onclick="closeBreathingSession()">←</button>
+        <button class="floating-btn back-float" onclick="closeBreathingSession()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>
+        </button>
         <div class="floating-badge" id="breath-round-badge">0/6</div>
       </div>
       <div class="sheet" id="breathing-session-body"></div>
@@ -371,22 +446,22 @@
     </section>
 
     <section id="screen-money-list" class="screen">
-      <header class="header"><button class="back-btn" onclick="goBack()">←</button><h1>Изобилие и деньги</h1></header>
+      <header class="header"><button class="back-btn" onclick="goBack()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h1>Изобилие и деньги</h1></header>
       <div class="scroll-area" id="money-list-body"></div>
     </section>
 
     <section id="screen-mindfulness-list" class="screen">
-      <header class="header"><button class="back-btn" onclick="goBack()">←</button><h1>Осознанность</h1></header>
+      <header class="header"><button class="back-btn" onclick="goBack()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h1>Осознанность</h1></header>
       <div class="scroll-area" id="mindfulness-list-body"></div>
     </section>
 
     <section id="screen-spiritual-list" class="screen">
-      <header class="header"><button class="back-btn" onclick="goBack()">←</button><h1>Духовные практики</h1></header>
+      <header class="header"><button class="back-btn" onclick="goBack()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h1>Духовные практики</h1></header>
       <div class="scroll-area" id="spiritual-list-body"></div>
     </section>
 
     <section id="screen-practice-detail" class="screen">
-      <header class="header"><button class="back-btn" onclick="goBack()">←</button><h1 id="practice-title"></h1></header>
+      <header class="header"><button class="back-btn" onclick="goBack()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h1 id="practice-title"></h1></header>
       <div class="scroll-area" id="practice-body"></div>
     </section>
 
@@ -396,23 +471,38 @@
     </section>
 
     <section id="screen-journal" class="screen">
-      <header class="header"><button class="back-btn" onclick="goBack()">←</button><h1>Дневник</h1></header>
+      <header class="header"><button class="back-btn" onclick="goBack()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h1>Дневник</h1></header>
       <div class="scroll-area" id="journal-body"></div>
     </section>
 
     <section id="screen-profile" class="screen">
-      <header class="header"><button class="back-btn" onclick="goBack()">←</button><h1>Профиль</h1></header>
+      <header class="header"><button class="back-btn" onclick="goBack()"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h1>Профиль</h1></header>
       <div class="scroll-area" id="profile-body"></div>
     </section>
 
   </main>
 
   <nav class="bottom-nav">
-    <button class="nav-item active" data-nav="screen-home" onclick="navRoot('screen-home')">🏠<span>Главная</span></button>
-    <button class="nav-item" data-nav="screen-meditations" onclick="navRoot('screen-meditations')">🧘<span>Медитации</span></button>
-    <button class="nav-item" data-nav="screen-breathing" onclick="navRoot('screen-breathing')">🌬<span>Дыхание</span></button>
-    <button class="nav-item" data-nav="screen-affirmations" onclick="navRoot('screen-affirmations')">✨<span>Аффирмации</span></button>
-    <button class="nav-item" data-nav="screen-practices" onclick="navRoot('screen-practices')">📚<span>Практики</span></button>
+    <button class="nav-item active" data-nav="screen-home" onclick="navRoot('screen-home')">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 11.5 12 4l8 7.5"/><path d="M6 10v9a1 1 0 0 0 1 1h4v-6h2v6h4a1 1 0 0 0 1-1v-9"/></svg>
+      <span>Главная</span>
+    </button>
+    <button class="nav-item" data-nav="screen-meditations" onclick="navRoot('screen-meditations')">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="6.2" r="2"/><path d="M12 8.2v3.3"/><path d="M6.5 19.5c0-3.3 2.3-5 5.5-5s5.5 1.7 5.5 5"/><path d="M4 19c1-1.8 2-2.6 2.7-3M20 19c-1-1.8-2-2.6-2.7-3"/></svg>
+      <span>Медитации</span>
+    </button>
+    <button class="nav-item" data-nav="screen-breathing" onclick="navRoot('screen-breathing')">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8h10.5a2.8 2.8 0 1 0-2.3-4.4"/><path d="M3 12.3h15.2a2.8 2.8 0 1 1-2.1 4.7"/><path d="M3 16.6h8.4a2.3 2.3 0 1 1-1.8 3.7"/></svg>
+      <span>Дыхание</span>
+    </button>
+    <button class="nav-item" data-nav="screen-affirmations" onclick="navRoot('screen-affirmations')">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"><path d="M12 3c.5 3.4 1.7 5.7 4.5 6.5-2.8.8-4 3.1-4.5 6.5-.5-3.4-1.7-5.7-4.5-6.5 2.8-.8 4-3.1 4.5-6.5z"/></svg>
+      <span>Аффирмации</span>
+    </button>
+    <button class="nav-item" data-nav="screen-practices" onclick="navRoot('screen-practices')">
+      <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3 3 8l9 5 9-5-9-5z"/><path d="M3 13l9 5 9-5"/></svg>
+      <span>Практики</span>
+    </button>
   </nav>
 </div>
 
@@ -725,6 +815,21 @@ const AREA_CONFIG = {
 };
 const WEEKDAYS = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
 
+const ICON_PATHS = {
+  meditate:'<circle cx="12" cy="6.2" r="2"/><path d="M12 8.2v3.3"/><path d="M6.5 19.5c0-3.3 2.3-5 5.5-5s5.5 1.7 5.5 5"/><path d="M4 19c1-1.8 2-2.6 2.7-3M20 19c-1-1.8-2-2.6-2.7-3"/>',
+  wind:'<path d="M3 8h10.5a2.8 2.8 0 1 0-2.3-4.4"/><path d="M3 12.3h15.2a2.8 2.8 0 1 1-2.1 4.7"/><path d="M3 16.6h8.4a2.3 2.3 0 1 1-1.8 3.7"/>',
+  sparkle:'<path d="M12 3c.5 3.4 1.7 5.7 4.5 6.5-2.8.8-4 3.1-4.5 6.5-.5-3.4-1.7-5.7-4.5-6.5 2.8-.8 4-3.1 4.5-6.5z" fill="currentColor" stroke="none"/>',
+  target:'<circle cx="12" cy="12" r="8.2"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.1" fill="currentColor" stroke="none"/>',
+  coin:'<circle cx="12" cy="12" r="8.2"/><path d="M12 7.3v9.4"/><path d="M9.3 9.4c0-1.1 1.1-1.9 2.7-1.9s2.7.8 2.7 1.8c0 2.5-5.4 1.3-5.4 3.8 0 1 1.1 1.9 2.7 1.9s2.7-.8 2.7-1.9"/>',
+  compass:'<circle cx="12" cy="12" r="8.6"/><path d="M15.2 8.8l-2.1 4.9-5 2.1 2.1-4.9 5-2.1z"/>',
+  moon:'<path d="M19.2 13.8A7.6 7.6 0 1 1 10.2 4.8a6.1 6.1 0 0 0 9 9z"/>',
+  book:'<path d="M4 5.6A1.6 1.6 0 0 1 5.6 4H12v16H5.6A1.6 1.6 0 0 1 4 18.4V5.6z"/><path d="M20 5.6A1.6 1.6 0 0 0 18.4 4H12v16h6.4a1.6 1.6 0 0 0 1.6-1.6V5.6z"/>'
+};
+function icon(name, size){
+  size = size || 20;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">${ICON_PATHS[name]}</svg>`;
+}
+
 /* ===================== STATE ===================== */
 
 const STORAGE_KEY = 'atma_app_state';
@@ -803,6 +908,20 @@ function heroSceneForNow(){
   if(h>=17 && h<21) return 'scene-bloom';
   return 'scene-night';
 }
+function buildGrainTexture(){
+  try{
+    const c = document.createElement('canvas');
+    c.width = 96; c.height = 96;
+    const ctx = c.getContext('2d');
+    const imgData = ctx.createImageData(96,96);
+    for(let i=0;i<imgData.data.length;i+=4){
+      const v = Math.floor(Math.random()*255);
+      imgData.data[i]=v; imgData.data[i+1]=v; imgData.data[i+2]=v; imgData.data[i+3]=255;
+    }
+    ctx.putImageData(imgData,0,0);
+    document.documentElement.style.setProperty('--grain-tex', `url(${c.toDataURL()})`);
+  }catch(e){}
+}
 
 /* ===================== NAVIGATION ===================== */
 
@@ -830,8 +949,10 @@ function updateNavHighlight(id){
   });
 }
 function showOnly(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active','screen-enter'));
+  const el = document.getElementById(id);
+  el.classList.add('active');
+  requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('screen-enter')));
 }
 function openScreen(id, opts={}){
   showOnly(id);
@@ -854,6 +975,15 @@ function goHome(){ navStack=['screen-home']; showOnly('screen-home'); updateNavH
 function renderHome(){
   const heroEl = document.getElementById('home-hero');
   heroEl.className = 'hero-scene tall '+heroSceneForNow();
+  heroEl.innerHTML = `
+    <div class="grain"></div>
+    <div class="hero-scrim"></div>
+    <button class="floating-btn" style="top:18px;right:18px;" onclick="goTo('screen-profile')">${icon('meditate',18).replace('20','18')}</button>
+    <div class="hero-overlay-text">
+      <div class="hero-logo">🪷 АТМА</div>
+      <h2 id="home-greeting-text"></h2>
+    </div>
+  `;
   const hour = new Date().getHours();
   const greeting = hour<5?'Доброй ночи':hour<12?'Доброе утро':hour<18?'Добрый день':'Добрый вечер';
   document.getElementById('home-greeting-text').textContent = greeting+', '+STATE.name;
@@ -861,18 +991,47 @@ function renderHome(){
   const todaysAffirmation = pickDailyAffirmation();
   const showIntention = STATE.intention && STATE.intention.date===todayStr() && STATE.intention.text;
   el.innerHTML = `
-    <p class="streak-line">🔥 ${STATE.streak} ${pluralDays(STATE.streak)} подряд</p>
-    <div class="card affirmation-of-day"><div class="card-label">Аффирмация дня</div><p class="big-affirmation">«${todaysAffirmation}»</p></div>
-    ${showIntention? `<div class="card intention-card"><div class="card-label">🌙 Намерение дня</div><p>${STATE.intention.text}</p></div>` : ''}
-    <div class="quick-grid">
-      <div class="quick-card" onclick="navRoot('screen-meditations')"><div class="quick-icon-circle" style="background:#ffe7c4;">🧘</div><span>Медитации</span></div>
-      <div class="quick-card" onclick="navRoot('screen-breathing')"><div class="quick-icon-circle" style="background:#cfe9ea;">🌬</div><span>Дыхание</span></div>
-      <div class="quick-card" onclick="navRoot('screen-affirmations')"><div class="quick-icon-circle" style="background:#f9e6b8;">✨</div><span>Аффирмации</span></div>
-      <div class="quick-card" onclick="goTo('screen-plan')"><div class="quick-icon-circle" style="background:#ecd3a0;">🎯</div><span>Мой план</span></div>
-      <div class="quick-card" onclick="goTo('screen-money-list')"><div class="quick-icon-circle" style="background:#f0dba7;">💰</div><span>Изобилие</span></div>
-      <div class="quick-card" onclick="goTo('screen-mindfulness-list')"><div class="quick-icon-circle" style="background:#d7e0c9;">🧭</div><span>Осознанность</span></div>
-      <div class="quick-card" onclick="goTo('screen-spiritual-list')"><div class="quick-icon-circle" style="background:#dcd6ea;">🌙</div><span>Духовные практики</span></div>
-      <div class="quick-card" onclick="goTo('screen-journal')"><div class="quick-icon-circle" style="background:#e6ebee;">📔</div><span>Дневник</span></div>
+    <div class="bento-grid">
+      <div class="bento bento-wide card glow-card">
+        <p class="streak-line">🔥 ${STATE.streak} ${pluralDays(STATE.streak)} подряд</p>
+        <div class="card-label">Аффирмация дня</div>
+        <p class="big-affirmation">«${todaysAffirmation}»</p>
+      </div>
+      ${showIntention? `<div class="bento bento-wide card intention-card"><div class="card-label">🌙 Намерение дня</div><p>${STATE.intention.text}</p></div>` : ''}
+      <div class="bento card quick-tile" onclick="goTo('screen-plan')">
+        <div class="quick-icon-circle" style="background:#f4e0c3;color:#a06a1f;">${icon('target')}</div>
+        <div class="quick-tile-title">Мой план</div>
+      </div>
+      <div class="bento card quick-tile" onclick="goTo('screen-journal')">
+        <div class="quick-icon-circle" style="background:#e2e7ea;color:#4c6068;">${icon('book')}</div>
+        <div class="quick-tile-title">Дневник</div>
+      </div>
+      <div class="bento-row-3">
+        <div class="quick-small" onclick="navRoot('screen-meditations')">
+          <div class="quick-icon-circle" style="background:#ffe3c2;color:#b5651d;">${icon('meditate')}</div>
+          <span>Медитации</span>
+        </div>
+        <div class="quick-small" onclick="navRoot('screen-breathing')">
+          <div class="quick-icon-circle" style="background:#cdeceb;color:#2f7d78;">${icon('wind')}</div>
+          <span>Дыхание</span>
+        </div>
+        <div class="quick-small" onclick="navRoot('screen-affirmations')">
+          <div class="quick-icon-circle" style="background:#f7e0ee;color:#a4488a;">${icon('sparkle')}</div>
+          <span>Аффирмации</span>
+        </div>
+      </div>
+      <div class="bento card quick-tile" onclick="goTo('screen-money-list')">
+        <div class="quick-icon-circle" style="background:#f3dca3;color:#8a5a10;">${icon('coin')}</div>
+        <div class="quick-tile-title">Изобилие</div>
+      </div>
+      <div class="bento card quick-tile" onclick="goTo('screen-mindfulness-list')">
+        <div class="quick-icon-circle" style="background:#d9e3c9;color:#4c6b34;">${icon('compass')}</div>
+        <div class="quick-tile-title">Осознанность</div>
+      </div>
+      <div class="bento bento-wide card quick-tile" onclick="goTo('screen-spiritual-list')">
+        <div class="quick-icon-circle" style="background:#ded6ee;color:#6650a3;">${icon('moon')}</div>
+        <div class="quick-tile-title">Духовные практики</div>
+      </div>
     </div>
   `;
 }
@@ -883,7 +1042,7 @@ function renderMeditationsList(){
   const el = document.getElementById('meditations-body');
   el.innerHTML = MEDITATIONS.map(m=>`
     <div class="list-card" onclick="openMeditation('${m.id}')">
-      <div class="scene-thumb ${m.scene}"><span class="thumb-badge">${m.icon}</span></div>
+      <div class="scene-thumb ${m.scene}"><div class="grain"></div><span class="thumb-badge">${m.icon}</span></div>
       <div class="list-info"><p class="list-title">${m.title}</p><p class="list-sub">${m.category} · ${m.duration} мин</p></div>
       <div class="list-arrow">→</div>
     </div>`).join('');
@@ -962,7 +1121,7 @@ function renderBreathingList(){
   const el = document.getElementById('breathing-body');
   el.innerHTML = BREATHING.map(b=>`
     <div class="list-card" onclick="openBreathing('${b.id}')">
-      <div class="scene-thumb ${b.scene}"><span class="thumb-badge">🌬</span></div>
+      <div class="scene-thumb ${b.scene}"><div class="grain"></div><span class="thumb-badge">🌬</span></div>
       <div class="list-info"><p class="list-title">${b.title}</p><p class="list-sub">${b.desc}</p></div>
       <div class="list-arrow">→</div>
     </div>`).join('');
@@ -1128,12 +1287,12 @@ function renderPracticesHub(){
   const el = document.getElementById('practices-body');
   el.innerHTML = `
     <div class="hub-grid">
-      <div class="list-card" onclick="goTo('screen-plan')"><div class="scene-thumb scene-golden"><span class="thumb-badge">🎯</span></div><div class="list-info"><p class="list-title">План саморазвития</p><p class="list-sub">Персональный план по твоим целям</p></div><div class="list-arrow">→</div></div>
-      <div class="list-card" onclick="goTo('screen-money-list')"><div class="scene-thumb scene-goldlight"><span class="thumb-badge">💰</span></div><div class="list-info"><p class="list-title">Денежные практики</p><p class="list-sub">Изобилие и денежный поток</p></div><div class="list-arrow">→</div></div>
-      <div class="list-card" onclick="goTo('screen-mindfulness-list')"><div class="scene-thumb scene-forest"><span class="thumb-badge">🧭</span></div><div class="list-info"><p class="list-title">Осознанность и поиск себя</p><p class="list-sub">Дневники, рефлексия, ценности</p></div><div class="list-arrow">→</div></div>
-      <div class="list-card" onclick="goTo('screen-spiritual-list')"><div class="scene-thumb scene-rainbow"><span class="thumb-badge">🌙</span></div><div class="list-info"><p class="list-title">Духовные практики</p><p class="list-sub">Чакры, луна, интуиция</p></div><div class="list-arrow">→</div></div>
-      <div class="list-card" onclick="goTo('screen-journal')"><div class="scene-thumb scene-cloud"><span class="thumb-badge">📔</span></div><div class="list-info"><p class="list-title">Дневник</p><p class="list-sub">Ежедневные заметки и настроение</p></div><div class="list-arrow">→</div></div>
-      <div class="list-card" onclick="goTo('screen-profile')"><div class="scene-thumb scene-sunrise"><span class="thumb-badge">⚙️</span></div><div class="list-info"><p class="list-title">Профиль и статистика</p><p class="list-sub">Серия дней, прогресс, настройки</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-plan')"><div class="scene-thumb scene-golden"><div class="grain"></div><span class="thumb-badge">🎯</span></div><div class="list-info"><p class="list-title">План саморазвития</p><p class="list-sub">Персональный план по твоим целям</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-money-list')"><div class="scene-thumb scene-goldlight"><div class="grain"></div><span class="thumb-badge">💰</span></div><div class="list-info"><p class="list-title">Денежные практики</p><p class="list-sub">Изобилие и денежный поток</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-mindfulness-list')"><div class="scene-thumb scene-forest"><div class="grain"></div><span class="thumb-badge">🧭</span></div><div class="list-info"><p class="list-title">Осознанность и поиск себя</p><p class="list-sub">Дневники, рефлексия, ценности</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-spiritual-list')"><div class="scene-thumb scene-rainbow"><div class="grain"></div><span class="thumb-badge">🌙</span></div><div class="list-info"><p class="list-title">Духовные практики</p><p class="list-sub">Чакры, луна, интуиция</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-journal')"><div class="scene-thumb scene-cloud"><div class="grain"></div><span class="thumb-badge">📔</span></div><div class="list-info"><p class="list-title">Дневник</p><p class="list-sub">Ежедневные заметки и настроение</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-profile')"><div class="scene-thumb scene-sunrise"><div class="grain"></div><span class="thumb-badge">⚙️</span></div><div class="list-info"><p class="list-title">Профиль и статистика</p><p class="list-sub">Серия дней, прогресс, настройки</p></div><div class="list-arrow">→</div></div>
     </div>
   `;
 }
@@ -1143,7 +1302,7 @@ function renderGenericList(cat){
   const el = document.getElementById(LIST_BODY_IDS[cat]);
   el.innerHTML = PRACTICE_DATA[cat].map(p=>`
     <div class="list-card" onclick="goToPractice('${cat}','${p.id}')">
-      <div class="scene-thumb ${p.scene}"><span class="thumb-badge">${p.icon}</span></div>
+      <div class="scene-thumb ${p.scene}"><div class="grain"></div><span class="thumb-badge">${p.icon}</span></div>
       <div class="list-info"><p class="list-title">${p.title}</p><p class="list-sub">${p.desc}</p></div>
       <div class="list-arrow">→</div>
     </div>`).join('');
@@ -1443,6 +1602,7 @@ function resetAllData(){
 /* ===================== INIT ===================== */
 
 document.addEventListener('DOMContentLoaded', ()=>{
+  buildGrainTexture();
   loadState();
   if(STATE.plan) wizardSelected = STATE.plan.areas.slice();
   renderHome();
