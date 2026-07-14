@@ -6,38 +6,37 @@
 <title>Атма — путь к себе</title>
 <style>
   :root{
-    --bg-deep:#0b0a1c;
-    --bg-mid:#1a1440;
-    --bg-mid2:#241a4d;
-    --accent-gold:#e8c874;
-    --accent-lavender:#b39ddb;
-    --accent-rose:#e6a4c4;
-    --accent-green:#8fd6b0;
-    --text-light:#f3f0fa;
-    --text-dim:#a99ecb;
-    --card-bg:rgba(255,255,255,0.06);
-    --card-border:rgba(255,255,255,0.12);
-    --danger:#e88a8a;
+    --bg-a:#e3e9ea;
+    --bg-b:#ece2cf;
+    --bg-c:#f4ede0;
+    --ink:#332f28;
+    --ink-soft:#7a7466;
+    --ink-faint:#a39c8c;
+    --card:rgba(255,255,255,0.6);
+    --card-solid:#fbf9f4;
+    --card-border:rgba(255,255,255,0.75);
+    --line:rgba(70,55,25,0.08);
+    --gold:#c9a768;
+    --gold-soft:#e6d3a3;
+    --gold-deep:#a6803f;
+    --sage:#8fa377;
+    --rose:#cf9e9a;
+    --shadow-soft:0 18px 40px rgba(70,55,25,0.12);
+    --shadow-card:0 10px 24px rgba(70,55,25,0.08);
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;height:100%;}
   body{
     font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
-    background:
-      radial-gradient(circle at 15% 20%, rgba(255,255,255,0.25) 0px, rgba(255,255,255,0.25) 1px, transparent 1px),
-      radial-gradient(circle at 65% 55%, rgba(255,255,255,0.18) 0px, rgba(255,255,255,0.18) 1px, transparent 1px),
-      radial-gradient(circle at 85% 15%, rgba(255,255,255,0.22) 0px, rgba(255,255,255,0.22) 1px, transparent 1px),
-      radial-gradient(circle at 35% 80%, rgba(255,255,255,0.15) 0px, rgba(255,255,255,0.15) 1px, transparent 1px),
-      linear-gradient(160deg, var(--bg-deep), var(--bg-mid) 55%, var(--bg-mid2));
-    background-size:180px 180px,220px 220px,260px 260px,200px 200px,cover;
-    color:var(--text-light);
+    background:linear-gradient(160deg, var(--bg-a) 0%, var(--bg-b) 55%, var(--bg-c) 100%);
+    color:var(--ink);
     min-height:100vh;
     display:flex;
     align-items:center;
     justify-content:center;
     padding:24px 0;
   }
-  h1,h2,h3{font-family:Georgia,'Times New Roman',serif;font-weight:600;margin:0 0 6px;}
+  h1,h2,h3{font-family:Georgia,'Times New Roman',serif;font-weight:600;margin:0 0 6px;text-wrap:balance;}
   p{line-height:1.5;}
   .app-shell{
     width:430px;
@@ -45,17 +44,17 @@
     height:900px;
     max-height:96vh;
     position:relative;
-    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.15));
+    background:var(--card-solid);
     border-radius:44px;
-    border:1px solid rgba(255,255,255,0.08);
-    box-shadow:0 40px 90px rgba(0,0,0,0.55), inset 0 0 0 6px rgba(0,0,0,0.35);
+    border:1px solid rgba(255,255,255,0.6);
+    box-shadow:var(--shadow-soft), inset 0 0 0 6px rgba(255,255,255,0.4);
     overflow:hidden;
   }
   @media (max-width:460px){
     body{padding:0;}
     .app-shell{width:100vw;height:100vh;max-height:100vh;border-radius:0;border:none;box-shadow:none;}
   }
-  .screens{position:absolute;inset:0;bottom:78px;}
+  .screens{position:absolute;inset:0;bottom:100px;}
   .screen{position:absolute;inset:0;display:none;flex-direction:column;}
   .screen.active{display:flex;}
   .header{
@@ -63,193 +62,258 @@
     padding:22px 20px 14px;
     flex-shrink:0;
   }
-  .header h1{font-size:19px;margin:0;color:var(--text-light);}
-  .header .logo{font-size:22px;background:linear-gradient(90deg,var(--accent-gold),var(--accent-rose));-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .header h1{font-size:19px;margin:0;color:var(--ink);}
+  .header .logo{font-size:20px;font-weight:700;background:linear-gradient(90deg,var(--gold-deep),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
   .back-btn{
-    background:var(--card-bg);border:1px solid var(--card-border);color:var(--text-light);
+    background:var(--card-solid);border:1px solid var(--line);color:var(--ink);
     width:36px;height:36px;border-radius:50%;font-size:16px;cursor:pointer;flex-shrink:0;
+    box-shadow:var(--shadow-card);
   }
-  .header.transparent{position:absolute;top:0;left:0;right:0;z-index:5;background:linear-gradient(180deg, rgba(0,0,0,0.35), transparent);}
   .scroll-area{flex:1;overflow-y:auto;padding:6px 20px 30px;-webkit-overflow-scrolling:touch;}
   .scroll-area::-webkit-scrollbar{width:4px;}
-  .scroll-area::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.15);border-radius:4px;}
+  .scroll-area::-webkit-scrollbar-thumb{background:rgba(70,55,25,0.15);border-radius:4px;}
 
-  .bottom-nav{
-    position:absolute;left:0;right:0;bottom:0;height:78px;
-    display:flex;background:rgba(12,10,30,0.85);backdrop-filter:blur(14px);
-    border-top:1px solid rgba(255,255,255,0.08);
+  /* hero photo scenes + overlapping sheet, echoing the reference's photo-card + info-panel layout */
+  .hero-scene{position:relative;overflow:hidden;flex-shrink:0;height:230px;}
+  .hero-scene.tall{height:280px;}
+  .hero-scrim{position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(255,255,255,0.55) 100%);pointer-events:none;}
+  .hero-overlay-text{position:absolute;left:22px;right:22px;bottom:20px;color:var(--ink);}
+  .hero-logo{font-size:15px;font-weight:700;letter-spacing:0.3px;margin-bottom:6px;}
+  .hero-overlay-text h2{font-size:23px;margin:0;}
+  .floating-btn{
+    position:absolute;z-index:5;background:rgba(255,255,255,0.75);backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,0.7);color:var(--ink);width:40px;height:40px;border-radius:50%;
+    box-shadow:var(--shadow-card);display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;
   }
-  .nav-item{
-    flex:1;background:none;border:none;color:var(--text-dim);font-size:11px;
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;
-    cursor:pointer;padding-top:6px;
+  .back-float{top:18px;left:18px;}
+  .floating-badge{
+    position:absolute;top:18px;right:18px;background:rgba(255,255,255,0.85);backdrop-filter:blur(10px);
+    color:var(--ink);font-size:12.5px;font-weight:700;padding:8px 14px;border-radius:20px;
+    box-shadow:var(--shadow-card);z-index:5;font-variant-numeric:tabular-nums;
   }
-  .nav-item span{font-size:11px;}
-  .nav-item{font-size:19px;}
-  .nav-item.active{color:var(--accent-gold);}
+  .sheet{
+    background:var(--card-solid);border-radius:28px 28px 0 0;margin-top:-24px;position:relative;z-index:2;
+    box-shadow:0 -14px 30px rgba(70,55,25,0.06);padding:24px 20px 24px;flex:1;overflow-y:auto;
+    -webkit-overflow-scrolling:touch;
+  }
+  .meta-line{color:var(--ink-soft);font-size:13px;margin-bottom:16px;}
+
+  /* scene backgrounds — abstract, painterly stand-ins for photography, tuned to each practice's mood */
+  .scene-sunrise{background:
+    radial-gradient(circle at 50% 60%, #fff2cf 0%, #ffe4a3 9%, transparent 10%),
+    linear-gradient(180deg,#ffd9a6 0%,#f7b98d 40%,#eb9c8e 62%,#d7e0d2 62%,#e9eee3 100%);}
+  .scene-night{background:
+    radial-gradient(circle at 22% 22%, rgba(255,255,255,0.55) 0 1.5px, transparent 1.5px),
+    radial-gradient(circle at 68% 14%, rgba(255,255,255,0.4) 0 1px, transparent 1px),
+    radial-gradient(circle at 82% 45%, rgba(255,255,255,0.5) 0 1.5px, transparent 1.5px),
+    radial-gradient(circle at 76% 26%, #f2ead2 0%, #f2ead2 7%, transparent 8%),
+    linear-gradient(180deg,#8d93ab 0%,#a7add0 42%,#c9c2d4 72%,#ded5d2 100%);
+    background-size:70px 70px,90px 90px,60px 60px,cover,cover;}
+  .scene-water{background:
+    repeating-linear-gradient(180deg, transparent 0 20px, rgba(255,255,255,0.12) 20px 21px),
+    linear-gradient(180deg,#d3e7e6 0%,#a8cdd0 45%,#7cb0b6 75%,#5c949c 100%);}
+  .scene-mist{background:linear-gradient(180deg,#e2e8de 0%,#c6d0bf 42%,#9fae95 72%,#7c8b74 100%);}
+  .scene-mist::before{content:'';position:absolute;left:-8%;bottom:-6%;width:65%;height:55%;background:rgba(58,68,50,0.28);clip-path:polygon(0% 100%,45% 12%,100% 100%);}
+  .scene-mist::after{content:'';position:absolute;right:-12%;bottom:-9%;width:75%;height:46%;background:rgba(58,68,50,0.18);clip-path:polygon(0% 100%,55% 22%,100% 100%);}
+  .scene-golden{background:
+    repeating-conic-gradient(from 210deg at 50% 0%, rgba(255,255,255,0.20) 0 3deg, transparent 3deg 14deg),
+    linear-gradient(180deg,#fff1d2 0%,#fadb9e 40%,#eeba75 70%,#dd9f5c 100%);}
+  .scene-goldlight{background:
+    radial-gradient(circle at 55% 40%, rgba(255,255,255,0.35) 0%, transparent 55%),
+    linear-gradient(160deg,#f4dca0 0%,#e2b06b 50%,#c68a48 100%);}
+  .scene-bloom{background:
+    radial-gradient(circle at 28% 28%, rgba(255,255,255,0.5) 0%, transparent 40%),
+    linear-gradient(160deg,#ffd9e1 0%,#f2b6c6 45%,#d99cb4 75%,#c48ba3 100%);}
+  .scene-rainbow{background:
+    linear-gradient(rgba(255,255,255,0.4),rgba(255,255,255,0.4)),
+    linear-gradient(115deg,#ffd6bd,#ffe9b8,#dbedc7,#c2e2e6,#cfd2ee,#e6cbe8);}
+  .scene-cloud{background:
+    radial-gradient(circle at 25% 70%, rgba(255,255,255,0.6) 0%, transparent 30%),
+    radial-gradient(circle at 60% 80%, rgba(255,255,255,0.5) 0%, transparent 26%),
+    radial-gradient(circle at 80% 55%, rgba(255,255,255,0.45) 0%, transparent 24%),
+    linear-gradient(180deg,#eef2f2 0%,#dde4e6 50%,#c9d3d7 100%);}
+  .scene-forest{background:linear-gradient(180deg,#e7ecdc 0%,#c1cba9 45%,#8fa073 78%,#69795a 100%);}
+  .scene-forest::before{content:'';position:absolute;left:8%;bottom:-4%;width:22%;height:70%;background:rgba(50,60,40,0.35);clip-path:polygon(50% 0%,0% 100%,100% 100%);}
+  .scene-forest::after{content:'';position:absolute;left:20%;bottom:6%;width:18%;height:55%;background:rgba(50,60,40,0.25);clip-path:polygon(50% 0%,0% 100%,100% 100%);}
+
+  .hero-scene{position:relative;overflow:hidden;}
+  .scene-thumb{position:relative;overflow:hidden;width:56px;height:56px;border-radius:16px;flex-shrink:0;box-shadow:inset 0 0 0 1px rgba(255,255,255,0.5);}
+  .thumb-badge{
+    position:absolute;bottom:-3px;right:-3px;width:22px;height:22px;border-radius:50%;background:var(--card-solid);
+    display:flex;align-items:center;justify-content:center;font-size:11px;box-shadow:var(--shadow-card);
+  }
+
+  /* circular ring progress — the app's one signature data-viz element, reused sparingly */
+  .ring-wrap{position:relative;width:168px;height:168px;margin:8px auto 18px;}
+  .ring{position:absolute;inset:0;border-radius:50%;background:conic-gradient(var(--gold) calc(var(--pct) * 3.6deg), rgba(70,55,25,0.08) 0deg);transition:background 0.3s;}
+  .ring-inner{position:absolute;inset:15px;background:var(--card-solid);border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:inset 0 2px 8px rgba(70,55,25,0.07);overflow:visible;}
+  .ring-value{font-size:28px;font-weight:700;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .ring-label{font-size:11px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
+
+  .stat-row{display:flex;justify-content:space-between;gap:6px;margin-top:16px;padding-top:16px;border-top:1px solid var(--line);}
+  .stat-row .stat{text-align:center;flex:1;}
+  .stat-row .stat b{display:block;font-size:17px;color:var(--ink);font-variant-numeric:tabular-nums;}
+  .stat-row .stat span{font-size:10.5px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:0.3px;}
 
   .card{
-    background:var(--card-bg);border:1px solid var(--card-border);border-radius:20px;
-    padding:18px;margin-bottom:16px;backdrop-filter:blur(6px);
+    background:var(--card-solid);border:1px solid var(--line);border-radius:22px;
+    padding:18px;margin-bottom:16px;box-shadow:var(--shadow-card);
   }
-  .card-label{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--accent-lavender);margin-bottom:8px;}
+  .card-label{font-size:12px;text-transform:uppercase;letter-spacing:1px;color:var(--gold-deep);margin-bottom:8px;}
   .home-greeting h2{font-size:22px;}
-  .streak-line{color:var(--accent-gold);font-size:14px;margin:0;}
-  .big-affirmation{font-size:18px;font-style:italic;color:var(--text-light);margin:0;}
-  .intention-card{border:1px solid rgba(232,200,116,0.35);}
+  .streak-line{color:var(--gold-deep);font-size:14px;margin:0;}
+  .big-affirmation{font-size:18px;font-style:italic;color:var(--ink);margin:0;font-family:Georgia,serif;}
+  .intention-card{border:1px solid rgba(201,167,104,0.35);}
 
   .quick-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:6px;}
   .quick-card{
-    background:var(--card-bg);border:1px solid var(--card-border);border-radius:18px;
-    padding:18px 12px;text-align:center;font-size:26px;cursor:pointer;
-    display:flex;flex-direction:column;align-items:center;gap:8px;transition:transform .15s;
+    background:var(--card-solid);border:1px solid var(--line);border-radius:20px;
+    padding:16px 12px;text-align:center;cursor:pointer;
+    display:flex;flex-direction:column;align-items:center;gap:10px;transition:transform .15s;
+    box-shadow:var(--shadow-card);
   }
   .quick-card:active{transform:scale(0.96);}
-  .quick-card span{font-size:12.5px;color:var(--text-light);font-weight:500;}
+  .quick-icon-circle{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;}
+  .quick-card span{font-size:12.5px;color:var(--ink);font-weight:600;}
 
   .list-card{
-    display:flex;align-items:center;gap:14px;background:var(--card-bg);border:1px solid var(--card-border);
-    border-radius:18px;padding:14px 16px;margin-bottom:12px;cursor:pointer;transition:transform .15s;
+    display:flex;align-items:center;gap:14px;background:var(--card-solid);border:1px solid var(--line);
+    border-radius:20px;padding:12px 14px;margin-bottom:12px;cursor:pointer;transition:transform .15s;
+    box-shadow:var(--shadow-card);
   }
   .list-card:active{transform:scale(0.98);}
-  .list-icon{font-size:26px;width:44px;height:44px;display:flex;align-items:center;justify-content:center;
-    background:rgba(255,255,255,0.08);border-radius:14px;flex-shrink:0;}
   .list-info{flex:1;min-width:0;}
-  .list-title{font-size:15px;font-weight:600;margin:0 0 3px;}
-  .list-sub{font-size:12.5px;color:var(--text-dim);margin:0;}
-  .list-arrow{color:var(--text-dim);font-size:16px;}
+  .list-title{font-size:15px;font-weight:600;margin:0 0 3px;color:var(--ink);}
+  .list-sub{font-size:12.5px;color:var(--ink-soft);margin:0;}
+  .list-arrow{color:var(--ink-faint);font-size:16px;}
 
-  .section-sub{font-size:14px;color:var(--accent-lavender);margin:22px 0 10px;text-transform:uppercase;letter-spacing:1px;}
+  .section-sub{font-size:13px;color:var(--gold-deep);margin:22px 0 10px;text-transform:uppercase;letter-spacing:1px;font-weight:600;}
 
   .btn{
     display:block;width:100%;padding:14px;border-radius:16px;border:none;font-size:15px;font-weight:600;
     cursor:pointer;margin-top:10px;text-align:center;
   }
-  .btn-primary{background:linear-gradient(90deg,var(--accent-gold),var(--accent-rose));color:#241a1a;}
-  .btn-outline{background:transparent;border:1px solid var(--card-border);color:var(--text-light);}
-  .link-btn{background:none;border:none;color:var(--accent-gold);font-size:13px;cursor:pointer;padding:6px 0;}
+  .btn-primary{background:linear-gradient(120deg,var(--gold),var(--gold-soft));color:#3a2c12;box-shadow:0 12px 26px rgba(180,140,60,0.28);}
+  .btn-outline{background:rgba(255,255,255,0.5);border:1px solid var(--line);color:var(--ink);}
+  .link-btn{background:none;border:none;color:var(--gold-deep);font-size:13px;cursor:pointer;padding:6px 0;}
+  .center-link{display:block;margin:6px auto 0;}
 
   .chip-grid{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px;}
   .chip{
-    background:var(--card-bg);border:1px solid var(--card-border);color:var(--text-light);
+    background:rgba(255,255,255,0.55);border:1px solid var(--line);color:var(--ink);
     padding:9px 14px;border-radius:20px;font-size:13px;cursor:pointer;
   }
-  .chip-active{background:linear-gradient(90deg,var(--accent-gold),var(--accent-rose));color:#241a1a;border-color:transparent;}
+  .chip-active{background:linear-gradient(120deg,var(--gold),var(--gold-soft));color:#3a2c12;border-color:transparent;}
 
   .affirm-card{
-    background:linear-gradient(160deg, rgba(179,157,219,0.18), rgba(230,164,196,0.10));
-    border:1px solid var(--card-border);border-radius:22px;padding:34px 20px;text-align:center;margin:14px 0;
-    min-height:120px;display:flex;align-items:center;justify-content:center;
+    background:linear-gradient(160deg, rgba(255,255,255,0.75), rgba(255,225,190,0.35));
+    border:1px solid rgba(255,255,255,0.8);border-radius:22px;padding:34px 20px;text-align:center;margin:14px 0;
+    min-height:120px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-card);
   }
-  .affirm-card p{font-size:19px;font-style:italic;font-family:Georgia,serif;}
+  .affirm-card p{font-size:19px;font-style:italic;font-family:Georgia,serif;color:var(--ink);}
   .affirm-actions{display:flex;gap:10px;}
-  .affirm-actions .btn{margin-top:4px;}
   .icon-btn{
-    background:var(--card-bg);border:1px solid var(--card-border);color:var(--text-light);
+    background:var(--card-solid);border:1px solid var(--line);color:var(--ink);
     width:52px;height:52px;border-radius:16px;font-size:20px;cursor:pointer;flex-shrink:0;
   }
-  .icon-btn.fav-active{color:var(--accent-rose);border-color:var(--accent-rose);}
+  .icon-btn.fav-active{color:var(--rose);border-color:var(--rose);}
   .affirm-list-item{
     display:flex;align-items:center;justify-content:space-between;gap:10px;
-    background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;
-    padding:12px 14px;margin-bottom:10px;font-size:13.5px;
+    background:var(--card-solid);border:1px solid var(--line);border-radius:14px;
+    padding:12px 14px;margin-bottom:10px;font-size:13.5px;color:var(--ink);
   }
-  .affirm-list-item button{background:none;border:none;font-size:17px;cursor:pointer;color:var(--text-dim);}
-  .affirm-list-item button.fav-active{color:var(--accent-rose);}
+  .affirm-list-item button{background:none;border:none;font-size:17px;cursor:pointer;color:var(--ink-faint);}
+  .affirm-list-item button.fav-active{color:var(--rose);}
 
-  .player-area{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding-top:90px;}
-  .med-circle-wrap{width:220px;height:220px;display:flex;align-items:center;justify-content:center;margin-bottom:30px;position:relative;}
-  .med-circle{
-    width:170px;height:170px;border-radius:50%;
-    background:radial-gradient(circle, rgba(255,255,255,0.18), rgba(255,255,255,0.02));
-    border:1px solid rgba(255,255,255,0.25);
-    transition:transform 4s ease-in-out;
-  }
-  .med-circle.breathing-animate{animation:medPulse 8s ease-in-out infinite;}
-  @keyframes medPulse{0%{transform:scale(0.92);}50%{transform:scale(1.12);}100%{transform:scale(0.92);}}
-  .med-timer{font-size:34px;font-weight:300;letter-spacing:2px;margin-bottom:6px;}
-  .med-step{font-size:16px;min-height:56px;max-width:300px;margin:0 auto 20px;color:var(--text-light);}
-  .med-controls{display:flex;gap:16px;align-items:center;}
+  .med-timer{font-size:26px;font-weight:300;letter-spacing:1px;color:var(--ink);font-variant-numeric:tabular-nums;}
   .med-play-btn{
-    width:64px;height:64px;border-radius:50%;border:none;
-    background:linear-gradient(90deg,var(--accent-gold),var(--accent-rose));font-size:24px;cursor:pointer;
+    width:56px;height:56px;border-radius:50%;border:none;
+    background:linear-gradient(120deg,var(--gold),var(--gold-soft));font-size:20px;cursor:pointer;
+    box-shadow:0 10px 22px rgba(180,140,60,0.3);margin-bottom:8px;
   }
-  .progress-bar{width:100%;height:6px;background:rgba(255,255,255,0.1);border-radius:6px;overflow:hidden;margin:14px 0 6px;}
-  .progress-fill{height:100%;background:linear-gradient(90deg,var(--accent-gold),var(--accent-rose));transition:width .4s;}
-  .med-progress-wrap{width:250px;}
+  .med-play-btn.standalone{display:block;margin:4px auto 4px;}
+  .step-card p{margin:0;font-size:15px;color:var(--ink);text-align:center;min-height:44px;}
 
-  .breath-phase-label{font-size:22px;color:var(--accent-gold);margin-bottom:14px;letter-spacing:1px;}
-  .breath-circle-wrap{width:240px;height:240px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;}
+  .breath-phase-label{font-size:19px;color:var(--gold-deep);margin-bottom:6px;letter-spacing:0.5px;text-align:center;font-weight:600;}
   .breath-circle{
-    width:120px;height:120px;border-radius:50%;
-    background:radial-gradient(circle, rgba(179,157,219,0.45), rgba(179,157,219,0.05));
-    border:1px solid rgba(179,157,219,0.5);
+    width:100px;height:100px;border-radius:50%;
+    background:radial-gradient(circle, rgba(201,167,104,0.55), rgba(201,167,104,0.08));
+    border:1px solid rgba(201,167,104,0.5);
     transition:transform 1s linear;
   }
-  .breath-round{color:var(--text-dim);font-size:13px;margin-bottom:18px;}
-  .rounds-select{display:flex;gap:8px;justify-content:center;margin-bottom:10px;}
+  .rounds-select{display:flex;gap:8px;justify-content:center;margin-bottom:14px;flex-wrap:wrap;}
 
-  .practice-desc{color:var(--text-dim);font-size:14px;margin-bottom:16px;}
+  .practice-desc{color:var(--ink-soft);font-size:14px;margin-bottom:16px;}
   .steps-list{padding-left:20px;margin:0 0 16px;}
-  .steps-list li{margin-bottom:10px;font-size:14.5px;line-height:1.5;}
+  .steps-list li{margin-bottom:10px;font-size:14.5px;line-height:1.5;color:var(--ink);}
   .field{margin-bottom:16px;}
-  .field label{display:block;font-size:13px;color:var(--accent-lavender);margin-bottom:6px;}
+  .field label{display:block;font-size:13px;color:var(--gold-deep);margin-bottom:6px;font-weight:600;}
   .field textarea, .field input[type=text]{
-    width:100%;background:rgba(255,255,255,0.05);border:1px solid var(--card-border);border-radius:12px;
-    color:var(--text-light);padding:11px 12px;font-size:14px;font-family:inherit;resize:vertical;min-height:44px;
+    width:100%;background:rgba(255,255,255,0.55);border:1px solid var(--line);border-radius:12px;
+    color:var(--ink);padding:11px 12px;font-size:14px;font-family:inherit;resize:vertical;min-height:44px;
   }
   .field textarea{min-height:70px;}
 
-  .challenge-grid{display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+  .challenge-grid{display:flex;flex-direction:column;gap:8px;margin-top:6px;}
   .challenge-item{
-    display:flex;align-items:center;gap:10px;background:var(--card-bg);border:1px solid var(--card-border);
+    display:flex;align-items:center;gap:10px;background:var(--card-solid);border:1px solid var(--line);
     border-radius:12px;padding:10px 12px;cursor:pointer;font-size:13px;
   }
-  .challenge-item.done{border-color:var(--accent-green);background:rgba(143,214,176,0.12);}
-  .day-num{color:var(--accent-gold);font-weight:600;flex-shrink:0;width:60px;}
-  .day-task{flex:1;color:var(--text-light);}
-  .check{color:var(--accent-green);font-weight:700;width:16px;}
+  .challenge-item.done{border-color:var(--sage);background:rgba(143,163,119,0.12);}
+  .day-num{color:var(--gold-deep);font-weight:600;flex-shrink:0;width:60px;}
+  .day-task{flex:1;color:var(--ink);}
+  .check{color:var(--sage);font-weight:700;width:16px;}
 
   .wheel-row{margin-bottom:14px;}
-  .wheel-label{font-size:13.5px;margin-bottom:4px;}
-  .wheel-label b{color:var(--accent-gold);}
-  input[type=range]{width:100%;accent-color:var(--accent-gold);}
+  .wheel-label{font-size:13.5px;margin-bottom:4px;color:var(--ink);}
+  .wheel-label b{color:var(--gold-deep);}
+  input[type=range]{width:100%;accent-color:var(--gold-deep);}
 
-  .chakra-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:12px 14px;margin-bottom:10px;}
-  .chakra-card summary{cursor:pointer;font-weight:600;font-size:14.5px;list-style:none;display:flex;align-items:center;gap:8px;}
+  .chakra-card{background:var(--card-solid);border:1px solid var(--line);border-radius:16px;padding:12px 14px;margin-bottom:10px;}
+  .chakra-card summary{cursor:pointer;font-weight:600;font-size:14.5px;list-style:none;display:flex;align-items:center;gap:8px;color:var(--ink);}
   .chakra-card summary::-webkit-details-marker{display:none;}
   .chakra-dot{width:12px;height:12px;border-radius:50%;display:inline-block;flex-shrink:0;}
-  .chakra-card p{font-size:13.5px;margin:8px 0 0;}
+  .chakra-card p{font-size:13.5px;margin:8px 0 0;color:var(--ink-soft);}
 
   .mood-row{display:flex;gap:10px;}
-  .mood-btn{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;font-size:22px;
+  .mood-btn{background:var(--card-solid);border:1px solid var(--line);border-radius:14px;font-size:22px;
     width:48px;height:48px;cursor:pointer;}
-  .mood-btn.active{border-color:var(--accent-gold);background:rgba(232,200,116,0.15);}
-  .journal-entry{background:var(--card-bg);border:1px solid var(--card-border);border-radius:14px;padding:12px 14px;margin-bottom:10px;font-size:13.5px;}
-  .je-head{color:var(--accent-gold);margin-bottom:6px;font-size:13px;}
+  .mood-btn.active{border-color:var(--gold);background:rgba(201,167,104,0.18);}
+  .journal-entry{background:var(--card-solid);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px;font-size:13.5px;color:var(--ink);}
+  .je-head{color:var(--gold-deep);margin-bottom:6px;font-size:13px;font-weight:600;}
   .journal-entry p{margin:2px 0;}
-  .empty-hint{color:var(--text-dim);font-size:13.5px;}
+  .empty-hint{color:var(--ink-soft);font-size:13.5px;}
 
   .profile-header{display:flex;align-items:center;gap:14px;margin-bottom:20px;}
-  .avatar{width:56px;height:56px;border-radius:50%;background:var(--card-bg);border:1px solid var(--card-border);
-    display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;}
+  .avatar{width:56px;height:56px;border-radius:50%;background:var(--card-solid);border:1px solid var(--line);
+    display:flex;align-items:center;justify-content:center;font-size:26px;flex-shrink:0;box-shadow:var(--shadow-card);}
   .profile-header input{
-    background:transparent;border:none;border-bottom:1px solid var(--card-border);color:var(--text-light);
+    background:transparent;border:none;border-bottom:1px solid var(--line);color:var(--ink);
     font-size:19px;font-family:Georgia,serif;padding:4px 0;flex:1;
   }
-  .stats-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:16px;}
-  .stat-card{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:16px;text-align:center;}
-  .stat-num{font-size:22px;font-weight:700;color:var(--accent-gold);}
-  .stat-label{font-size:11.5px;color:var(--text-dim);margin-top:4px;}
 
-  .plan-day{background:var(--card-bg);border:1px solid var(--card-border);border-radius:16px;padding:14px 16px;margin-bottom:12px;}
-  .plan-day summary{cursor:pointer;font-weight:600;font-size:14.5px;list-style:none;}
+  .plan-day{background:var(--card-solid);border:1px solid var(--line);border-radius:18px;padding:14px 16px;margin-bottom:12px;}
+  .plan-day summary{cursor:pointer;font-weight:600;font-size:14.5px;list-style:none;color:var(--ink);}
   .plan-day summary::-webkit-details-marker{display:none;}
-  .plan-task{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid rgba(255,255,255,0.06);font-size:13.5px;}
-  .plan-task label{display:flex;align-items:center;gap:8px;}
-  .plan-task.done label{color:var(--accent-green);}
+  .plan-task{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line);font-size:13.5px;}
+  .plan-task label{display:flex;align-items:center;gap:8px;color:var(--ink);}
+  .plan-task.done label{color:var(--sage);}
 
   .hub-grid{display:grid;grid-template-columns:1fr;gap:12px;}
+
+  .bottom-nav{
+    position:absolute;left:16px;right:16px;bottom:16px;height:68px;border-radius:34px;
+    display:flex;background:rgba(255,255,255,0.62);backdrop-filter:blur(18px);
+    border:1px solid rgba(255,255,255,0.75);box-shadow:var(--shadow-soft);
+  }
+  .nav-item{
+    flex:1;background:none;border:none;color:var(--ink-faint);font-size:11px;
+    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;
+    cursor:pointer;padding-top:4px;font-size:19px;
+  }
+  .nav-item span{font-size:10.5px;font-weight:600;}
+  .nav-item.active{color:var(--gold-deep);}
+  .nav-item.active::after{content:'';display:block;width:4px;height:4px;border-radius:50%;background:var(--gold-deep);}
 </style>
 </head>
 <body>
@@ -257,8 +321,15 @@
   <main class="screens">
 
     <section id="screen-home" class="screen active">
-      <header class="header"><h1 class="logo">🪷 Атма</h1></header>
-      <div class="scroll-area" id="home-body"></div>
+      <div class="hero-scene tall" id="home-hero">
+        <div class="hero-scrim"></div>
+        <button class="floating-btn" style="top:18px;right:18px;" onclick="goTo('screen-profile')">⚙️</button>
+        <div class="hero-overlay-text">
+          <div class="hero-logo">🪷 Атма</div>
+          <h2 id="home-greeting-text"></h2>
+        </div>
+      </div>
+      <div class="sheet" id="home-body"></div>
     </section>
 
     <section id="screen-meditations" class="screen">
@@ -267,8 +338,12 @@
     </section>
 
     <section id="screen-meditation-player" class="screen">
-      <header class="header transparent"><button class="back-btn" onclick="closeMeditationPlayer()">←</button></header>
-      <div class="scroll-area player-area" id="meditation-player-body"></div>
+      <div class="hero-scene" id="med-hero">
+        <div class="hero-scrim"></div>
+        <button class="floating-btn back-float" onclick="closeMeditationPlayer()">←</button>
+        <div class="floating-badge" id="med-step-badge">1/1</div>
+      </div>
+      <div class="sheet" id="meditation-player-body"></div>
     </section>
 
     <section id="screen-breathing" class="screen">
@@ -277,8 +352,12 @@
     </section>
 
     <section id="screen-breathing-session" class="screen">
-      <header class="header transparent"><button class="back-btn" onclick="closeBreathingSession()">←</button></header>
-      <div class="scroll-area player-area" id="breathing-session-body"></div>
+      <div class="hero-scene" id="breath-hero">
+        <div class="hero-scrim"></div>
+        <button class="floating-btn back-float" onclick="closeBreathingSession()">←</button>
+        <div class="floating-badge" id="breath-round-badge">0/6</div>
+      </div>
+      <div class="sheet" id="breathing-session-body"></div>
     </section>
 
     <section id="screen-affirmations" class="screen">
@@ -341,7 +420,7 @@
 /* ===================== DATA ===================== */
 
 const MEDITATIONS = [
-  {id:'m1', title:'Утренняя медитация пробуждения', category:'Утро', duration:7, color:'#e8c874',
+  {id:'m1', title:'Утренняя медитация пробуждения', category:'Утро', duration:7, scene:'scene-sunrise', icon:'🌅',
     steps:[
       'Сядь удобно или ляг, позволь телу расслабиться.',
       'Сделай глубокий вдох через нос и медленный выдох через рот.',
@@ -351,7 +430,7 @@ const MEDITATIONS = [
       'Скажи себе: «Я готов(а) принять этот день с открытым сердцем».',
       'Сделай ещё три глубоких вдоха и медленно возвращайся.'
     ]},
-  {id:'m2', title:'Медитация для глубокого сна', category:'Сон', duration:12, color:'#7a8fd1',
+  {id:'m2', title:'Медитация для глубокого сна', category:'Сон', duration:12, scene:'scene-night', icon:'🌙',
     steps:[
       'Ляг в удобное положение, позволь телу стать тяжёлым.',
       'Начни с макушки головы — расслабь лоб, брови, челюсть.',
@@ -363,7 +442,7 @@ const MEDITATIONS = [
       'С каждым выдохом ты погружаешься глубже в отдых.',
       'Спи спокойно, ты в безопасности.'
     ]},
-  {id:'m3', title:'Снятие тревоги здесь и сейчас', category:'Стресс', duration:8, color:'#8fd6b0',
+  {id:'m3', title:'Снятие тревоги здесь и сейчас', category:'Стресс', duration:8, scene:'scene-water', icon:'🍃',
     steps:[
       'Заметь, что ты сейчас чувствуешь, без осуждения.',
       'Положи руку на грудь или живот.',
@@ -373,7 +452,7 @@ const MEDITATIONS = [
       'Напомни себе: «Прямо сейчас я в безопасности».',
       'Продолжай дышать медленно, отпуская напряжение с каждым выдохом.'
     ]},
-  {id:'m4', title:'Сканирование тела', category:'Тело', duration:10, color:'#b39ddb',
+  {id:'m4', title:'Сканирование тела', category:'Тело', duration:10, scene:'scene-mist', icon:'🧘',
     steps:[
       'Начни с внимания к стопам — просто замечай ощущения.',
       'Перемести внимание к голеням и коленям.',
@@ -384,7 +463,7 @@ const MEDITATIONS = [
       'Заметь шею, лицо, макушку головы.',
       'Ощути тело целиком, как единое целое.'
     ]},
-  {id:'m5', title:'Медитация благодарности', category:'Благодарность', duration:6, color:'#e6a4c4',
+  {id:'m5', title:'Медитация благодарности', category:'Благодарность', duration:6, scene:'scene-golden', icon:'🙏',
     steps:[
       'Вспомни одного человека, за которого ты благодарен(на).',
       'Вспомни момент этого дня, который порадовал тебя.',
@@ -393,7 +472,7 @@ const MEDITATIONS = [
       'Позволь чувству благодарности наполнить грудь теплом.',
       'Улыбнись — даже мысленно.'
     ]},
-  {id:'m6', title:'Любящая доброта (метта)', category:'Любовь', duration:9, color:'#e6a4c4',
+  {id:'m6', title:'Любящая доброта (метта)', category:'Любовь', duration:9, scene:'scene-bloom', icon:'💗',
     steps:[
       'Направь тёплое пожелание себе: «Пусть я буду счастлив(а), пусть я буду в безопасности».',
       'Представь близкого человека и пожелай ему того же.',
@@ -402,7 +481,7 @@ const MEDITATIONS = [
       'Расширь пожелание на всех живых существ.',
       'Заверши, вернув тепло себе: «Пусть я буду свободен(на) от страданий».'
     ]},
-  {id:'m7', title:'Медитация изобилия и денежного потока', category:'Изобилие', duration:10, color:'#e8c874',
+  {id:'m7', title:'Медитация изобилия и денежного потока', category:'Изобилие', duration:10, scene:'scene-goldlight', icon:'💰',
     steps:[
       'Устройся удобно, сделай несколько глубоких вдохов.',
       'Представь тёплый золотой свет над головой — энергию изобилия.',
@@ -413,7 +492,7 @@ const MEDITATIONS = [
       'Представь, как делишься своим изобилием с другими.',
       'Поблагодари за то, что уже есть в твоей жизни.'
     ]},
-  {id:'m8', title:'Путешествие по семи чакрам', category:'Энергия', duration:15, color:'#b39ddb',
+  {id:'m8', title:'Путешествие по семи чакрам', category:'Энергия', duration:15, scene:'scene-rainbow', icon:'🌈',
     steps:[
       'Муладхара, копчик — представь красный свет и ощущение опоры.',
       'Свадхистана, низ живота — оранжевый свет, поток творчества.',
@@ -424,7 +503,7 @@ const MEDITATIONS = [
       'Сахасрара, макушка — фиолетово-белый свет, связь с высшим.',
       'Позволь всем цветам объединиться в единый поток света через тело.'
     ]},
-  {id:'m9', title:'Отпускание и прощение', category:'Исцеление', duration:8, color:'#8fd6b0',
+  {id:'m9', title:'Отпускание и прощение', category:'Исцеление', duration:8, scene:'scene-cloud', icon:'🕊️',
     steps:[
       'Вспомни ситуацию, которую хочешь отпустить.',
       'Позволь себе почувствовать связанные с ней эмоции, не подавляя их.',
@@ -433,7 +512,7 @@ const MEDITATIONS = [
       'Представь, как груз спадает с твоих плеч.',
       'Сделай глубокий вдох свободы и лёгкости.'
     ]},
-  {id:'m10', title:'Встреча с внутренней мудростью', category:'Осознанность', duration:10, color:'#7a8fd1',
+  {id:'m10', title:'Встреча с внутренней мудростью', category:'Осознанность', duration:10, scene:'scene-forest', icon:'🦉',
     steps:[
       'Расслабься и представь тихое место в природе.',
       'Представь, что навстречу идёт твоя мудрая часть — та, что знает верный путь.',
@@ -446,17 +525,17 @@ const MEDITATIONS = [
 
 const BREATHING = [
   {id:'b1', title:'Квадратное дыхание', desc:'Концентрация и снятие стресса. Равные фазы вдоха, задержки и выдоха.',
-    pattern:[4,4,4,4], rounds:6, color:'#e8c874'},
+    pattern:[4,4,4,4], rounds:6, scene:'scene-mist'},
   {id:'b2', title:'Дыхание 4-7-8', desc:'Глубокое расслабление, помогает уснуть.',
-    pattern:[4,7,8,0], rounds:4, color:'#7a8fd1'},
+    pattern:[4,7,8,0], rounds:4, scene:'scene-night'},
   {id:'b3', title:'Диафрагмальное дыхание', desc:'Базовое дыхание животом для быстрого успокоения нервной системы.',
-    pattern:[4,0,6,0], rounds:8, color:'#8fd6b0'},
+    pattern:[4,0,6,0], rounds:8, scene:'scene-water'},
   {id:'b4', title:'Когерентное дыхание', desc:'Ровное дыхание 5 на 5 — баланс нервной системы, спокойствие ума.',
-    pattern:[5,0,5,0], rounds:10, color:'#b39ddb'},
-  {id:'b5', title:'Бодрящее дыхание', desc:'Быстрые ровные циклы для energии и бодрости. Не подходит при беременности и заболеваниях сердца.',
-    pattern:[2,0,2,0], rounds:15, color:'#e6a4c4'},
+    pattern:[5,0,5,0], rounds:10, scene:'scene-cloud'},
+  {id:'b5', title:'Бодрящее дыхание', desc:'Быстрые ровные циклы для энергии и бодрости. Не подходит при беременности и заболеваниях сердца.',
+    pattern:[2,0,2,0], rounds:15, scene:'scene-sunrise'},
   {id:'b6', title:'Попеременное дыхание через ноздри', desc:'Баланс и ясность ума. Дыши в своём темпе, поочерёдно прикрывая ноздри пальцами.',
-    pattern:[4,2,4,0], rounds:8, color:'#e8c874'}
+    pattern:[4,2,4,0], rounds:8, scene:'scene-bloom'}
 ];
 
 const AFFIRMATIONS = {
@@ -573,11 +652,11 @@ const MONEY_CHALLENGE_TASKS = [
 const CHAKRAS = [
   {name:'Муладхара', ru:'Корневая чакра', color:'#e05252', location:'Основание позвоночника', theme:'Опора, безопасность, выживание', affirmation:'Я в безопасности и твёрдо стою на земле.', practice:'Постой босиком на земле 5 минут, представляя красный свет у основания позвоночника.'},
   {name:'Свадхистана', ru:'Сакральная чакра', color:'#e8944a', location:'Низ живота', theme:'Творчество, удовольствие, эмоции', affirmation:'Я разрешаю себе радость и творчество.', practice:'Потанцуй под любимую музыку 5 минут без цели, просто ради удовольствия.'},
-  {name:'Манипура', ru:'Чакра солнечного сплетения', color:'#e8c874', location:'Область желудка', theme:'Личная сила, воля, уверенность', affirmation:'Я уверенно иду к своим целям.', practice:'Сделай 10 глубоких вдохов животом, представляя жёлтое солнце в центре тела.'},
-  {name:'Анахата', ru:'Сердечная чакра', color:'#8fd6b0', location:'Центр груди', theme:'Любовь, сострадание, принятие', affirmation:'Моё сердце открыто для любви.', practice:'Положи руку на сердце и вспомни момент, когда чувствовал(а) любовь.'},
-  {name:'Вишуддха', ru:'Горловая чакра', color:'#7ec8e3', location:'Горло', theme:'Голос, честность, самовыражение', affirmation:'Я говорю свою правду с любовью.', practice:'Пропой любой звук вслух в течение минуты, отпуская зажим в горле.'},
-  {name:'Аджна', ru:'Чакра третьего глаза', color:'#7a8fd1', location:'Межбровье', theme:'Интуиция, ясность, видение', affirmation:'Я доверяю своей внутренней мудрости.', practice:'Закрой глаза и 2 минуты просто наблюдай за пространством перед внутренним взором.'},
-  {name:'Сахасрара', ru:'Коронная чакра', color:'#b39ddb', location:'Макушка головы', theme:'Связь с высшим, единство, духовность', affirmation:'Я связан(а) с чем-то большим, чем я сам(а).', practice:'Посиди в тишине 3 минуты, представляя свет над макушкой, соединяющий тебя со Вселенной.'}
+  {name:'Манипура', ru:'Чакра солнечного сплетения', color:'#dcb35a', location:'Область желудка', theme:'Личная сила, воля, уверенность', affirmation:'Я уверенно иду к своим целям.', practice:'Сделай 10 глубоких вдохов животом, представляя жёлтое солнце в центре тела.'},
+  {name:'Анахата', ru:'Сердечная чакра', color:'#7fae7f', location:'Центр груди', theme:'Любовь, сострадание, принятие', affirmation:'Моё сердце открыто для любви.', practice:'Положи руку на сердце и вспомни момент, когда чувствовал(а) любовь.'},
+  {name:'Вишуддха', ru:'Горловая чакра', color:'#6fa8c9', location:'Горло', theme:'Голос, честность, самовыражение', affirmation:'Я говорю свою правду с любовью.', practice:'Пропой любой звук вслух в течение минуты, отпуская зажим в горле.'},
+  {name:'Аджна', ru:'Чакра третьего глаза', color:'#7d84b8', location:'Межбровье', theme:'Интуиция, ясность, видение', affirmation:'Я доверяю своей внутренней мудрости.', practice:'Закрой глаза и 2 минуты просто наблюдай за пространством перед внутренним взором.'},
+  {name:'Сахасрара', ru:'Коронная чакра', color:'#a993c9', location:'Макушка головы', theme:'Связь с высшим, единство, духовность', affirmation:'Я связан(а) с чем-то большим, чем я сам(а).', practice:'Посиди в тишине 3 минуты, представляя свет над макушкой, соединяющий тебя со Вселенной.'}
 ];
 
 const VALUES_LIST = ['Свобода','Семья','Творчество','Здоровье','Любовь','Честность','Рост','Служение','Приключения','Стабильность','Духовность','Дружба','Успех','Красота','Мудрость','Справедливость','Благодарность','Радость','Смелость','Гармония'];
@@ -588,49 +667,49 @@ const INTENTION_SUGGESTIONS = ['Сегодня я выбираю спокойс�
 
 const PRACTICE_DATA = {
   money:[
-    {id:'morning_ritual', title:'Утренний ритуал изобилия', icon:'🌅', desc:'Начни день с чувства достатка вместо тревоги о деньгах.', type:'steps',
+    {id:'morning_ritual', title:'Утренний ритуал изобилия', icon:'🌅', scene:'scene-sunrise', desc:'Начни день с чувства достатка вместо тревоги о деньгах.', type:'steps',
       steps:['Проснувшись, ещё лёжа в постели, вспомни 3 вещи, за которые ты благодарен(на) в финансовой сфере.','Произнеси вслух: «Я открыт(а) принимать изобилие».','Улыбнись и начни день с чувства достатка.']},
-    {id:'visualization', title:'Визуализация денежного потока', icon:'💫', desc:'Короткая практика, чтобы прочувствовать желаемую финансовую реальность.', type:'steps',
+    {id:'visualization', title:'Визуализация денежного потока', icon:'💫', scene:'scene-goldlight', desc:'Короткая практика, чтобы прочувствовать желаемую финансовую реальность.', type:'steps',
       steps:['Закрой глаза и сделай три глубоких вдоха.','Представь во всех деталях, как выглядит твоя желаемая финансовая жизнь.','Почувствуй эмоции так, будто это уже произошло — спокойствие, радость, свободу.','Поблагодари за то, что это уже в пути к тебе.']},
-    {id:'abundance_journal', title:'Дневник изобилия', icon:'📓', desc:'Регулярные короткие записи меняют отношение к деньгам.', type:'journal',
+    {id:'abundance_journal', title:'Дневник изобилия', icon:'📓', scene:'scene-golden', desc:'Регулярные короткие записи меняют отношение к деньгам.', type:'journal',
       prompts:['Что хорошего в финансовом плане произошло сегодня?','За что я благодарен(на) деньгам сегодня?','Какую возможность я заметил(а) сегодня?']},
-    {id:'already_have', title:'Практика «Я уже имею»', icon:'✅', desc:'Техника проживания цели в настоящем времени.', type:'journal',
+    {id:'already_have', title:'Практика «Я уже имею»', icon:'✅', scene:'scene-goldlight', desc:'Техника проживания цели в настоящем времени.', type:'journal',
       prompts:['Составь список из 10 пунктов так, будто желаемое финансовое положение уже есть, и прочитай его вслух.']},
-    {id:'money_challenge21', title:'21-дневный челлендж изобилия', icon:'🔥', desc:'Ежедневная практика для трансформации отношения к деньгам за 21 день.', type:'challenge21'},
-    {id:'money_beliefs', title:'Работа с денежными установками', icon:'🧩', desc:'Найди и перепиши убеждения, которые мешают твоему изобилию.', type:'journal',
+    {id:'money_challenge21', title:'21-дневный челлендж изобилия', icon:'🔥', scene:'scene-goldlight', desc:'Ежедневная практика для трансформации отношения к деньгам за 21 день.', type:'challenge21'},
+    {id:'money_beliefs', title:'Работа с денежными установками', icon:'🧩', scene:'scene-mist', desc:'Найди и перепиши убеждения, которые мешают твоему изобилию.', type:'journal',
       prompts:['Что говорили о деньгах в моей семье, когда я рос(ла)?','Какое убеждение о деньгах мешает мне сейчас больше всего?','Как я могу переписать это убеждение в поддерживающее?']},
-    {id:'gratitude_ritual', title:'Ритуал благодарности деньгам', icon:'🙌', desc:'Меняет отношение к тратам и доходам на более лёгкое.', type:'steps',
+    {id:'gratitude_ritual', title:'Ритуал благодарности деньгам', icon:'🙌', scene:'scene-golden', desc:'Меняет отношение к тратам и доходам на более лёгкое.', type:'steps',
       steps:['Когда платишь за что-то — мысленно поблагодари деньги за услугу, которую они тебе оказали.','Когда получаешь деньги — прими их с благодарностью, а не с тревогой о том, что скоро закончатся.']},
-    {id:'money_meditation_link', title:'Медитация на привлечение денег', icon:'🧘', desc:'Guided-медитация из раздела медитаций для настройки на изобилие.', type:'meditation-link', meditationId:'m7'}
+    {id:'money_meditation_link', title:'Медитация на привлечение денег', icon:'🧘', scene:'scene-goldlight', desc:'Guided-медитация из раздела медитаций для настройки на изобилие.', type:'meditation-link', meditationId:'m7'}
   ],
   mindfulness:[
-    {id:'mindfulness_journal', title:'Дневник осознанности', icon:'📔', desc:'Простая практика возвращения в настоящий момент.', type:'journal',
+    {id:'mindfulness_journal', title:'Дневник осознанности', icon:'📔', scene:'scene-cloud', desc:'Простая практика возвращения в настоящий момент.', type:'journal',
       prompts:['Что я чувствую прямо сейчас?','Что я заметил(а) сегодня, на что раньше не обращал(а) внимания?','За что я благодарен(на) себе сегодня?']},
-    {id:'who_am_i', title:'Практика «Кто я?»', icon:'❓', desc:'Классическая практика самоисследования.', type:'steps',
+    {id:'who_am_i', title:'Практика «Кто я?»', icon:'❓', scene:'scene-mist', desc:'Классическая практика самоисследования.', type:'steps',
       steps:['Сядь удобно, закрой глаза, сделай три глубоких вдоха.','Спроси себя: «Кто я?» — и просто наблюдай, какие ответы приходят.','Продолжай мягко спрашивать: «А кто наблюдает эти мысли?»','Позволь себе побыть в тишине без ответа, просто в присутствии.','Запиши после практики любые инсайты в дневнике.']},
-    {id:'shadow_work', title:'Работа с тенью', icon:'🌗', desc:'Мягкое исследование вытесненных частей себя.', type:'journal',
+    {id:'shadow_work', title:'Работа с тенью', icon:'🌗', scene:'scene-night', desc:'Мягкое исследование вытесненных частей себя.', type:'journal',
       prompts:['Что во мне я больше всего стараюсь скрыть от других?','Какие черты в других людях вызывают у меня сильное раздражение?','Каким я боюсь показаться?','Что я разрешаю себе только наедине с собой?','Какое качество из детства я подавил(а), чтобы быть «удобным»?','Как я могу отнестись к этой части себя с добротой, а не с осуждением?']},
-    {id:'wheel_of_life', title:'Колесо баланса жизни', icon:'☸️', desc:'Оцени 8 сфер жизни и увидь, где нужно внимание.', type:'wheel'},
-    {id:'grounding', title:'Заземление 5-4-3-2-1', icon:'🌳', desc:'Быстрая техника возвращения в тело при тревоге.', type:'steps',
+    {id:'wheel_of_life', title:'Колесо баланса жизни', icon:'☸️', scene:'scene-forest', desc:'Оцени 8 сфер жизни и увидь, где нужно внимание.', type:'wheel'},
+    {id:'grounding', title:'Заземление 5-4-3-2-1', icon:'🌳', scene:'scene-forest', desc:'Быстрая техника возвращения в тело при тревоге.', type:'steps',
       steps:['Назови 5 вещей, которые ты видишь вокруг.','Назови 4 вещи, которые можешь потрогать.','Назови 3 звука, которые слышишь.','Назови 2 запаха, которые чувствуешь.','Назови 1 вкус во рту или то, за что благодарен(на) прямо сейчас.']},
-    {id:'letter', title:'Письмо себе', icon:'✉️', desc:'Тёплые слова себе — то, что ты хотел(а) бы услышать.', type:'journal',
+    {id:'letter', title:'Письмо себе', icon:'✉️', scene:'scene-cloud', desc:'Тёплые слова себе — то, что ты хотел(а) бы услышать.', type:'journal',
       prompts:['Напиши письмо себе — что бы ты хотел(а) услышать сегодня?']},
-    {id:'values', title:'Список ценностей', icon:'🧭', desc:'Определи главные жизненные ориентиры.', type:'values'},
-    {id:'evening_reflection', title:'Вечерняя рефлексия', icon:'🌆', desc:'Мягкое подведение итогов дня.', type:'journal',
+    {id:'values', title:'Список ценностей', icon:'🧭', scene:'scene-bloom', desc:'Определи главные жизненные ориентиры.', type:'values'},
+    {id:'evening_reflection', title:'Вечерняя рефлексия', icon:'🌆', scene:'scene-night', desc:'Мягкое подведение итогов дня.', type:'journal',
       prompts:['3 победы сегодняшнего дня','1 урок, который я вынес(ла) из сегодняшнего дня','За что я благодарен(на) сегодня?']}
   ],
   spiritual:[
-    {id:'chakras', title:'Путешествие по чакрам', icon:'🌈', desc:'Обзор 7 энергетических центров и практики для каждого.', type:'chakras'},
-    {id:'moon_ritual', title:'Лунные ритуалы', icon:'🌙', desc:'Ставь намерения в новолуние и отпускай в полнолуние.', type:'journal',
+    {id:'chakras', title:'Путешествие по чакрам', icon:'🌈', scene:'scene-rainbow', desc:'Обзор 7 энергетических центров и практики для каждого.', type:'chakras'},
+    {id:'moon_ritual', title:'Лунные ритуалы', icon:'🌙', scene:'scene-night', desc:'Ставь намерения в новолуние и отпускай в полнолуние.', type:'journal',
       prompts:['Новолуние: что я хочу привлечь в этом цикле?','Полнолуние: что я готов(а) отпустить?']},
-    {id:'space_clearing', title:'Энергетическая очистка пространства', icon:'🕯️', desc:'Наведи порядок в доме и в энергии одновременно.', type:'steps',
+    {id:'space_clearing', title:'Энергетическая очистка пространства', icon:'🕯️', scene:'scene-cloud', desc:'Наведи порядок в доме и в энергии одновременно.', type:'steps',
       steps:['Открой окна на несколько минут, впусти свежий воздух.','Убери один захламлённый угол или поверхность.','Мысленно или вслух задай намерение: «Это пространство наполнено спокойствием и светом».','Зажги свечу или благовоние, если это тебе откликается.']},
-    {id:'forgiveness', title:'Практика прощения', icon:'🕊️', desc:'Отпускание обид ради собственной свободы.', type:'steps',
+    {id:'forgiveness', title:'Практика прощения', icon:'🕊️', scene:'scene-bloom', desc:'Отпускание обид ради собственной свободы.', type:'steps',
       steps:['Вспомни ситуацию или человека, которого хочешь простить, включая, возможно, себя.','Признай боль, не подавляя её.','Произнеси: «Я прощаю тебя (себя) и отпускаю эту историю».','Представь, как отпускаешь этот груз с выдохом.']},
-    {id:'intuition_journal', title:'Дневник интуиции', icon:'🔮', desc:'Учись замечать и доверять внутреннему голосу.', type:'journal',
+    {id:'intuition_journal', title:'Дневник интуиции', icon:'🔮', scene:'scene-rainbow', desc:'Учись замечать и доверять внутреннему голосу.', type:'journal',
       prompts:['Какие совпадения или знаки я заметил(а) на этой неделе?','Что подсказывает мне интуиция прямо сейчас?']},
-    {id:'daily_intention', title:'Намерение дня', icon:'☀️', desc:'Задай тон дню одной ясной фразой.', type:'intention'},
-    {id:'higher_self', title:'Связь с высшим Я', icon:'✨', desc:'Короткая созерцательная практика для внутренней связи.', type:'steps',
+    {id:'daily_intention', title:'Намерение дня', icon:'☀️', scene:'scene-sunrise', desc:'Задай тон дню одной ясной фразой.', type:'intention'},
+    {id:'higher_self', title:'Связь с высшим Я', icon:'✨', scene:'scene-night', desc:'Короткая созерцательная практика для внутренней связи.', type:'steps',
       steps:['Сядь в тишине и сделай несколько медленных вдохов.','Представь свою высшую, мудрую версию себя рядом.','Спроси у неё: «Что мне нужно помнить сегодня?»','Прими любой ответ с благодарностью, даже если это просто тишина.']}
   ]
 };
@@ -717,6 +796,13 @@ function markActivity(){
   STATE.lastActiveDate = today;
 }
 function val(id){ const el=document.getElementById(id); return el? el.value : ''; }
+function heroSceneForNow(){
+  const h = new Date().getHours();
+  if(h>=5 && h<11) return 'scene-sunrise';
+  if(h>=11 && h<17) return 'scene-golden';
+  if(h>=17 && h<21) return 'scene-bloom';
+  return 'scene-night';
+}
 
 /* ===================== NAVIGATION ===================== */
 
@@ -766,24 +852,27 @@ function goHome(){ navStack=['screen-home']; showOnly('screen-home'); updateNavH
 /* ===================== HOME ===================== */
 
 function renderHome(){
-  const el = document.getElementById('home-body');
+  const heroEl = document.getElementById('home-hero');
+  heroEl.className = 'hero-scene tall '+heroSceneForNow();
   const hour = new Date().getHours();
   const greeting = hour<5?'Доброй ночи':hour<12?'Доброе утро':hour<18?'Добрый день':'Добрый вечер';
+  document.getElementById('home-greeting-text').textContent = greeting+', '+STATE.name;
+  const el = document.getElementById('home-body');
   const todaysAffirmation = pickDailyAffirmation();
   const showIntention = STATE.intention && STATE.intention.date===todayStr() && STATE.intention.text;
   el.innerHTML = `
-    <div class="home-greeting"><h2>${greeting}, ${STATE.name} ✨</h2><p class="streak-line">🔥 ${STATE.streak} ${pluralDays(STATE.streak)} подряд</p></div>
+    <p class="streak-line">🔥 ${STATE.streak} ${pluralDays(STATE.streak)} подряд</p>
     <div class="card affirmation-of-day"><div class="card-label">Аффирмация дня</div><p class="big-affirmation">«${todaysAffirmation}»</p></div>
     ${showIntention? `<div class="card intention-card"><div class="card-label">🌙 Намерение дня</div><p>${STATE.intention.text}</p></div>` : ''}
     <div class="quick-grid">
-      <div class="quick-card" onclick="navRoot('screen-meditations')">🧘<span>Медитации</span></div>
-      <div class="quick-card" onclick="navRoot('screen-breathing')">🌬<span>Дыхание</span></div>
-      <div class="quick-card" onclick="navRoot('screen-affirmations')">✨<span>Аффирмации</span></div>
-      <div class="quick-card" onclick="goTo('screen-plan')">🎯<span>Мой план</span></div>
-      <div class="quick-card" onclick="goTo('screen-money-list')">💰<span>Изобилие</span></div>
-      <div class="quick-card" onclick="goTo('screen-mindfulness-list')">🧭<span>Осознанность</span></div>
-      <div class="quick-card" onclick="goTo('screen-spiritual-list')">🌙<span>Духовные практики</span></div>
-      <div class="quick-card" onclick="goTo('screen-journal')">📔<span>Дневник</span></div>
+      <div class="quick-card" onclick="navRoot('screen-meditations')"><div class="quick-icon-circle" style="background:#ffe7c4;">🧘</div><span>Медитации</span></div>
+      <div class="quick-card" onclick="navRoot('screen-breathing')"><div class="quick-icon-circle" style="background:#cfe9ea;">🌬</div><span>Дыхание</span></div>
+      <div class="quick-card" onclick="navRoot('screen-affirmations')"><div class="quick-icon-circle" style="background:#f9e6b8;">✨</div><span>Аффирмации</span></div>
+      <div class="quick-card" onclick="goTo('screen-plan')"><div class="quick-icon-circle" style="background:#ecd3a0;">🎯</div><span>Мой план</span></div>
+      <div class="quick-card" onclick="goTo('screen-money-list')"><div class="quick-icon-circle" style="background:#f0dba7;">💰</div><span>Изобилие</span></div>
+      <div class="quick-card" onclick="goTo('screen-mindfulness-list')"><div class="quick-icon-circle" style="background:#d7e0c9;">🧭</div><span>Осознанность</span></div>
+      <div class="quick-card" onclick="goTo('screen-spiritual-list')"><div class="quick-icon-circle" style="background:#dcd6ea;">🌙</div><span>Духовные практики</span></div>
+      <div class="quick-card" onclick="goTo('screen-journal')"><div class="quick-icon-circle" style="background:#e6ebee;">📔</div><span>Дневник</span></div>
     </div>
   `;
 }
@@ -794,7 +883,7 @@ function renderMeditationsList(){
   const el = document.getElementById('meditations-body');
   el.innerHTML = MEDITATIONS.map(m=>`
     <div class="list-card" onclick="openMeditation('${m.id}')">
-      <div class="list-icon" style="background:${m.color}33;">🧘</div>
+      <div class="scene-thumb ${m.scene}"><span class="thumb-badge">${m.icon}</span></div>
       <div class="list-info"><p class="list-title">${m.title}</p><p class="list-sub">${m.category} · ${m.duration} мин</p></div>
       <div class="list-arrow">→</div>
     </div>`).join('');
@@ -809,25 +898,26 @@ function openMeditation(id){
 }
 function renderMeditationPlayerUI(){
   const m = currentMeditation;
+  document.getElementById('med-hero').className = 'hero-scene '+m.scene;
+  document.getElementById('med-step-badge').textContent = `1/${m.steps.length}`;
   const el = document.getElementById('meditation-player-body');
-  el.style.background = `radial-gradient(circle at 50% 30%, ${m.color}22, transparent 70%)`;
   el.innerHTML = `
-    <h2 style="margin-bottom:4px;">${m.title}</h2>
-    <p style="color:var(--text-dim);font-size:13px;margin-bottom:20px;">${m.category} · ${m.duration} мин</p>
-    <div class="med-circle-wrap"><div class="med-circle" id="med-circle" style="background:radial-gradient(circle, ${m.color}55, transparent 70%);border-color:${m.color}88;"></div></div>
-    <div class="med-timer" id="med-timer">${formatTime(medTotal)}</div>
-    <div class="med-progress-wrap"><div class="progress-bar"><div class="progress-fill" id="med-progress" style="width:0%"></div></div></div>
-    <p class="med-step" id="med-step">${m.steps[0]}</p>
-    <div class="med-controls">
-      <button class="med-play-btn" id="med-play-btn" onclick="toggleMedPlay()">▶</button>
+    <h2>${m.title}</h2>
+    <p class="meta-line">${m.category} · ${m.duration} мин</p>
+    <div class="ring-wrap">
+      <div class="ring" id="med-ring" style="--pct:0"></div>
+      <div class="ring-inner" id="med-ring-inner">
+        <button class="med-play-btn" id="med-play-btn" onclick="toggleMedPlay()">▶</button>
+        <div class="med-timer" id="med-timer">${formatTime(medTotal)}</div>
+      </div>
     </div>
-    <button class="link-btn" onclick="finishMeditation()">Завершить</button>
+    <div class="card step-card"><p id="med-step">${m.steps[0]}</p></div>
+    <button class="link-btn center-link" onclick="finishMeditation()">Завершить</button>
   `;
 }
 function toggleMedPlay(){ medPlaying ? pauseMed() : playMed(); }
 function playMed(){
   medPlaying=true;
-  document.getElementById('med-circle').classList.add('breathing-animate');
   document.getElementById('med-play-btn').textContent='❚❚';
   medTimer = setInterval(()=>{
     medElapsed++;
@@ -838,8 +928,6 @@ function playMed(){
 function pauseMed(){
   medPlaying=false;
   clearInterval(medTimer);
-  const circle=document.getElementById('med-circle');
-  if(circle) circle.classList.remove('breathing-animate');
   const btn=document.getElementById('med-play-btn');
   if(btn) btn.textContent='▶';
 }
@@ -847,12 +935,14 @@ function updateMedUI(){
   const remaining = medTotal-medElapsed;
   const timerEl=document.getElementById('med-timer');
   if(timerEl) timerEl.textContent = formatTime(remaining);
-  const progEl=document.getElementById('med-progress');
-  if(progEl) progEl.style.width = (medElapsed/medTotal*100)+'%';
+  const ringEl=document.getElementById('med-ring');
+  if(ringEl) ringEl.style.setProperty('--pct', (medElapsed/medTotal*100).toFixed(1));
   const stepDur = medTotal/currentMeditation.steps.length;
   const idx = Math.min(currentMeditation.steps.length-1, Math.floor(medElapsed/stepDur));
   const stepEl=document.getElementById('med-step');
   if(stepEl) stepEl.textContent = currentMeditation.steps[idx];
+  const badgeEl=document.getElementById('med-step-badge');
+  if(badgeEl) badgeEl.textContent = `${idx+1}/${currentMeditation.steps.length}`;
 }
 function finishMeditation(){
   clearInterval(medTimer); medPlaying=false;
@@ -872,7 +962,7 @@ function renderBreathingList(){
   const el = document.getElementById('breathing-body');
   el.innerHTML = BREATHING.map(b=>`
     <div class="list-card" onclick="openBreathing('${b.id}')">
-      <div class="list-icon" style="background:${b.color}33;">🌬</div>
+      <div class="scene-thumb ${b.scene}"><span class="thumb-badge">🌬</span></div>
       <div class="list-info"><p class="list-title">${b.title}</p><p class="list-sub">${b.desc}</p></div>
       <div class="list-arrow">→</div>
     </div>`).join('');
@@ -883,24 +973,28 @@ const PHASE_NAMES=['Вдох','Задержка','Выдох','Задержка'
 function openBreathing(id){
   currentBreath = BREATHING.find(b=>b.id===id);
   clearInterval(breathTimer);
-  breathPlaying=false; breathRound=0; phaseIndex=0;
+  breathPlaying=false; breathRound=0; phaseIndex=0; phaseTimeLeft=0;
   breathRoundsTotal = currentBreath.rounds;
   goTo('screen-breathing-session');
 }
 function renderBreathingSessionUI(){
   const b = currentBreath;
+  document.getElementById('breath-hero').className = 'hero-scene '+b.scene;
+  document.getElementById('breath-round-badge').textContent = `0/${breathRoundsTotal}`;
   const el = document.getElementById('breathing-session-body');
   el.innerHTML = `
-    <h2 style="margin-bottom:4px;">${b.title}</h2>
-    <p style="color:var(--text-dim);font-size:13px;margin-bottom:10px;">${b.desc}</p>
+    <h2>${b.title}</h2>
+    <p class="meta-line">${b.desc}</p>
     <div class="rounds-select" id="rounds-select">
       ${[4,6,10,15].map(r=>`<button class="chip ${breathRoundsTotal===r?'chip-active':''}" onclick="setBreathRounds(${r})">${r} циклов</button>`).join('')}
     </div>
     <div class="breath-phase-label" id="breath-phase-label">Готов(а)?</div>
-    <div class="breath-circle-wrap"><div class="breath-circle" id="breath-circle" style="background:radial-gradient(circle, ${b.color}66, transparent 70%);border-color:${b.color}aa;"></div></div>
-    <div class="breath-round" id="breath-round">Раунд 0 из ${breathRoundsTotal}</div>
-    <button class="med-play-btn" id="breath-play-btn" onclick="toggleBreathPlay()">▶</button>
-    <button class="link-btn" onclick="finishBreathing()">Завершить</button>
+    <div class="ring-wrap">
+      <div class="ring" id="breath-ring" style="--pct:0"></div>
+      <div class="ring-inner"><div class="breath-circle" id="breath-circle"></div></div>
+    </div>
+    <button class="med-play-btn standalone" id="breath-play-btn" onclick="toggleBreathPlay()">▶</button>
+    <button class="link-btn center-link" onclick="finishBreathing()">Завершить</button>
   `;
 }
 function setBreathRounds(r){
@@ -945,14 +1039,16 @@ function animateCirclePhase(){
   if(!circle) return;
   const dur=Math.max(getPhaseDuration(phaseIndex),1);
   circle.style.transition=`transform ${dur}s linear`;
-  if(phaseIndex===0){ circle.style.transform='scale(1.8)'; }
-  else if(phaseIndex===2){ circle.style.transform='scale(0.7)'; }
+  if(phaseIndex===0){ circle.style.transform='scale(1.7)'; }
+  else if(phaseIndex===2){ circle.style.transform='scale(0.65)'; }
   const label=document.getElementById('breath-phase-label');
   if(label) label.textContent = PHASE_NAMES[phaseIndex];
 }
 function updateBreathUI(){
-  const roundEl=document.getElementById('breath-round');
-  if(roundEl) roundEl.textContent = `Раунд ${Math.min(breathRound+1,breathRoundsTotal)} из ${breathRoundsTotal}`;
+  const roundEl=document.getElementById('breath-round-badge');
+  if(roundEl) roundEl.textContent = `${Math.min(breathRound,breathRoundsTotal)}/${breathRoundsTotal}`;
+  const ringEl=document.getElementById('breath-ring');
+  if(ringEl) ringEl.style.setProperty('--pct', (breathRound/breathRoundsTotal*100).toFixed(1));
 }
 function finishBreathing(){
   clearInterval(breathTimer); breathPlaying=false;
@@ -1032,12 +1128,12 @@ function renderPracticesHub(){
   const el = document.getElementById('practices-body');
   el.innerHTML = `
     <div class="hub-grid">
-      <div class="list-card" onclick="goTo('screen-plan')"><div class="list-icon">🎯</div><div class="list-info"><p class="list-title">План саморазвития</p><p class="list-sub">Персональный план по твоим целям</p></div><div class="list-arrow">→</div></div>
-      <div class="list-card" onclick="goTo('screen-money-list')"><div class="list-icon">💰</div><div class="list-info"><p class="list-title">Денежные практики</p><p class="list-sub">Изобилие и денежный поток</p></div><div class="list-arrow">→</div></div>
-      <div class="list-card" onclick="goTo('screen-mindfulness-list')"><div class="list-icon">🧭</div><div class="list-info"><p class="list-title">Осознанность и поиск себя</p><p class="list-sub">Дневники, рефлексия, ценности</p></div><div class="list-arrow">→</div></div>
-      <div class="list-card" onclick="goTo('screen-spiritual-list')"><div class="list-icon">🌙</div><div class="list-info"><p class="list-title">Духовные практики</p><p class="list-sub">Чакры, луна, интуиция</p></div><div class="list-arrow">→</div></div>
-      <div class="list-card" onclick="goTo('screen-journal')"><div class="list-icon">📔</div><div class="list-info"><p class="list-title">Дневник</p><p class="list-sub">Ежедневные заметки и настроение</p></div><div class="list-arrow">→</div></div>
-      <div class="list-card" onclick="goTo('screen-profile')"><div class="list-icon">⚙️</div><div class="list-info"><p class="list-title">Профиль и статистика</p><p class="list-sub">Серия дней, прогресс, настройки</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-plan')"><div class="scene-thumb scene-golden"><span class="thumb-badge">🎯</span></div><div class="list-info"><p class="list-title">План саморазвития</p><p class="list-sub">Персональный план по твоим целям</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-money-list')"><div class="scene-thumb scene-goldlight"><span class="thumb-badge">💰</span></div><div class="list-info"><p class="list-title">Денежные практики</p><p class="list-sub">Изобилие и денежный поток</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-mindfulness-list')"><div class="scene-thumb scene-forest"><span class="thumb-badge">🧭</span></div><div class="list-info"><p class="list-title">Осознанность и поиск себя</p><p class="list-sub">Дневники, рефлексия, ценности</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-spiritual-list')"><div class="scene-thumb scene-rainbow"><span class="thumb-badge">🌙</span></div><div class="list-info"><p class="list-title">Духовные практики</p><p class="list-sub">Чакры, луна, интуиция</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-journal')"><div class="scene-thumb scene-cloud"><span class="thumb-badge">📔</span></div><div class="list-info"><p class="list-title">Дневник</p><p class="list-sub">Ежедневные заметки и настроение</p></div><div class="list-arrow">→</div></div>
+      <div class="list-card" onclick="goTo('screen-profile')"><div class="scene-thumb scene-sunrise"><span class="thumb-badge">⚙️</span></div><div class="list-info"><p class="list-title">Профиль и статистика</p><p class="list-sub">Серия дней, прогресс, настройки</p></div><div class="list-arrow">→</div></div>
     </div>
   `;
 }
@@ -1047,7 +1143,7 @@ function renderGenericList(cat){
   const el = document.getElementById(LIST_BODY_IDS[cat]);
   el.innerHTML = PRACTICE_DATA[cat].map(p=>`
     <div class="list-card" onclick="goToPractice('${cat}','${p.id}')">
-      <div class="list-icon">${p.icon}</div>
+      <div class="scene-thumb ${p.scene}"><span class="thumb-badge">${p.icon}</span></div>
       <div class="list-info"><p class="list-title">${p.title}</p><p class="list-sub">${p.desc}</p></div>
       <div class="list-arrow">→</div>
     </div>`).join('');
@@ -1111,12 +1207,17 @@ function renderJournalPracticeHistory(){
 }
 function renderChallenge21(){
   const c = STATE.challenge21;
+  const pct = Math.round(c.checkedDays.length/21*100);
   const items = MONEY_CHALLENGE_TASKS.map((t,i)=>{
     const done = c.checkedDays.includes(i);
     return `<div class="challenge-item ${done?'done':''}" onclick="toggleChallengeDay(${i})"><span class="day-num">День ${i+1}</span><span class="day-task">${t}</span><span class="check">${done?'✓':''}</span></div>`;
   }).join('');
-  const pct = Math.round(c.checkedDays.length/21*100);
-  return `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div><p>${c.checkedDays.length} из 21 дня</p><div class="challenge-grid">${items}</div>`;
+  return `
+    <div class="ring-wrap">
+      <div class="ring" style="--pct:${pct}"></div>
+      <div class="ring-inner"><div class="ring-value">${c.checkedDays.length}/21</div><div class="ring-label">дней пройдено</div></div>
+    </div>
+    <div class="challenge-grid">${items}</div>`;
 }
 function toggleChallengeDay(i){
   const idx = STATE.challenge21.checkedDays.indexOf(i);
@@ -1232,7 +1333,20 @@ function renderPlanView(){
     return `<details class="plan-day" ${di===0?'open':''}><summary>${d.weekday} — ${cfg.icon} ${cfg.label}</summary>${taskRows}</details>`;
   }).join('');
   const pct = totalCount? Math.round(doneCount/totalCount*100):0;
-  return `<div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div><p>${pct}% выполнено на этой неделе</p>${daysHtml}<button class="btn btn-outline" onclick="resetPlan()">Составить новый план</button>`;
+  return `
+    <div class="ring-wrap">
+      <div class="ring" style="--pct:${pct}"></div>
+      <div class="ring-inner"><div class="ring-value">${pct}%</div><div class="ring-label">за неделю</div></div>
+    </div>
+    <div class="stat-row">
+      <div class="stat"><b>${doneCount}</b><span>Выполнено</span></div>
+      <div class="stat"><b>${totalCount-doneCount}</b><span>Осталось</span></div>
+      <div class="stat"><b>${totalCount}</b><span>Всего</span></div>
+    </div>
+    <div class="section-sub">Дни недели</div>
+    ${daysHtml}
+    <button class="btn btn-outline" onclick="resetPlan()">Составить новый план</button>
+  `;
 }
 function togglePlanTask(di,key){
   const t = STATE.plan.days[di].tasks[key];
@@ -1305,11 +1419,13 @@ function renderProfile(){
   const el = document.getElementById('profile-body');
   el.innerHTML = `
     <div class="profile-header"><div class="avatar">🧘</div><input id="profile-name" value="${STATE.name}" onchange="updateName()"></div>
-    <div class="stats-grid">
-      <div class="stat-card"><div class="stat-num">${STATE.streak} 🔥</div><div class="stat-label">${pluralDays(STATE.streak)} подряд</div></div>
-      <div class="stat-card"><div class="stat-num">${STATE.totalMeditations}</div><div class="stat-label">медитаций</div></div>
-      <div class="stat-card"><div class="stat-num">${STATE.totalBreathing}</div><div class="stat-label">дыхательных практик</div></div>
-      <div class="stat-card"><div class="stat-num">${STATE.totalJournal}</div><div class="stat-label">записей в дневнике</div></div>
+    <div class="card">
+      <div class="stat-row" style="margin-top:0;padding-top:0;border-top:none;">
+        <div class="stat"><b>${STATE.streak}🔥</b><span>${pluralDays(STATE.streak)}</span></div>
+        <div class="stat"><b>${STATE.totalMeditations}</b><span>Медитаций</span></div>
+        <div class="stat"><b>${STATE.totalBreathing}</b><span>Дыхания</span></div>
+        <div class="stat"><b>${STATE.totalJournal}</b><span>Записей</span></div>
+      </div>
     </div>
     <button class="btn btn-outline" onclick="resetAllData()">Сбросить весь прогресс</button>
   `;
